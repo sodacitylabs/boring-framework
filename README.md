@@ -1,4 +1,4 @@
-# Boring Framework
+# The Boring Framework
 The Boring Framework is a Rails-inspired web framework that includes everything needed to
 create database-backed web applications according to the
 [Model-View-Controller (MVC)](https://en.wikipedia.org/wiki/Model-view-controller)
