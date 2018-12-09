@@ -1,0 +1,49 @@
+{
+  "name": "boring-framework",
+  "version": "0.1.0",
+  "description": "Boring Framework - a Rails-inspired MVC framework for Node.js",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sodacitylabs/boring-framework.git"
+  },
+  "keywords": [
+    "Node",
+    "MVC",
+    "Rails"
+  ],
+  "author": {
+    "name": "George Fogle",
+    "web": "https://github.com/gfogle"
+  },
+  "bugs": {
+    "url": "https://github.com/sodacitylabs/boring-framework/issues"
+  },
+  "homepage": "https://github.com/sodacitylabs/boring-framework/wiki/Home-Page",
+  "engines": {
+    "node": ">=8.11.0"
+  },
+  "bin": {
+    "boring": "./src/cli/index.js"
+  },
+  "main": "./src/core/index.js",
+  "files": [
+    "src/*"
+  ],
+  "scripts": {
+    "lint": "./node_modules/.bin/eslint --color src",
+    "postpublish": "PACKAGE_VERSION=$(cat package.json | grep \\\"version\\\" | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && git tag v$PACKAGE_VERSION && git push upstream --tags"
+  },
+  "dependencies": {
+    "ejs": "2.6.1",
+    "url": "0.11.0",
+    "uuid": "3.3.2"
+  },
+  "devDependencies": {
+    "eslint": "5.8.0",
+    "eslint-plugin-jest": "21.27.1",
+    "eslint-config-prettier": "3.0.1",
+    "eslint-plugin-prettier": "2.6.2",
+    "prettier": "1.14.2"
+  }
+}
