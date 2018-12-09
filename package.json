@@ -1,8 +1,10 @@
 {
-  "name": "boring-framework",
+  "name": "@sodacitylabs/boring-framework",
   "version": "0.1.0",
   "description": "Boring Framework - a Rails-inspired MVC framework for Node.js",
-  "private": true,
+  "config": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sodacitylabs/boring-framework.git"
@@ -32,6 +34,7 @@
   ],
   "scripts": {
     "lint": "./node_modules/.bin/eslint --color src",
+    "publish": "",
     "postpublish": "PACKAGE_VERSION=$(cat package.json | grep \\\"version\\\" | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && git tag v$PACKAGE_VERSION && git push upstream --tags"
   },
   "dependencies": {

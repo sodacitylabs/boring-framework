@@ -33,7 +33,7 @@ module.exports = function(name, root) {
       {
         name: name,
         scripts: {
-          start: "./node_modules/.bin/nrx start"
+          start: "./node_modules/.bin/boring start"
         },
         engines: {
           node: ">=8.11.0"
@@ -41,7 +41,7 @@ module.exports = function(name, root) {
         dependencies: {
           ejs: CoreConfig.versions.ejs,
           knex: CoreConfig.versions.knex,
-          "boring-framework": CoreConfig.versions.npm,
+          "@sodacitylabs/boring-framework": CoreConfig.versions.npm,
           sqlite3: CoreConfig.versions.sqlite3,
           uuid: CoreConfig.versions.uuid
         },
