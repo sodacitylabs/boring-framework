@@ -59,3 +59,10 @@ typings/
 
 # next.js build output
 .next
+
+# locally linked folders for testing CLI
+links
+
+# IDE
+.idea
+.vscode
