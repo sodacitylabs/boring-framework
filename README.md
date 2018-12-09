@@ -47,10 +47,6 @@ response, or to generate the body of an email.
 
 Views are handled by [EJS](http://ejs.co/).
 
-## Frameworks and libraries
-
-No outside frameworks or libraries are used at this time.
-
 ## Getting Started
 
 We try to maintain clear, concise documentation for Getting Started and using The Boring Framework. Check out our [docs](https://github.com/sodacitylabs/boring-framework/wiki) pages for any questions you have!
