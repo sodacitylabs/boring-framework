@@ -53,24 +53,7 @@ No outside frameworks or libraries are used at this time.
 
 ## Getting Started
 
-1. Install The Boring Framework at the command prompt if you haven't yet:
-
-        $ npm install -g @sodacitylabs/boring-framework
-
-2. At the command prompt, create a new application:
-
-        $ boring new myapp
-
-   where "myapp" is the application name.
-
-3. Change directory to `myapp` and start the web server:
-
-        $ cd myapp
-        $ ./bin/boring.sh server
-
-   Run with `--help` or `-h` for options.
-
-4. Go to `http://localhost:3000` and you'll see the welcome aboard page
+We try to maintain clear, concise documentation for Getting Started and using The Boring Framework. Check out our [docs](https://github.com/sodacitylabs/boring-framework/wiki) pages for any questions you have!
 
 ## License
 
