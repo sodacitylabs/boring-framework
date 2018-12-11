@@ -25,6 +25,10 @@ module.exports = function(root, name, action) {
     throw new Error(`Action ${action} is not a valid action name.`);
   }
 
+  if (name[0] !== name[0].toUpperCase()) {
+    name[0] = name[0].toUpperCase();
+  }
+
   action = action.toLowerCase();
 
   if (!fs.existsSync(`${root}/app/controllers/${name}.js`)) {

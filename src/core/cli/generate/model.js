@@ -1,9 +1,50 @@
 "use strict";
 
 const fs = require("fs");
+const pluralize = require("pluralize");
+
+function getNameForms(name) {
+  const singular = pluralize.singular(name);
+  const plural = pluralize.plural(name);
+
+  // todo: should only need to make this pass 1 time
+  const resourceSingular = singular.split("").reduce((acc, curr, idx) => {
+    if (curr === curr.toUpperCase() && idx !== 0) {
+      acc += `_${curr.toLowerCase()}`;
+    } else if (idx === 0) {
+      acc += curr.toLowerCase();
+    } else {
+      acc += curr;
+    }
+
+    return acc;
+  }, "");
+  const resourcePlural = plural.split("").reduce((acc, curr, idx) => {
+    if (curr === curr.toUpperCase() && idx !== 0) {
+      acc += `_${curr.toLowerCase()}`;
+    } else if (idx === 0) {
+      acc += curr.toLowerCase();
+    } else {
+      acc += curr;
+    }
+
+    return acc;
+  }, "");
+
+  return {
+    singular,
+    plural,
+    resourceSingular,
+    resourcePlural
+  };
+}
 
 module.exports = async function(dir, name, attrs) {
-  const resource = `${name.toLowerCase()}s`;
+  if (name[0] !== name[0].toUpperCase()) {
+    name = name[0].toUpperCase() + name.substring(1);
+  }
+
+  const forms = getNameForms(name);
 
   // todo: verify model name is singular and uppercased
   // todo: verify all attrs are of supported type
@@ -35,8 +76,10 @@ module.exports = async function(dir, name, attrs) {
     .toString()
     .padStart(2, "0");
   const timestamp = `${year}${month}${day}${hours}${minutes}${seconds}`;
-  const migrationFile = `${dir}/db/migrations/${timestamp}_create_${resource}.js`;
-  const modelFile = `${dir}/app/models/${name}.js`;
+  const migrationFile = `${dir}/db/migrations/${timestamp}_create_${
+    forms.resourcePlural
+  }.js`;
+  const modelFile = `${dir}/app/models/${forms.singular}.js`;
 
   if (fs.existsSync(migrationFile)) {
     throw new Error(
@@ -56,8 +99,8 @@ module.exports = async function(dir, name, attrs) {
     migrationFile,
     `
     exports.up = async function(knex) {
-      await knex.schema.dropTableIfExists('${resource}');
-      await knex.schema.createTable('${resource}', (table) => {
+      await knex.schema.dropTableIfExists('${forms.resourcePlural}');
+      await knex.schema.createTable('${forms.resourcePlural}', (table) => {
         table.uuid('id').primary();
         ${attrs.reduce((acc, curr) => {
           if (curr.type !== "references") {
@@ -65,11 +108,16 @@ module.exports = async function(dir, name, attrs) {
           }
 
           if (curr.type === "references") {
-            belongsTo.push(`${curr.name}s`);
-            acc += `table.uuid('${curr.name}_id').notNullable();\n`;
+            const belongsToForms = getNameForms(curr.name);
+            belongsTo.push(`${belongsToForms.resourcePlural}`);
+            acc += `table.uuid('${
+              belongsToForms.resourceSingular
+            }_id').notNullable();\n`;
             acc += `table.foreign("${
-              curr.name
-            }_id").references("id").inTable("${curr.name}s");\n`;
+              belongsToForms.resourceSingular
+            }_id").references("id").inTable("${
+              belongsToForms.resourcePlural
+            }");\n`;
           }
 
           return acc;
@@ -79,7 +127,7 @@ module.exports = async function(dir, name, attrs) {
     };
 
     exports.down = async function(knex) {
-      await knex.schema.dropTableIfExists('${resource}');
+      await knex.schema.dropTableIfExists('${forms.resourcePlural}');
     };
     `,
     "utf8"
@@ -92,7 +140,7 @@ module.exports = async function(dir, name, attrs) {
     const Boring = require('@sodacitylabs/boring-framework');
     const ActiveRecord = Boring.Model.ActiveRecord;
 
-    module.exports = class ${name} extends ActiveRecord {
+    module.exports = class ${forms.singular} extends ActiveRecord {
       constructor(attrs) {
         super(attrs);
       }
