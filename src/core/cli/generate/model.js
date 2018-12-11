@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const pluralize = require("pluralize");
+const { spawnSync } = require("child_process");
 
 function getNameForms(name) {
   const singular = pluralize.singular(name);
@@ -155,4 +156,15 @@ module.exports = async function(dir, name, attrs) {
     `,
     "utf8"
   );
+
+  spawnSync(`${dir}/node_modules/.bin/prettier "${migrationFile}" --write`, {
+    stdio: `inherit`,
+    shell: true,
+    cwd: dir
+  });
+  spawnSync(`${dir}/node_modules/.bin/prettier "${modelFile}" --write`, {
+    stdio: `inherit`,
+    shell: true,
+    cwd: dir
+  });
 };

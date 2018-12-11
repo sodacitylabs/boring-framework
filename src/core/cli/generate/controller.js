@@ -1,6 +1,7 @@
 "use strict";
 
 const fs = require("fs");
+const { spawnSync } = require("child_process");
 
 /**
  * Create an empty controller
@@ -35,5 +36,12 @@ module.exports = function(root, name) {
     "utf8"
   );
 
-  // todo: run prettier on file
+  spawnSync(
+    `${root}/node_modules/.bin/prettier "${root}/app/controllers/${name}.js" --write`,
+    {
+      stdio: `inherit`,
+      shell: true,
+      cwd: root
+    }
+  );
 };
