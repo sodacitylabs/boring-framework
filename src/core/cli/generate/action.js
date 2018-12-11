@@ -2,6 +2,7 @@
 
 const CoreConfig = require("../../config");
 const fs = require("fs");
+const { spawnSync } = require("child_process");
 
 /**
  * Create an action on an already existing controller
@@ -107,5 +108,12 @@ module.exports = function(root, name, action) {
     "utf8"
   );
 
-  // todo: prettier the file
+  spawnSync(
+    `${root}/node_modules/.bin/prettier "${root}/app/controllers/${name}.js" --write`,
+    {
+      stdio: `inherit`,
+      shell: true,
+      cwd: root
+    }
+  );
 };

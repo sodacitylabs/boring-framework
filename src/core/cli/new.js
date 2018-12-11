@@ -153,14 +153,14 @@ module.exports = function(name, root) {
   console.log(`${creatingPrefix} .eslintignore`);
   fs.writeFileSync(
     `${projectDirectory}/.eslintignore`,
-    `node_modules\npackage.json\napp/assets\ntmp\npublic\nlogs`,
+    `node_modules\npackage.json\napp/assets\ntmp\npublic\nlogs\nsqlite.db`,
     "utf8"
   );
   // prettier files to ignore
   console.log(`${creatingPrefix} .prettierignore`);
   fs.writeFileSync(
     `${projectDirectory}/.prettierignore`,
-    `node_modules\npackage.json\napp/assets\ntmp\npublic\nlogs`,
+    `node_modules\npackage.json\napp/assets\ntmp\npublic\nlogs\nsqlite.db`,
     "utf8"
   );
 
@@ -199,4 +199,21 @@ module.exports = function(name, root) {
     shell: true,
     cwd: projectDirectory
   });
+
+  spawnSync(
+    `${projectDirectory}/node_modules/.bin/prettier "${projectDirectory}/config/**/*.js" --write`,
+    {
+      stdio: `inherit`,
+      shell: true,
+      cwd: root
+    }
+  );
+  spawnSync(
+    `${projectDirectory}/node_modules/.bin/prettier "${projectDirectory}/db/**/*.js" --write`,
+    {
+      stdio: `inherit`,
+      shell: true,
+      cwd: root
+    }
+  );
 };
