@@ -56,6 +56,61 @@ module.exports = class ActiveRecord {
     return getNameForms(this.constructor.name).resourcePlural;
   }
 
+  static async all() {
+    const modelName = getNameForms(this.name).singular;
+    const Model = require(`${process.cwd()}/app/models/${modelName}`);
+    const table = `${getNameForms(this.name).resourcePlural}`;
+
+    try {
+      const columns = await db
+        .connection()
+        .table(table)
+        .columnInfo();
+
+      const cases = Object.keys(columns).map(k => {
+        return {
+          snake: k,
+          camel: k
+            .split("_")
+            .map(
+              (v, i) => (i > 0 ? `${v[0].toUpperCase()}${v.substring(1)}` : v)
+            )
+            .join("")
+        };
+      });
+
+      const rows = await db
+        .connection()
+        .select()
+        .from(table)
+        .orderBy("created_at", "asc")
+        .catch(err => {
+          console.error(`Error caught: ${err.message}`);
+        });
+
+      if (!rows || !rows.length) {
+        return [];
+      }
+
+      const models = rows.map(r => {
+        const attrs = Object.keys(r).reduce((acc, curr) => {
+          const column = cases.filter(c => c.snake === curr)[0];
+
+          acc[column.camel] = r[curr];
+
+          return acc;
+        }, {});
+
+        return new Model(attrs);
+      });
+
+      return models;
+    } catch (ex) {
+      console.error(`Exception in ${name}.all :: ${ex.message}`);
+      return null;
+    }
+  }
+
   static async create(attrs) {
     const modelName = getNameForms(this.name).singular;
     const Model = require(`${process.cwd()}/app/models/${modelName}`);
