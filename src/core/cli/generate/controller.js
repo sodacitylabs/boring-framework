@@ -14,6 +14,10 @@ module.exports = function(root, name) {
     throw new Error(`Generating a controller requires a controller name`);
   }
 
+  if (name[0] !== name[0].toUpperCase()) {
+    name[0] = name[0].toUpperCase();
+  }
+
   // todo: get all file names and check for non-normalize and normalized versions
   if (name && fs.existsSync(`${root}/app/controllers/${name}.js`)) {
     throw new Error(

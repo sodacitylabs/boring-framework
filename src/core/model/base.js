@@ -1,4 +1,41 @@
 const db = require("../db/index");
+const pluralize = require("pluralize");
+
+function getNameForms(name) {
+  const singular = pluralize.singular(name);
+  const plural = pluralize.plural(name);
+
+  // todo: should only need to make this pass 1 time
+  const resourceSingular = singular.split("").reduce((acc, curr, idx) => {
+    if (curr === curr.toUpperCase() && idx !== 0) {
+      acc += `_${curr.toLowerCase()}`;
+    } else if (idx === 0) {
+      acc += curr.toLowerCase();
+    } else {
+      acc += curr;
+    }
+
+    return acc;
+  }, "");
+  const resourcePlural = plural.split("").reduce((acc, curr, idx) => {
+    if (curr === curr.toUpperCase() && idx !== 0) {
+      acc += `_${curr.toLowerCase()}`;
+    } else if (idx === 0) {
+      acc += curr.toLowerCase();
+    } else {
+      acc += curr;
+    }
+
+    return acc;
+  }, "");
+
+  return {
+    singular,
+    plural,
+    resourceSingular,
+    resourcePlural
+  };
+}
 
 module.exports = class ActiveRecord {
   constructor(attrs) {
@@ -7,67 +44,22 @@ module.exports = class ActiveRecord {
     Object.keys(attrs).forEach(k => {
       self[k] = attrs[k];
     });
+
+    // todo: precalculate the columns and cases
   }
 
-  static async all() {
-    const name = this.name;
-    const Model = require(`${process.cwd()}/app/models/${name}`);
-    const table = `${name.toLowerCase()}s`;
+  get modelName() {
+    return getNameForms(this.constructor.name).singular;
+  }
 
-    try {
-      const columns = await db
-        .connection()
-        .table(table)
-        .columnInfo();
-
-      const cases = Object.keys(columns).map(k => {
-        return {
-          snake: k,
-          camel: k
-            .split("_")
-            .map(
-              (v, i) => (i > 0 ? `${v[0].toUpperCase()}${v.substring(1)}` : v)
-            )
-            .join("")
-        };
-      });
-
-      const rows = await db
-        .connection()
-        .select()
-        .from(table)
-        .orderBy("created_at", "asc")
-        .catch(err => {
-          console.error(`Error caught: ${err.message}`);
-        });
-
-      if (!rows || !rows.length) {
-        return [];
-      }
-
-      const models = rows.map(r => {
-        const attrs = Object.keys(r).reduce((acc, curr) => {
-          const column = cases.filter(c => c.snake === curr)[0];
-
-          acc[column.camel] = r[curr];
-
-          return acc;
-        }, {});
-
-        return new Model(attrs);
-      });
-
-      return models;
-    } catch (ex) {
-      console.error(`Exception in ${name}.all :: ${ex.message}`);
-      return null;
-    }
+  get tableName() {
+    return getNameForms(this.constructor.name).resourcePlural;
   }
 
   static async create(attrs) {
-    const name = this.name;
-    const Model = require(`${process.cwd()}/app/models/${name}`);
-    const table = `${name.toLowerCase()}s`;
+    const modelName = getNameForms(this.name).singular;
+    const Model = require(`${process.cwd()}/app/models/${modelName}`);
+    const table = `${getNameForms(this.name).resourcePlural}`;
 
     const columns = await db
       .connection()
@@ -102,51 +94,31 @@ module.exports = class ActiveRecord {
 
       return new Model(attrs);
     } catch (ex) {
-      console.error(`Error in ${name}.create :: ${ex.message}`);
+      console.error(`Error in ${modelName}.create :: ${ex.message}`);
       return null;
     }
   }
 
   async destroy() {
-    const name = this.constructor.name;
-    const table = `${name.toLowerCase()}s`;
-
     try {
       await db
         .connection()
-        .table(table)
+        .table(this.tableName)
         .where("id", this.id)
         .del();
 
       return true;
     } catch (ex) {
-      console.error(`Error in ${name}.destroy :: ${ex.message}`);
-      return false;
-    }
-  }
-
-  static async destroyAll() {
-    const name = this.constructor.name;
-    const table = `${name.toLowerCase()}s`;
-
-    try {
-      await db
-        .connection()
-        .table(table)
-        .del();
-
-      return true;
-    } catch (ex) {
-      console.error(`Error in ${name}.destroyAll :: ${ex.message}`);
+      console.error(`Error in ${this.modelName}.destroy :: ${ex.message}`);
       return false;
     }
   }
 
   static async find(id) {
     // todo: get column definitions and make sure id is of matching type
-    const name = this.name;
-    const Model = require(`${process.cwd()}/app/models/${name}`);
-    const table = `${name.toLowerCase()}s`;
+    const modelName = getNameForms(this.name).singular;
+    const Model = require(`${process.cwd()}/app/models/${modelName}`);
+    const table = `${getNameForms(this.name).resourcePlural}`;
 
     try {
       const row = await db
@@ -186,15 +158,15 @@ module.exports = class ActiveRecord {
 
       return new Model(attrs);
     } catch (ex) {
-      console.error(`Exception in ${name}.find :: ${ex.message}`);
+      console.error(`Exception in ${modelName}.find :: ${ex.message}`);
       return null;
     }
   }
 
   static async findBy(attrs) {
-    const name = this.name;
-    const Model = require(`${process.cwd()}/app/models/${name}`);
-    const table = `${name.toLowerCase()}s`;
+    const modelName = getNameForms(this.name).singular;
+    const Model = require(`${process.cwd()}/app/models/${modelName}`);
+    const table = `${getNameForms(this.name).resourcePlural}`;
 
     try {
       let findAttrs = {};
@@ -258,137 +230,21 @@ module.exports = class ActiveRecord {
 
       return models;
     } catch (ex) {
-      console.error(`Exception in ${name}.findBy :: ${ex.message}`);
-      return null;
-    }
-  }
-
-  static async first(numberOf) {
-    const name = this.name;
-    const Model = require(`${process.cwd()}/app/models/${name}`);
-    const table = `${name.toLowerCase()}s`;
-
-    try {
-      const columns = await db
-        .connection()
-        .table(table)
-        .columnInfo();
-
-      const cases = Object.keys(columns).map(k => {
-        return {
-          snake: k,
-          camel: k
-            .split("_")
-            .map(
-              (v, i) => (i > 0 ? `${v[0].toUpperCase()}${v.substring(1)}` : v)
-            )
-            .join("")
-        };
-      });
-
-      const rows = await db
-        .connection()
-        .select()
-        .from(table)
-        .orderBy("created_at", "asc")
-        .limit(numberOf ? numberOf : 1)
-        .catch(err => {
-          console.error(`Error caught: ${err.message}`);
-        });
-
-      if (!rows || !rows.length) {
-        return [];
-      }
-
-      const models = rows.map(r => {
-        const attrs = Object.keys(r).reduce((acc, curr) => {
-          const column = cases.filter(c => c.snake === curr);
-
-          acc[column.camel] = r[curr];
-
-          return acc;
-        }, {});
-
-        return new Model(attrs);
-      });
-
-      return models;
-    } catch (ex) {
-      console.error(`Exception in ${name}.first :: ${ex.message}`);
-      return null;
-    }
-  }
-
-  static async last(numberOf) {
-    const name = this.name;
-    const Model = require(`${process.cwd()}/app/models/${name}`);
-    const table = `${name.toLowerCase()}s`;
-
-    try {
-      const columns = await db
-        .connection()
-        .table(table)
-        .columnInfo();
-
-      const cases = Object.keys(columns).map(k => {
-        return {
-          snake: k,
-          camel: k
-            .split("_")
-            .map(
-              (v, i) => (i > 0 ? `${v[0].toUpperCase()}${v.substring(1)}` : v)
-            )
-            .join("")
-        };
-      });
-
-      const rows = await db
-        .connection()
-        .select()
-        .from(table)
-        .orderBy("created_at", "desc")
-        .limit(numberOf ? numberOf : 1)
-        .catch(err => {
-          console.error(`Error caught: ${err.message}`);
-        });
-
-      if (!rows || !rows.length) {
-        return [];
-      }
-
-      const models = rows.map(r => {
-        const attrs = Object.keys(r).reduce((acc, curr) => {
-          const column = cases.filter(c => c.snake === curr);
-
-          acc[column.camel] = r[curr];
-
-          return acc;
-        }, {});
-
-        return new Model(attrs);
-      });
-
-      return models;
-    } catch (ex) {
-      console.error(`Exception in ${name}.first :: ${ex.message}`);
+      console.error(`Exception in ${modelName}.findBy :: ${ex.message}`);
       return null;
     }
   }
 
   static new(attrs) {
-    const name = this.name;
-    const Model = require(`${process.cwd()}/app/models/${name}`);
+    const Model = require(`${process.cwd()}/app/models/${this.modelName}`);
 
     return new Model(attrs);
   }
 
   async save() {
-    const name = this.constructor.name;
-    const table = `${name.toLowerCase()}s`;
-
     const columns = await db
       .connection()
-      .table(table)
+      .table(this.tableName)
       .columnInfo();
 
     const cases = Object.keys(columns).map(k => {
@@ -415,7 +271,7 @@ module.exports = class ActiveRecord {
       const row = await db
         .connection()
         .select()
-        .from(table)
+        .from(this.tableName)
         .where("id", this.id)
         .first()
         .catch(err => {
@@ -427,28 +283,25 @@ module.exports = class ActiveRecord {
           .connection()
           .where("id", this.id)
           .update(toSave)
-          .into(table);
+          .into(this.tableName);
       } else {
         await db
           .connection()
           .insert(toSave)
-          .into(table);
+          .into(this.tableName);
       }
 
       return true;
     } catch (ex) {
-      console.error(`Error in ${name}.save :: ${ex.message}`);
+      console.error(`Error in ${this.modelName}.save :: ${ex.message}`);
       return false;
     }
   }
 
   async update(args) {
-    const name = this.constructor.name;
-    const table = `${name.toLowerCase()}s`;
-
     const columns = await db
       .connection()
-      .table(table)
+      .table(this.tableName)
       .columnInfo();
 
     const cases = Object.keys(columns).map(k => {
@@ -481,11 +334,11 @@ module.exports = class ActiveRecord {
         .connection()
         .where("id", this.id)
         .update(toSave)
-        .into(table);
+        .into(this.tableName);
 
       return true;
     } catch (ex) {
-      console.error(`Error in ${name}.update :: ${ex.message}`);
+      console.error(`Error in ${this.modelName}.update :: ${ex.message}`);
       return false;
     }
   }
