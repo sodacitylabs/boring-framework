@@ -3,5 +3,6 @@
 module.exports = {
   CLI: require("./cli"),
   Model: require("./model"),
-  Server: require("./server")
+  Server: require("./server"),
+  Test: require("./test")
 };

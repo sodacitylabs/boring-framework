@@ -9,6 +9,7 @@ module.exports = function CLI() {
     generateController: require("./generate/controller"),
     generateModel: require("./generate/model"),
     newProject: require("./new"),
-    showRoutes: require("./routes")
+    showRoutes: require("./routes"),
+    runTests: require("./test")
   };
 };

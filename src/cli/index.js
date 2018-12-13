@@ -22,6 +22,9 @@ switch (cmd) {
   case "server":
     startServer();
     break;
+  case "test":
+    runTests();
+    break;
   default:
     console.error(`Unknown command ${cmd} and args phrase`);
     process.exit(1);
@@ -145,6 +148,16 @@ function startServer() {
     server.start();
   } catch (ex) {
     console.error(`Error running server: ${ex.message}`);
+    process.exit(1);
+  }
+}
+
+function runTests() {
+  try {
+    const cli = new Core.CLI();
+    cli.runTests();
+  } catch (ex) {
+    console.error(`Error running tests: ${ex.message}`);
     process.exit(1);
   }
 }
