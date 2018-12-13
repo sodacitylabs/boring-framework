@@ -81,6 +81,7 @@ module.exports = async function(dir, name, attrs) {
     forms.resourcePlural
   }.js`;
   const modelFile = `${dir}/app/models/${forms.singular}.js`;
+  const modelTestFile = `${dir}/test/models/${forms.singular}Test.js`;
 
   if (fs.existsSync(migrationFile)) {
     throw new Error(
@@ -157,12 +158,39 @@ module.exports = async function(dir, name, attrs) {
     "utf8"
   );
 
+  fs.writeFileSync(
+    modelTestFile,
+    `
+    const db = require('../../db');
+    const Boring = require('@sodacitylabs/boring-framework');
+    const ActiveTest = Boring.Test.ActiveTest;
+
+    module.exports = class ${forms.singular}Test extends ActiveTest {
+      constructor(attrs) {
+        super(attrs);
+      }
+      // async "returns true"() {
+      //   return true;
+      // }
+      // async "fails"() {
+      //   throw new Error("test failed");
+      // }
+    };
+    `,
+    "utf8"
+  );
+
   spawnSync(`${dir}/node_modules/.bin/prettier "${migrationFile}" --write`, {
     stdio: `inherit`,
     shell: true,
     cwd: dir
   });
   spawnSync(`${dir}/node_modules/.bin/prettier "${modelFile}" --write`, {
+    stdio: `inherit`,
+    shell: true,
+    cwd: dir
+  });
+  spawnSync(`${dir}/node_modules/.bin/prettier "${modelTestFile}" --write`, {
     stdio: `inherit`,
     shell: true,
     cwd: dir

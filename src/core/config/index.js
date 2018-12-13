@@ -20,7 +20,12 @@ module.exports = {
     "bin",
     "config",
     "db",
-    "db/migrations"
+    "db/migrations",
+    "test",
+    "test/controllers",
+    "test/fixtures",
+    "test/helpers",
+    "test/models"
   ],
   templates: {
     editorConfig: `
