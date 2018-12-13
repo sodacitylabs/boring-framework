@@ -36,6 +36,30 @@ module.exports = function(root, name) {
     "utf8"
   );
 
+  const testFile = `${root}/test/controllers/${name}ControllerTest.js`;
+
+  fs.writeFileSync(
+    testFile,
+    `
+    const db = require('../../db');
+    const Boring = require('@sodacitylabs/boring-framework');
+    const ActiveTest = Boring.Test.ActiveTest;
+
+    module.exports = class ${name}ControllerTest extends ActiveTest {
+      constructor(attrs) {
+        super(attrs);
+      }
+      // async "returns true"() {
+      //   return true;
+      // }
+      // async "fails"() {
+      //   throw new Error("test failed");
+      // }
+    };
+    `,
+    "utf8"
+  );
+
   spawnSync(
     `${root}/node_modules/.bin/prettier "${root}/app/controllers/${name}.js" --write`,
     {
@@ -44,4 +68,9 @@ module.exports = function(root, name) {
       cwd: root
     }
   );
+  spawnSync(`${dir}/node_modules/.bin/prettier "${testFile}" --write`, {
+    stdio: `inherit`,
+    shell: true,
+    cwd: dir
+  });
 };
