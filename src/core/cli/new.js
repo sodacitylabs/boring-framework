@@ -41,6 +41,7 @@ module.exports = function(name, root) {
         dependencies: {
           ejs: CoreConfig.versions.ejs,
           knex: CoreConfig.versions.knex,
+          lodash: CoreConfig.versions.lodash,
           "@sodacitylabs/boring-framework": CoreConfig.versions.npm,
           sqlite3: CoreConfig.versions.sqlite3,
           uuid: CoreConfig.versions.uuid
@@ -107,7 +108,47 @@ module.exports = function(name, root) {
   );
   fs.writeFileSync(
     `${projectDirectory}/config/index.js`,
+    `
+    "use strict";
+
+    const merge = require("lodash/merge");
+    const all = require("./all");
+    const environment = process.env.NODE_ENV;
+
+    let secretsConfig = {};
+    let envConfig = {};
+
+    try {
+      envConfig = require(\`./\${environment}\`);
+      secretsConfig = require(\`./\${environment}.secrets\`);
+    } catch (e) {}
+    module.exports = merge({}, all, envConfig, secretsConfig);
+    `,
+    "utf8"
+  );
+  fs.writeFileSync(
+    `${projectDirectory}/config/all.js`,
     `module.exports = ${projectConfig};`,
+    "utf8"
+  );
+  fs.writeFileSync(
+    `${projectDirectory}/config/development.secrets.js`,
+    `module.exports = {};`,
+    "utf8"
+  );
+  fs.writeFileSync(
+    `${projectDirectory}/config/development.js`,
+    `module.exports = {};`,
+    "utf8"
+  );
+  fs.writeFileSync(
+    `${projectDirectory}/config/test.js`,
+    `module.exports = {};`,
+    "utf8"
+  );
+  fs.writeFileSync(
+    `${projectDirectory}/config/production.js`,
+    `module.exports = {};`,
     "utf8"
   );
 
