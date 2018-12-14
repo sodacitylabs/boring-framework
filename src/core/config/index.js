@@ -305,7 +305,7 @@ module.exports = {
                 <li>
                   <h2>Set up a root route to replace this page</h2>
                   <p>You&#39;re seeing this page because you&#39;re running in development mode and you haven't set a root route yet.</p>
-                  <p>Configure a root route in <span class="filename">config/index.js</span>.</p>
+                  <p>Configure a root route in <span class="filename">config/all.js</span>.</p>
                 </li>
 
                 <li>
@@ -321,8 +321,8 @@ module.exports = {
               <li>
                 <h3>Browse the documentation</h3>
                 <ul class="links">
-                  <li><a href="#">Guides</a></li>
-                  <li><a href="https://nodejs.org">NodeJS core</a></li>
+                  <li><a rel="noopener noreferrer" target="_blank" href="https://github.com/sodacitylabs/boring-framework/wiki">Guides</a></li>
+                  <li><a rel="noopener noreferrer" target="_blank" href="https://nodejs.org">NodeJS core</a></li>
                 </ul>
               </li>
             </ul>
@@ -355,6 +355,7 @@ module.exports = {
     ejs: "2.6.1",
     eslint: "5.8.0",
     knex: "0.15.2",
+    lodash: "4.17.10",
     npm: "0.1.0",
     prettier: "1.14.2",
     sqlite3: "4.0.3",
