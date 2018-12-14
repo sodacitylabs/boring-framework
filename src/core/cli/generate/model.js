@@ -169,11 +169,13 @@ module.exports = async function(dir, name, attrs) {
       constructor(attrs) {
         super(attrs);
       }
+
       // async "returns true"() {
-      //   return true;
+      //   return this.assert(true).equals(true);
       // }
-      // async "fails"() {
-      //   throw new Error("test failed");
+
+      // async "returns false"() {
+      //   return this.assert(true).equals(false);
       // }
     };
     `,

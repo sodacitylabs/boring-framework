@@ -8,17 +8,17 @@ async function runActiveTests(activeInstance) {
 
   for (let k = 0; k < tests.length; k++) {
     const methodName = tests[k];
-    const method = activeInstance[methodName];
 
     try {
       let failed = false;
 
-      await method()
+      await activeInstance[methodName]()
         .then(() => {
           console.log("  " + methodName + " :: PASSED");
         })
-        .catch(() => {
+        .catch(ex => {
           console.log("  " + methodName + " :: FAILED");
+          console.log(ex);
           failed = true;
         });
 
@@ -27,6 +27,7 @@ async function runActiveTests(activeInstance) {
       }
     } catch (ex) {
       console.log("  " + methodName + " :: FAILED");
+      console.log(ex);
       return false;
     }
   }

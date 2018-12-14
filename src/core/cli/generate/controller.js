@@ -68,9 +68,9 @@ module.exports = function(root, name) {
       cwd: root
     }
   );
-  spawnSync(`${dir}/node_modules/.bin/prettier "${testFile}" --write`, {
+  spawnSync(`${root}/node_modules/.bin/prettier "${testFile}" --write`, {
     stdio: `inherit`,
     shell: true,
-    cwd: dir
+    cwd: root
   });
 };
