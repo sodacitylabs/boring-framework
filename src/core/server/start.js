@@ -3,7 +3,7 @@
 const http = require("http");
 const Router = require("../router");
 
-module.exports = function() {
+module.exports = function(cb) {
   const port = 3000;
   const start = Date.now();
   const instance = http.createServer(Router.incoming);
@@ -14,5 +14,9 @@ module.exports = function() {
     console.log(
       `server listening on port ${port}. Startup took ${Date.now() - start}ms`
     );
+
+    if (cb) {
+      cb();
+    }
   });
 };

@@ -138,7 +138,6 @@ module.exports = async function(dir, name, attrs) {
   fs.writeFileSync(
     modelFile,
     `
-    const db = require('../../db');
     const Boring = require('@sodacitylabs/boring-framework');
     const ActiveRecord = Boring.Model.ActiveRecord;
 
