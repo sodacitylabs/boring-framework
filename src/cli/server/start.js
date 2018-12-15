@@ -1,10 +1,12 @@
 "use strict";
 
 const http = require("http");
-const Router = require("../router");
+const Router = require("../../core/router");
 
 module.exports = function(cb) {
-  const port = 3000;
+  const dir = process.cwd();
+  const config = require(`${dir}/config`);
+  const port = config.server.port || 3000;
   const start = Date.now();
   const instance = http.createServer(Router.incoming);
 
