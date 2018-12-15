@@ -1,4 +1,4 @@
 module.exports = {
-  ActiveTest: require("./ActiveTest"),
+  UnitTest: require("./UnitTest"),
   IntegrationTest: require("./IntegrationTest")
 };

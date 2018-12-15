@@ -1,6 +1,6 @@
 const assert = require("assert");
 
-module.exports = class ActiveTest {
+module.exports = class UnitTest {
   constructor() {}
 
   assert(val) {

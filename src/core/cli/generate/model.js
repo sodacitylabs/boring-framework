@@ -162,9 +162,9 @@ module.exports = async function(dir, name, attrs) {
     `
     const db = require('../../db');
     const Boring = require('@sodacitylabs/boring-framework');
-    const ActiveTest = Boring.Test.ActiveTest;
+    const UnitTest = Boring.Test.UnitTest;
 
-    module.exports = class ${forms.singular}Test extends ActiveTest {
+    module.exports = class ${forms.singular}Test extends UnitTest {
       constructor(attrs) {
         super(attrs);
       }

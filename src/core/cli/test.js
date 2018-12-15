@@ -1,7 +1,7 @@
-const ActiveTest = require("../test/index").ActiveTest;
+const UnitTest = require("../test/index").UnitTest;
 const IntegrationTest = require("../test/index").IntegrationTest;
 
-async function runActiveTests(activeInstance) {
+async function runTests(activeInstance) {
   const tests = Object.getOwnPropertyNames(
     Object.getPrototypeOf(activeInstance)
   ).filter(k => k !== "constructor");
@@ -46,19 +46,18 @@ module.exports = async function(tests) {
       const TestClass = require(`${tests[k]}`);
       const instance = new TestClass();
 
-      if (
-        instance instanceof ActiveTest ||
-        instance instanceof IntegrationTest
-      ) {
+      if (instance instanceof UnitTest || instance instanceof IntegrationTest) {
         console.log(`${TestClass.name}`);
 
-        let success = await runActiveTests(instance);
+        let success = await runTests(instance);
 
         if (!success) {
           return false;
         }
       } else {
-        throw new Error(`${tests[k]} not instanceof ActiveTest`);
+        throw new Error(
+          `${tests[k]} not instanceof UnitTest or IntegrationTest`
+        );
       }
     }
   } catch (ex) {
