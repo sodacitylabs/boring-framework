@@ -41,6 +41,8 @@
   "dependencies": {
     "ejs": "2.6.1",
     "pluralize": "7.0.0",
+    "request": "2.88.0",
+    "request-promise-native": "1.0.5",
     "url": "0.11.0",
     "uuid": "3.3.2"
   },

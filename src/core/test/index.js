@@ -25,5 +25,6 @@ class ActiveTest {
 }
 
 module.exports = {
-  ActiveTest
+  ActiveTest,
+  IntegrationTest: require("./IntegrationTest")
 };

@@ -41,11 +41,10 @@ module.exports = function(root, name) {
   fs.writeFileSync(
     testFile,
     `
-    const db = require('../../db');
     const Boring = require('@sodacitylabs/boring-framework');
-    const ActiveTest = Boring.Test.ActiveTest;
+    const IntegrationTest = Boring.Test.IntegrationTest;
 
-    module.exports = class ${name}ControllerTest extends ActiveTest {
+    module.exports = class ${name}ControllerTest extends IntegrationTest {
       constructor(attrs) {
         super(attrs);
       }

@@ -1,9 +1,15 @@
 const ActiveTest = require("../test/index").ActiveTest;
+const IntegrationTest = require("../test/index").IntegrationTest;
 
 async function runActiveTests(activeInstance) {
   const tests = Object.getOwnPropertyNames(
     Object.getPrototypeOf(activeInstance)
   ).filter(k => k !== "constructor");
+
+  if (!tests.length) {
+    console.log("  NO TESTS TO RUN");
+    return true;
+  }
 
   for (let k = 0; k < tests.length; k++) {
     const methodName = tests[k];
@@ -22,7 +28,7 @@ async function runActiveTests(activeInstance) {
         });
 
       if (failed) {
-        return failed;
+        return false;
       }
     } catch (ex) {
       console.log("  " + methodName + " :: FAILED");
@@ -30,6 +36,8 @@ async function runActiveTests(activeInstance) {
       return false;
     }
   }
+
+  return true;
 }
 
 module.exports = async function(tests) {
@@ -38,13 +46,16 @@ module.exports = async function(tests) {
       const TestClass = require(`${tests[k]}`);
       const instance = new TestClass();
 
-      if (instance instanceof ActiveTest) {
+      if (
+        instance instanceof ActiveTest ||
+        instance instanceof IntegrationTest
+      ) {
         console.log(`${TestClass.name}`);
 
         let success = await runActiveTests(instance);
 
         if (!success) {
-          return;
+          return false;
         }
       } else {
         throw new Error(`${tests[k]} not instanceof ActiveTest`);
@@ -52,5 +63,6 @@ module.exports = async function(tests) {
     }
   } catch (ex) {
     console.log(ex.message);
+    process.exit(1);
   }
 };

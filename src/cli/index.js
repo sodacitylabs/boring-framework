@@ -155,6 +155,7 @@ function startServer() {
 
 function runTests() {
   try {
+    const server = Core.Server();
     const cli = new Core.CLI();
     const dir = process.cwd();
     const testDirectory = `${dir}/test`;
@@ -172,7 +173,11 @@ function runTests() {
         .map(f => `${testDirectory}/models/${f}`)
     );
 
-    cli.runTests(tests);
+    server.start(async function() {
+      await cli.runTests(tests);
+
+      process.exit(0);
+    });
   } catch (ex) {
     console.error(`Error running tests: ${ex.message}`);
     process.exit(1);
