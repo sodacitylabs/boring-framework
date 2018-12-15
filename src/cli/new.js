@@ -1,6 +1,6 @@
 "use strict";
 
-const CoreConfig = require("../config/index.js");
+const CoreConfig = require("../core/config/index.js");
 const fs = require("fs");
 const { spawnSync } = require("child_process");
 
@@ -101,6 +101,9 @@ module.exports = function(name, root) {
       },
       routes: {
         root: "" // special route in the form controller#action
+      },
+      server: {
+        port: 3000
       }
     },
     null,

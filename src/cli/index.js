@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const fs = require("fs");
-const Core = require("../core");
 
 const [, , ...args] = process.argv;
 const dir = process.cwd();
@@ -59,11 +58,10 @@ function generate() {
 
 function generateAction() {
   try {
-    const cli = new Core.CLI();
     const action = args[2];
     const controller = args[3];
 
-    cli.generateAction(dir, controller, action);
+    require("./generate/action")(dir, controller, action);
   } catch (ex) {
     console.error(`Error creating an action: ${ex.message}`);
     process.exit(1);
@@ -72,13 +70,12 @@ function generateAction() {
 
 function generateController() {
   try {
-    const cli = new Core.CLI();
     const name = args[2];
 
-    cli.generateController(dir, name);
+    require("./generate/controller")(dir, name);
 
     const actions = args.slice(3);
-    actions.forEach(a => cli.generateAction(dir, name, a));
+    actions.forEach(a => require("./generate/action")(dir, name, a));
   } catch (ex) {
     console.error(`Error creating a controller: ${ex.message}`);
     process.exit(1);
@@ -87,7 +84,6 @@ function generateController() {
 
 function generateModel() {
   try {
-    const cli = new Core.CLI();
     const model = args[2];
     const attrs = args.slice(3).map(attr => {
       const pair = attr.split(":");
@@ -97,7 +93,7 @@ function generateModel() {
       };
     });
 
-    cli.generateModel(dir, model, attrs);
+    require("./generate/model")(dir, model, attrs);
   } catch (ex) {
     console.error(`Error creating a model: ${ex.message}`);
     process.exit(1);
@@ -124,8 +120,7 @@ function migrateDatabase() {
 
 function newProject() {
   try {
-    const cli = new Core.CLI();
-    cli.newProject(args[1], dir);
+    require("./new")(args[1], dir);
   } catch (ex) {
     console.error(`Error creating new project: ${ex.message}`);
     process.exit(1);
@@ -134,8 +129,7 @@ function newProject() {
 
 function showRoutes() {
   try {
-    const cli = new Core.CLI();
-    cli.showRoutes();
+    require("./routes")();
   } catch (ex) {
     console.error(`Error building routes: ${ex.message}`);
     process.exit(1);
@@ -144,9 +138,7 @@ function showRoutes() {
 
 function startServer() {
   try {
-    const server = Core.Server();
-
-    server.start();
+    require("./server/start")();
   } catch (ex) {
     console.error(`Error running server: ${ex.message}`);
     process.exit(1);
@@ -155,8 +147,6 @@ function startServer() {
 
 function runTests() {
   try {
-    const server = Core.Server();
-    const cli = new Core.CLI();
     const dir = process.cwd();
     const testDirectory = `${dir}/test`;
 
@@ -173,8 +163,8 @@ function runTests() {
         .map(f => `${testDirectory}/models/${f}`)
     );
 
-    server.start(async function() {
-      await cli.runTests(tests);
+    require("./server/start")(async function() {
+      await require("./test")(tests);
 
       process.exit(0);
     });

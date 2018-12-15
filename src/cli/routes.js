@@ -1,6 +1,6 @@
 "use strict";
 
-const CoreConfig = require("../config");
+const CoreConfig = require("../core/config/index.js");
 const fs = require("fs");
 const pluralize = require("pluralize");
 
