@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const fs = require("fs");
 const Core = require("../core");
 
 const [, , ...args] = process.argv;
@@ -155,7 +156,23 @@ function startServer() {
 function runTests() {
   try {
     const cli = new Core.CLI();
-    cli.runTests();
+    const dir = process.cwd();
+    const testDirectory = `${dir}/test`;
+
+    let tests = [];
+
+    tests = tests.concat(
+      fs
+        .readdirSync(`${testDirectory}/controllers`)
+        .map(f => `${testDirectory}/controllers/${f}`)
+    );
+    tests = tests.concat(
+      fs
+        .readdirSync(`${testDirectory}/models`)
+        .map(f => `${testDirectory}/models/${f}`)
+    );
+
+    cli.runTests(tests);
   } catch (ex) {
     console.error(`Error running tests: ${ex.message}`);
     process.exit(1);

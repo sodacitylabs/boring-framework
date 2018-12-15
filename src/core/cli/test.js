@@ -1,4 +1,3 @@
-const fs = require("fs");
 const ActiveTest = require("../test/index").ActiveTest;
 
 async function runActiveTests(activeInstance) {
@@ -33,23 +32,7 @@ async function runActiveTests(activeInstance) {
   }
 }
 
-module.exports = async function() {
-  const dir = process.cwd();
-  const testDirectory = `${dir}/test`;
-
-  let tests = [];
-
-  tests = tests.concat(
-    fs
-      .readdirSync(`${testDirectory}/controllers`)
-      .map(f => `${testDirectory}/controllers/${f}`)
-  );
-  tests = tests.concat(
-    fs
-      .readdirSync(`${testDirectory}/models`)
-      .map(f => `${testDirectory}/models/${f}`)
-  );
-
+module.exports = async function(tests) {
   try {
     for (let k = 0; k < tests.length; k++) {
       const TestClass = require(`${tests[k]}`);
