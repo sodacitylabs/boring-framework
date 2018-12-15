@@ -1,3 +1,3 @@
 module.exports = {
-  ActiveRecord: require("./base")
+  ActiveRecord: require("./ActiveRecord")
 };
