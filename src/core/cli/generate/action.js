@@ -100,7 +100,7 @@ module.exports = function(root, name, action) {
   fs.writeFileSync(
     `${root}/app/controllers/${name}.js`,
     controllerFile.replace(
-      /(class (\w*)Controller)(\s*)({(\s*))([\w\n\s\t();,{}./*@$:=`[\]"]*)(};)/g,
+      /(class (\w*)Controller)([\s\w]*)({(\s*))([\w\n\s\t();,{}./*@$:=`[\]"]*)(};)/g,
       `class ${Controller.name} {
         ${fileContents}
       };`

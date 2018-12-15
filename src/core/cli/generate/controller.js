@@ -32,7 +32,12 @@ module.exports = function(root, name) {
 
   fs.writeFileSync(
     `${root}/app/controllers/${name}.js`,
-    `module.exports = class ${name}Controller {};`,
+    `
+    const Boring = require('@sodacitylabs/boring-framework');
+    const RequestController = Boring.Controller.RequestController;
+
+    module.exports = class ${name}Controller extends RequestController {};
+    `,
     "utf8"
   );
 
