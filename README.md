@@ -7,7 +7,29 @@ pattern.
 MVC divides your application into three main layers: Model, View, and Controller.
 
 ## Model layer
-_**FILL ME IN PLEASE**_
+
+The _**Model layer**_ is responsible for describing your business data and, in some cases,
+the logic associated with it.
+
+Specifically, your models will be [Active Records](https://en.wikipedia.org/wiki/Active_record_pattern) that will significantly lessen the overhead of maintaining and interacting with your database. ActiveRecords have a limited set of functions that you'll commonly use to interact with your database:
+
+| Function | Description |
+| --------- | ----------- |
+| `all` | get all rows in your database for a given model |
+| `create` | insert a new row in your database based on the model values |
+| `destroy` | delete a row from your database based on the model's `id` |
+| `find` | find a row from your database based on the given `id` value |
+| `findBy` | find multiple rows from your database based on provided key/value pairs |
+| `new` | create an ActiveRecord object without saving to the database |
+| `save` | insert or update a row in the database based on the model values |
+| `update` | update a row in the database based on the model values |
+
+Your Models will be named in the _singular_ form but are typically backed by database tables in the _plural_ form:
+
+| Model | Table Name |
+| --------- | ----------- |
+| `BlogPost` | `blog_posts` |
+| `Comment` | `comments` |
 
 ## Controller layer
 
