@@ -2,53 +2,7 @@
 
 const CoreConfig = require("../config");
 const fs = require("fs");
-const pluralize = require("pluralize");
-
-function getNameForms(name) {
-  const singular = pluralize.singular(name);
-  const plural = pluralize.plural(name);
-
-  // todo: should only need to make this pass 1 time
-  const resourceSingular = singular.split("").reduce((acc, curr, idx) => {
-    if (curr === curr.toUpperCase() && idx !== 0) {
-      acc += `_${curr.toLowerCase()}`;
-    } else if (idx === 0) {
-      acc += curr.toLowerCase();
-    } else {
-      acc += curr;
-    }
-
-    return acc;
-  }, "");
-  const resourcePlural = plural.split("").reduce((acc, curr, idx) => {
-    if (curr === curr.toUpperCase() && idx !== 0) {
-      acc += `_${curr.toLowerCase()}`;
-    } else if (idx === 0) {
-      acc += curr.toLowerCase();
-    } else {
-      acc += curr;
-    }
-
-    return acc;
-  }, "");
-  const nameSingular = singular
-    .split("_")
-    .map(word => word[0].toUpperCase() + word.substring(1))
-    .join("");
-  const namePlural = plural
-    .split("_")
-    .map(word => word[0].toUpperCase() + word.substring(1))
-    .join("");
-
-  return {
-    singular,
-    plural,
-    resourceSingular,
-    resourcePlural,
-    nameSingular,
-    namePlural
-  };
-}
+const NounHelper = require("../helpers").NounHelper;
 
 let routes = []; // private route tree
 
@@ -309,7 +263,7 @@ function routeToAction(req, res) {
    * @param {*} idx - current index of the split URL were at
    */
   function recurse(idx) {
-    const controller = getNameForms(urlArray[idx]).namePlural;
+    const controller = NounHelper.fromResourcePluralToNamePlural(urlArray[idx]);
 
     if (!routes[controller]) {
       return routingError(req, res);

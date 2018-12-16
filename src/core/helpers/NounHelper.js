@@ -2,6 +2,19 @@ const pluralize = require("pluralize");
 
 module.exports = class NounHelper {
   /**
+   * @description given a resource, convert to its' plural name
+   * @example blog_posts returns BlogPosts
+   * @param {*} val the resource
+   */
+  static fromResourcePluralToNamePlural(val) {
+    const plural = this.getPluralForm(val);
+    return plural
+      .split("_")
+      .map(word => word[0].toUpperCase() + word.substring(1))
+      .join("");
+  }
+
+  /**
    * @description given a noun, convert to its' plural form
    * @example BlogPost returns BlogPosts
    * @param {*} val the noun

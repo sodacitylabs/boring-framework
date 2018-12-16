@@ -2,43 +2,8 @@
 
 const CoreConfig = require("../core/config/index.js");
 const fs = require("fs");
-const pluralize = require("pluralize");
 
-function getNameForms(name) {
-  const singular = pluralize.singular(name);
-  const plural = pluralize.plural(name);
-
-  // todo: should only need to make this pass 1 time
-  const resourceSingular = singular.split("").reduce((acc, curr, idx) => {
-    if (curr === curr.toUpperCase() && idx !== 0) {
-      acc += `_${curr.toLowerCase()}`;
-    } else if (idx === 0) {
-      acc += curr.toLowerCase();
-    } else {
-      acc += curr;
-    }
-
-    return acc;
-  }, "");
-  const resourcePlural = plural.split("").reduce((acc, curr, idx) => {
-    if (curr === curr.toUpperCase() && idx !== 0) {
-      acc += `_${curr.toLowerCase()}`;
-    } else if (idx === 0) {
-      acc += curr.toLowerCase();
-    } else {
-      acc += curr;
-    }
-
-    return acc;
-  }, "");
-
-  return {
-    singular,
-    plural,
-    resourceSingular,
-    resourcePlural
-  };
-}
+const NounHelper = require("../core/helpers").NounHelper;
 
 module.exports = function() {
   const dir = process.cwd();
@@ -62,8 +27,9 @@ module.exports = function() {
 
   for (let i = 0; i < controllers.length; i++) {
     const Controller = require(`${dir}/app/controllers/${controllers[i]}`);
-    const controllerName = getNameForms(Controller.name.split("Controller")[0])
-      .resourcePlural;
+    const controllerName = NounHelper.toPluralResource(
+      Controller.name.split("Controller")[0]
+    );
     const actions = Object.getOwnPropertyNames(Controller)
       .filter(p => CoreConfig.actionNames.indexOf(p) !== -1)
       .sort((a, b) => a[0].localeCompare(b[0]));
