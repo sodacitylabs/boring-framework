@@ -1,12 +1,28 @@
 const Boring = require("../../src/core");
-const ActiveTest = Boring.Test.ActiveTest;
+const UnitTest = Boring.Test.UnitTest;
 
-module.exports = class ActiveRecordTest extends ActiveTest {
+module.exports = class ActiveRecordTest extends UnitTest {
   constructor() {
     super();
   }
 
-  async "returns true"() {
-    return this.assert(true).equals(true, "true should equal true");
+  async "returns singular form for model name"() {
+    class BlogPost extends Boring.Model.ActiveRecord {
+      constructor() {
+        super();
+      }
+    }
+
+    return this.assert(BlogPost.modelName).equals("BlogPost");
+  }
+
+  async "returns plural form for table name"() {
+    class BlogPost extends Boring.Model.ActiveRecord {
+      constructor() {
+        super();
+      }
+    }
+
+    return this.assert(BlogPost.tableName).equals("blog_posts");
   }
 };

@@ -1,5 +1,5 @@
-const UnitTest = require("../test/index").UnitTest;
-const IntegrationTest = require("../test/index").IntegrationTest;
+const UnitTest = require("../core/test/index").UnitTest;
+const IntegrationTest = require("../core/test/index").IntegrationTest;
 
 async function runTests(activeInstance) {
   const tests = Object.getOwnPropertyNames(

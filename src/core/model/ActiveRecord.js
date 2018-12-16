@@ -1,41 +1,6 @@
 const db = require("../db/index");
-const pluralize = require("pluralize");
 
-function getNameForms(name) {
-  const singular = pluralize.singular(name);
-  const plural = pluralize.plural(name);
-
-  // todo: should only need to make this pass 1 time
-  const resourceSingular = singular.split("").reduce((acc, curr, idx) => {
-    if (curr === curr.toUpperCase() && idx !== 0) {
-      acc += `_${curr.toLowerCase()}`;
-    } else if (idx === 0) {
-      acc += curr.toLowerCase();
-    } else {
-      acc += curr;
-    }
-
-    return acc;
-  }, "");
-  const resourcePlural = plural.split("").reduce((acc, curr, idx) => {
-    if (curr === curr.toUpperCase() && idx !== 0) {
-      acc += `_${curr.toLowerCase()}`;
-    } else if (idx === 0) {
-      acc += curr.toLowerCase();
-    } else {
-      acc += curr;
-    }
-
-    return acc;
-  }, "");
-
-  return {
-    singular,
-    plural,
-    resourceSingular,
-    resourcePlural
-  };
-}
+const NounHelper = require("../helpers").NounHelper;
 
 module.exports = class ActiveRecord {
   constructor(attrs) {
@@ -47,11 +12,11 @@ module.exports = class ActiveRecord {
   }
 
   static get modelName() {
-    return getNameForms(this.name).singular;
+    return NounHelper.getSingularForm(this.name);
   }
 
   static get tableName() {
-    return getNameForms(this.name).resourcePlural;
+    return NounHelper.toPluralResource(this.name);
   }
 
   static async all() {
