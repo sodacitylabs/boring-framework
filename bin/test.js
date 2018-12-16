@@ -1,9 +1,8 @@
 const fs = require("fs");
-const Boring = require("../src/core");
+const runTests = require("../src/cli/test");
 
 async function test() {
   try {
-    const cli = new Boring.CLI();
     const dir = process.cwd();
     const testDirectory = `${dir}/test`;
 
@@ -14,8 +13,13 @@ async function test() {
         .readdirSync(`${testDirectory}/model`)
         .map(f => `${testDirectory}/model/${f}`)
     );
+    tests = tests.concat(
+      fs
+        .readdirSync(`${testDirectory}/helpers`)
+        .map(f => `${testDirectory}/helpers/${f}`)
+    );
 
-    cli.runTests(tests);
+    runTests(tests);
   } catch (ex) {
     console.error(`Error running tests: ${ex.message}`);
     process.exit(1);

@@ -1,7 +1,7 @@
 const Boring = require("../../src/core");
-const ActiveTest = Boring.Test.ActiveTest;
+const UnitTest = Boring.Test.UnitTest;
 
-module.exports = class ActiveRecordTest extends ActiveTest {
+module.exports = class ActiveRecordTest extends UnitTest {
   constructor() {
     super();
   }
