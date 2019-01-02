@@ -5,6 +5,17 @@ const fs = require("fs");
 const NounHelper = require("../helpers").NounHelper;
 
 let routes = []; // private route tree
+const fileTypeTranslations = {
+  css: "text/css",
+  gif: "image/gif",
+  jpg: "image/jpg",
+  jpeg: "image/jpeg",
+  js: "application/javascript",
+  png: "image/png",
+  svg: "image/svg+xml",
+  ico: "image/x-icon",
+  txt: "text/plain"
+};
 
 class Router {
   /**
@@ -32,6 +43,10 @@ class Router {
       const root = projectConfig.routes.root.split("#");
 
       return invokeAction(req, res, dir, root[0], root[1]);
+    }
+
+    if (req.url.startsWith("/assets")) {
+      return serveAsset(req, res);
     }
 
     return routeToAction(req, res);
@@ -376,6 +391,34 @@ function routeToAction(req, res) {
   }
 
   recurse(0);
+}
+
+function serveAsset(req, res) {
+  try {
+    const dir = process.cwd();
+    const assetPath = req.url.split("/assets/").splice(1)[0];
+    const asset = fs.readFileSync(`${dir}/public/assets/${assetPath}`);
+    const ext = assetPath.split(".").splice(1)[0];
+    const type = fileTypeTranslations[ext] || undefined;
+
+    if (asset && type) {
+      res.writeHead(200, {
+        "Content-Length": Buffer.byteLength(asset),
+        "Content-Type": type,
+        "Cache-Control": "public, max-age=31557600"
+      });
+      res.write(asset, "binary");
+      res.end();
+    } else {
+      throw new Error(`asset not found`);
+    }
+  } catch (ex) {
+    res.writeHead(400, {
+      "Content-Length": Buffer.byteLength("")
+    });
+    res.write("");
+    res.end();
+  }
 }
 
 module.exports = Router;
