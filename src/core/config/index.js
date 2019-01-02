@@ -14,6 +14,8 @@ module.exports = {
   ],
   seedDirectories: [
     "app",
+    "app/assets",
+    "app/assets/images",
     "app/controllers",
     "app/models",
     "app/views",
@@ -21,6 +23,9 @@ module.exports = {
     "config",
     "db",
     "db/migrations",
+    "public",
+    "public/assets",
+    "public/assets/images",
     "test",
     "test/controllers",
     "test/fixtures",
