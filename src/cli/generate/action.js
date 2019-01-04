@@ -101,7 +101,7 @@ module.exports = function(root, name, action) {
     `${root}/app/controllers/${name}.js`,
     controllerFile.replace(
       /(class (\w*)Controller)([\s\w]*)({(\s*))([\w\n\s\t();,{}./*@$:=`[\]"]*)(};)/g,
-      `class ${Controller.name} {
+      `class ${Controller.name} extends RequestController {
         ${fileContents}
       };`
     ),
