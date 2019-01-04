@@ -33,7 +33,7 @@ module.exports = function(name, root) {
       {
         name: name,
         scripts: {
-          start: "./node_modules/.bin/boring start"
+          start: "./node_modules/.bin/boring server"
         },
         engines: {
           node: ">=8.11.0"
