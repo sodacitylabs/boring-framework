@@ -152,16 +152,25 @@ function runTests() {
 
     let tests = [];
 
-    tests = tests.concat(
-      fs
-        .readdirSync(`${testDirectory}/controllers`)
-        .map(f => `${testDirectory}/controllers/${f}`)
-    );
-    tests = tests.concat(
-      fs
-        .readdirSync(`${testDirectory}/models`)
-        .map(f => `${testDirectory}/models/${f}`)
-    );
+    try {
+      tests = tests.concat(
+        fs
+          .readdirSync(`${testDirectory}/controllers`)
+          .map(f => `${testDirectory}/controllers/${f}`)
+      );
+    } catch (ex) {
+      console.warn(`No controller tests found. Skipping.`);
+    }
+
+    try {
+      tests = tests.concat(
+        fs
+          .readdirSync(`${testDirectory}/models`)
+          .map(f => `${testDirectory}/models/${f}`)
+      );
+    } catch (ex) {
+      console.warn(`No model tests found. Skipping.`);
+    }
 
     require("./server/start")(async function() {
       await require("./test")(tests);
