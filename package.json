@@ -1,6 +1,6 @@
 {
   "name": "@sodacitylabs/boring-framework",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Boring Framework - a Rails-inspired MVC framework for Node.js",
   "config": {
     "access": "public"
