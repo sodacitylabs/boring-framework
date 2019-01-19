@@ -166,7 +166,27 @@ function showRoutes() {
 
 function startServer() {
   try {
-    require("./server/start")();
+    const reload = args[1] && args[1] === "--reload";
+
+    if (reload) {
+      const nodemon = require(`${dir}/node_modules/nodemon`);
+
+      nodemon({});
+
+      nodemon
+        .on("start", function() {
+          console.log("Server has started");
+        })
+        .on("quit", function() {
+          console.log("Server has quit");
+          process.exit();
+        })
+        .on("restart", function(files) {
+          console.log("Server restarted due to: ", files);
+        });
+    } else {
+      require("./server/start")(null, reload);
+    }
   } catch (ex) {
     console.error(`Error running server: ${ex.message}`);
     process.exit(1);
