@@ -43,6 +43,9 @@ function generate() {
       case "controller":
         generateController();
         break;
+      case "migration":
+        generateMigration();
+        break;
       case "model":
         generateModel();
         break;
@@ -82,6 +85,17 @@ function generateController() {
   }
 }
 
+function generateMigration() {
+  try {
+    const fileName = args[2];
+
+    require("./generate/migration")(dir, fileName);
+  } catch (ex) {
+    console.error(`Error creating a migration: ${ex.message}`);
+    process.exit(1);
+  }
+}
+
 function generateModel() {
   try {
     const model = args[2];
@@ -102,16 +116,30 @@ function generateModel() {
 
 function migrateDatabase() {
   try {
+    const direction = args[1];
     const db = require(`${dir}/db`);
 
-    db.migrate
-      .latest({
-        directory: `${dir}/db/migrations`
-      })
-      .then(function() {
-        console.log(`Done migrating db`);
-        process.exit(0);
-      });
+    if (direction === "up") {
+      db.migrate
+        .latest({
+          directory: `${dir}/db/migrations`
+        })
+        .then(function() {
+          console.log(`Done migrating db`);
+          process.exit(0);
+        });
+    } else if (direction === "down") {
+      db.migrate
+        .rollback({
+          directory: `${dir}/db/migrations`
+        })
+        .then(function() {
+          console.log(`Done rolling back db`);
+          process.exit(0);
+        });
+    } else {
+      throw new Error(`migration direction of ${direction} is not supported.`);
+    }
   } catch (ex) {
     console.error(`Error migrating db: ${ex.message}`);
     process.exit(1);
