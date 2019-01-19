@@ -38,10 +38,16 @@ module.exports = function(name, root) {
         engines: {
           node: ">=8.11.0"
         },
+        nodemonConfig: {
+          watch: ["config/", "app/"],
+          ignore: ["app/assets/"],
+          ext: "js json ejs"
+        },
         dependencies: {
           ejs: CoreConfig.versions.ejs,
           knex: CoreConfig.versions.knex,
           lodash: CoreConfig.versions.lodash,
+          nodemon: CoreConfig.versions.nodemon,
           "@sodacitylabs/boring-framework": CoreConfig.versions.npm,
           sqlite3: CoreConfig.versions.sqlite3,
           uuid: CoreConfig.versions.uuid

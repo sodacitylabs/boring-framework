@@ -362,6 +362,7 @@ module.exports = {
     knex: "0.15.2",
     lodash: "4.17.10",
     npm: "0.4.0",
+    nodemon: "1.18.9",
     prettier: "1.14.2",
     sqlite3: "4.0.3",
     uuid: "3.3.2"
