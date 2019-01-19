@@ -237,6 +237,18 @@ module.exports = function(name, root) {
     "utf8"
   );
 
+  console.log(`NVM installing`);
+  spawnSync(`nvm install v8.11.0`, {
+    stdio: `inherit`,
+    cwd: projectDirectory
+  });
+
+  console.log(`NVM using`);
+  spawnSync(`nvm use`, {
+    stdio: `inherit`,
+    cwd: projectDirectory
+  });
+
   console.log(`${installPrefix} project dependencies`);
   spawnSync(`npm install`, {
     stdio: `inherit`,
