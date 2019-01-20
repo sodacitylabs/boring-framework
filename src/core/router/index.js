@@ -30,10 +30,14 @@ class Router {
 
     const dir = process.cwd();
     const projectConfig = require(`${dir}/config`);
-    const welcome = CoreConfig.templates.welcome();
     const urlObj = UrlHelper.parse(req.url);
 
+    req.hash = urlObj.hash;
+    req.query = urlObj.query;
+
     if (urlObj.pathname === "/" && !projectConfig.routes.root.length) {
+      const welcome = CoreConfig.templates.welcome();
+
       res.writeHead(200, {
         "Content-Length": Buffer.byteLength(welcome),
         "Content-Type": "text/html"

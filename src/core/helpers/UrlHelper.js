@@ -7,10 +7,6 @@ module.exports = class UrlHelper {
     const parsedHash =
       urlObj.hash && urlObj.hash.split("#").filter(s => s.length)[0];
 
-    return {
-      hash: querystring.parse(parsedHash),
-      pathname: urlObj.pathname,
-      query: urlObj.query
-    };
+    return Object.assign({}, urlObj, { hash: querystring.parse(parsedHash) });
   }
 };
