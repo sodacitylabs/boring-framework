@@ -105,6 +105,15 @@ module.exports = function(name, root) {
         },
         useNullAsDefault: true
       },
+      mailer: {
+        default: true,
+        plugin: "smtp",
+        transport: {
+          host: "0.0.0.0",
+          port: 1025,
+          ignoreTLS: true
+        }
+      },
       routes: {
         root: "" // special route in the form controller#action
       },
