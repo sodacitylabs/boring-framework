@@ -2,6 +2,7 @@
 
 const CoreConfig = require("../config");
 const fs = require("fs");
+const CookieHelper = require("../helpers").CookieHelper;
 const NounHelper = require("../helpers").NounHelper;
 const UrlHelper = require("../helpers").UrlHelper;
 
@@ -34,6 +35,7 @@ class Router {
 
     req.hash = urlObj.hash;
     req.query = urlObj.query;
+    req.cookies = CookieHelper.parse(req);
 
     if (urlObj.pathname === "/" && !projectConfig.routes.root.length) {
       const welcome = CoreConfig.templates.welcome();
@@ -223,7 +225,7 @@ async function invokeAction(req, res, dir, controller, action) {
       `Routing Error`,
       `No route matches [${req.method}] "${req.url}"`
     );
-    res.writeHead(200, {
+    res.writeHead(404, {
       "Content-Length": Buffer.byteLength(error),
       "Content-Type": "text/html"
     });
