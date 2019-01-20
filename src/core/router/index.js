@@ -3,6 +3,7 @@
 const CoreConfig = require("../config");
 const fs = require("fs");
 const NounHelper = require("../helpers").NounHelper;
+const UrlHelper = require("../helpers").UrlHelper;
 
 let routes = []; // private route tree
 const fileTypeTranslations = {
@@ -30,8 +31,9 @@ class Router {
     const dir = process.cwd();
     const projectConfig = require(`${dir}/config`);
     const welcome = CoreConfig.templates.welcome();
+    const urlObj = UrlHelper.parse(req.url);
 
-    if (req.url === "/" && !projectConfig.routes.root.length) {
+    if (urlObj.pathname === "/" && !projectConfig.routes.root.length) {
       res.writeHead(200, {
         "Content-Length": Buffer.byteLength(welcome),
         "Content-Type": "text/html"
@@ -39,13 +41,13 @@ class Router {
       return res.end(welcome);
     }
 
-    if (req.url === "/" && projectConfig.routes.root.length) {
+    if (urlObj.pathname === "/" && projectConfig.routes.root.length) {
       const root = projectConfig.routes.root.split("#");
 
       return invokeAction(req, res, dir, root[0], root[1]);
     }
 
-    if (req.url.startsWith("/assets")) {
+    if (urlObj.pathname.startsWith("/assets")) {
       return serveAsset(req, res);
     }
 
@@ -267,7 +269,8 @@ function routingError(req, res) {
 
 function routeToAction(req, res) {
   const dir = process.cwd();
-  const urlArray = req.url.split("/").splice(1);
+  const urlObj = UrlHelper.parse(req.url);
+  const urlArray = urlObj.pathname.split("/").splice(1);
   const browserRequest = req.headers.accept.indexOf("html") !== -1;
   const apiRequest = req.headers.accept.indexOf("json") !== -1;
 
@@ -396,7 +399,8 @@ function routeToAction(req, res) {
 function serveAsset(req, res) {
   try {
     const dir = process.cwd();
-    const assetPath = req.url.split("/assets/").splice(1)[0];
+    const urlObj = UrlHelper.parse(req.url);
+    const assetPath = urlObj.pathname.split("/assets/").splice(1)[0];
     const asset = fs.readFileSync(`${dir}/public/assets/${assetPath}`);
     const ext = assetPath.split(".").splice(1)[0];
     const type = fileTypeTranslations[ext] || undefined;
