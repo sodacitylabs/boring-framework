@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require("fs");
+const { spawn } = require("child_process");
 
 const [, , ...args] = process.argv;
 const dir = process.cwd();
@@ -166,7 +167,16 @@ function showRoutes() {
 
 function startServer() {
   try {
+    const projectConfig = require(`${dir}/config`);
     const reload = args[1] && args[1] === "--reload";
+
+    if (projectConfig.mailer.default) {
+      spawn(`./node_modules/.bin/maildev`, {
+        stdio: `inherit`,
+        shell: true,
+        cwd: dir
+      });
+    }
 
     if (reload) {
       const nodemon = require(`${dir}/node_modules/nodemon`);
