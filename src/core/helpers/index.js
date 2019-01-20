@@ -1,3 +1,4 @@
 module.exports = {
-  NounHelper: require("./NounHelper")
+  NounHelper: require("./NounHelper"),
+  UrlHelper: require("./UrlHelper")
 };
