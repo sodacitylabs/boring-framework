@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/sodacitylabs/boring-framework/wiki/Home-Page",
   "engines": {
-    "node": ">=8.11.0"
+    "node": ">=10.14.0"
   },
   "bin": {
     "boring": "./src/cli/index.js"

@@ -36,7 +36,7 @@ module.exports = function(name, root) {
           start: "./node_modules/.bin/boring server"
         },
         engines: {
-          node: ">=8.11.0"
+          node: require("../../package.json").engines.node
         },
         nodemonConfig: {
           watch: ["config/", "app/"],
@@ -44,19 +44,19 @@ module.exports = function(name, root) {
           ext: "js json ejs"
         },
         dependencies: {
-          ejs: CoreConfig.versions.ejs,
-          knex: CoreConfig.versions.knex,
-          lodash: CoreConfig.versions.lodash,
-          nodemon: CoreConfig.versions.nodemon,
-          "@sodacitylabs/boring-framework": CoreConfig.versions.npm,
-          sqlite3: CoreConfig.versions.sqlite3,
-          uuid: CoreConfig.versions.uuid
+          "@sodacitylabs/boring-framework": "0.6.1",
+          ejs: "2.6.1",
+          knex: "0.15.2",
+          lodash: "4.17.10",
+          nodemon: "1.18.9",
+          sqlite3: "4.0.3",
+          uuid: "3.3.2"
         },
         devDependencies: {
-          eslint: CoreConfig.versions.eslint,
+          eslint: "5.8.0",
           "eslint-config-prettier": "3.0.1",
           "eslint-plugin-prettier": "2.6.2",
-          prettier: CoreConfig.versions.prettier
+          prettier: "1.14.2"
         }
       },
       null,
