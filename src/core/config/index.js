@@ -357,16 +357,5 @@ module.exports = {
     </html>
     `
   },
-  versions: {
-    ejs: "2.6.1",
-    eslint: "5.8.0",
-    knex: "0.15.2",
-    lodash: "4.17.10",
-    npm: "0.6.1",
-    nodemon: "1.18.9",
-    prettier: "1.14.2",
-    sqlite3: "4.0.3",
-    uuid: "3.3.2"
-  },
   viewActionNames: ["index", "new", "show", "edit"]
 };

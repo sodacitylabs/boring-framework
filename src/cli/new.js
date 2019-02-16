@@ -2,12 +2,16 @@
 
 const CoreConfig = require("../core/config/index.js");
 const fs = require("fs");
+const path = require("path");
 const { spawnSync } = require("child_process");
 
 /**
  * Create a new project at the specified directory as the root
  */
 module.exports = function(name, root) {
+  const nodeVersion = fs
+    .readFileSync(path.resolve(__dirname, "../../.nvmrc"))
+    .toString();
   const projectDirectory = `${root}/${name}`;
   const creatingPrefix = `Creating  `;
   const installPrefix = `Installing`;
@@ -36,7 +40,7 @@ module.exports = function(name, root) {
           start: "./node_modules/.bin/boring server"
         },
         engines: {
-          node: ">=8.11.0"
+          node: require("../../package.json").engines.node
         },
         nodemonConfig: {
           watch: ["config/", "app/"],
@@ -44,19 +48,19 @@ module.exports = function(name, root) {
           ext: "js json ejs"
         },
         dependencies: {
-          ejs: CoreConfig.versions.ejs,
-          knex: CoreConfig.versions.knex,
-          lodash: CoreConfig.versions.lodash,
-          nodemon: CoreConfig.versions.nodemon,
-          "@sodacitylabs/boring-framework": CoreConfig.versions.npm,
-          sqlite3: CoreConfig.versions.sqlite3,
-          uuid: CoreConfig.versions.uuid
+          "@sodacitylabs/boring-framework": "0.6.1",
+          ejs: "2.6.1",
+          knex: "0.16.3",
+          lodash: "4.17.11",
+          nodemon: "1.18.9",
+          sqlite3: "4.0.6",
+          uuid: "3.3.2"
         },
         devDependencies: {
-          eslint: CoreConfig.versions.eslint,
-          "eslint-config-prettier": "3.0.1",
-          "eslint-plugin-prettier": "2.6.2",
-          prettier: CoreConfig.versions.prettier
+          eslint: "5.14.0",
+          "eslint-config-prettier": "4.0.0",
+          "eslint-plugin-prettier": "3.0.1",
+          prettier: "1.16.4"
         }
       },
       null,
@@ -86,7 +90,7 @@ module.exports = function(name, root) {
   fs.writeFileSync(`${projectDirectory}/.npmrc`, `save_exact=true\n`, "utf8");
 
   console.log(`${creatingPrefix} .nvmrc`);
-  fs.writeFileSync(`${projectDirectory}/.nvmrc`, `v8.11.0\n`, "utf8");
+  fs.writeFileSync(`${projectDirectory}/.nvmrc`, `${nodeVersion}`, "utf8");
 
   // all the application code
   console.log(`${seedingPrefix} project directories`);
@@ -253,7 +257,7 @@ module.exports = function(name, root) {
   );
 
   console.log(`NVM installing`);
-  spawnSync(`nvm install v8.11.0`, {
+  spawnSync(`nvm install ${nodeVersion}`, {
     stdio: `inherit`,
     cwd: projectDirectory
   });
