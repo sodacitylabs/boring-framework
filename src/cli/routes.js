@@ -1,9 +1,9 @@
 "use strict";
 
-const CoreConfig = require("../core/config/index.js");
+const CoreConfig = require("../core/Config");
 const fs = require("fs");
 
-const NounHelper = require("../core/helpers").NounHelper;
+const NounHelper = require("../core/helpers/NounHelper");
 
 module.exports = function() {
   const dir = process.cwd();
