@@ -3,6 +3,8 @@
 module.exports = {
   Controller: require("./controller"),
   Mailer: require("./Mailer"),
-  Model: require("./model"),
+  Model: {
+    ActiveRecord: require("./ActiveRecord")
+  },
   Test: require("./test")
 };
