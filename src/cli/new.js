@@ -37,7 +37,8 @@ module.exports = function(name, root) {
       {
         name: name,
         scripts: {
-          start: "./node_modules/.bin/boring server"
+          start: "./node_modules/.bin/boring server",
+          test: "./node_modules/.bin/boring test"
         },
         engines: {
           node: require("../../package.json").engines.node
