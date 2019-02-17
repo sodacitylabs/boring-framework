@@ -1,6 +1,5 @@
-const Boring = require("../../src/core");
-const UnitTest = Boring.Test.UnitTest;
-const IntegrationTest = Boring.Test.IntegrationTest;
+const UnitTest = require("../../src/test/UnitTest");
+const IntegrationTest = require("../../src/test/IntegrationTest");
 
 async function runTests(activeInstance) {
   const tests = Object.getOwnPropertyNames(
@@ -62,7 +61,8 @@ module.exports = async function(tests) {
       }
     }
   } catch (ex) {
-    console.log(ex.message);
+    console.error(ex);
+
     process.exit(1);
   }
 };

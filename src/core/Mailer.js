@@ -3,13 +3,14 @@ const ejs = require("ejs");
 const fs = require("fs");
 const htmlToText = require("nodemailer-html-to-text").htmlToText;
 const nodemailer = require("nodemailer");
-const projectConfig = require(`${dir}/config`);
 
 let _transport;
 
 module.exports = class Mailer {
   static get transport() {
     if (!_transport) {
+      const projectConfig = require(`${dir}/config`);
+
       switch (projectConfig.mailer.plugin) {
         case "smtp":
           _transport = nodemailer.createTransport(

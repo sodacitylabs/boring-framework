@@ -1,5 +1,4 @@
-const Boring = require("../../src/core");
-const UnitTest = Boring.Test.UnitTest;
+const UnitTest = require("../../src/test/UnitTest");
 const NounHelper = require("../../src/core/helpers").NounHelper;
 
 module.exports = class NounHelperTest extends UnitTest {
