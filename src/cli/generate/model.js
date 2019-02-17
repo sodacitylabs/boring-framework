@@ -3,7 +3,7 @@
 const fs = require("fs");
 const { spawnSync } = require("child_process");
 
-const NounHelper = require("../../core/helpers").NounHelper;
+const NounHelper = require("../../core/helpers/NounHelper");
 
 module.exports = async function(dir, name, attrs) {
   if (name[0] !== name[0].toUpperCase()) {

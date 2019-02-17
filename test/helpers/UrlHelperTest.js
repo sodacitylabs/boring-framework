@@ -1,5 +1,5 @@
 const UnitTest = require("../../src/test/UnitTest");
-const UrlHelper = require("../../src/core/helpers").UrlHelper;
+const UrlHelper = require("../../src/core/helpers/UrlHelper");
 
 module.exports = class NounHelperTest extends UnitTest {
   constructor() {

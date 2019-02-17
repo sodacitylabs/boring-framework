@@ -3,7 +3,7 @@
 const CoreConfig = require("../core/config/index.js");
 const fs = require("fs");
 
-const NounHelper = require("../core/helpers").NounHelper;
+const NounHelper = require("../core/helpers/NounHelper");
 
 module.exports = function() {
   const dir = process.cwd();

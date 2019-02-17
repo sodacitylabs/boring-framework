@@ -2,9 +2,9 @@
 
 const CoreConfig = require("../config");
 const fs = require("fs");
-const CookieHelper = require("../helpers").CookieHelper;
-const NounHelper = require("../helpers").NounHelper;
-const UrlHelper = require("../helpers").UrlHelper;
+const CookieHelper = require("../helpers/CookieHelper");
+const NounHelper = require("../helpers/NounHelper");
+const UrlHelper = require("../helpers/UrlHelper");
 
 let routes = []; // private route tree
 const fileTypeTranslations = {

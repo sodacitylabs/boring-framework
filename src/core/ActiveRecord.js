@@ -1,6 +1,6 @@
 const db = require("./db/index");
 
-const NounHelper = require("./helpers").NounHelper;
+const NounHelper = require("./helpers/NounHelper");
 
 module.exports = class ActiveRecord {
   constructor(attrs) {
