@@ -8,5 +8,8 @@ module.exports = {
   Model: {
     ActiveRecord: require("./ActiveRecord")
   },
-  Test: require("./test")
+  Test: {
+    UnitTest: require("../test/UnitTest"),
+    IntegrationTest: require("../test/IntegrationTest")
+  }
 };

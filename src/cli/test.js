@@ -1,5 +1,6 @@
-const UnitTest = require("../core/test/index").UnitTest;
-const IntegrationTest = require("../core/test/index").IntegrationTest;
+const Boring = require("../../src/core");
+const UnitTest = Boring.Test.UnitTest;
+const IntegrationTest = Boring.Test.IntegrationTest;
 
 async function runTests(activeInstance) {
   const tests = Object.getOwnPropertyNames(
