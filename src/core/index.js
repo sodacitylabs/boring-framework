@@ -1,7 +1,9 @@
 "use strict";
 
 module.exports = {
-  Controller: require("./controller"),
+  Controller: {
+    RequestController: require("./RequestController")
+  },
   Mailer: require("./Mailer"),
   Model: {
     ActiveRecord: require("./ActiveRecord")
