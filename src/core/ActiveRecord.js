@@ -1,4 +1,4 @@
-const db = require("./db/index");
+const db = require("./Database");
 
 const NounHelper = require("./helpers/NounHelper");
 
