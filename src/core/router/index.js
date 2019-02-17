@@ -1,6 +1,6 @@
 "use strict";
 
-const CoreConfig = require("../config");
+const CoreConfig = require("../Config");
 const fs = require("fs");
 const CookieHelper = require("../helpers/CookieHelper");
 const NounHelper = require("../helpers/NounHelper");

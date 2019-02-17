@@ -1,6 +1,6 @@
 "use strict";
 
-const CoreConfig = require("../../core/config");
+const CoreConfig = require("../../core/Config");
 const fs = require("fs");
 const { spawnSync } = require("child_process");
 
