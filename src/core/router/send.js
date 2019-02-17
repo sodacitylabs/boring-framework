@@ -6,8 +6,8 @@
 module.exports = function(code, data) {
   try {
     if (data) {
-      const content = JSON.stringify(data);
-      this.writeHead(200, {
+      const content = typeof data === "object" ? JSON.stringify(data) : data;
+      this.writeHead(code, {
         "Content-Length": Buffer.byteLength(content),
         "Content-Type": "application/json"
       });

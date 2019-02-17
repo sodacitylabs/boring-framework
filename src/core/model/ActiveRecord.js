@@ -273,27 +273,39 @@ module.exports = class ActiveRecord {
 
         return acc;
       }, {});
-      const row = await db
-        .connection()
-        .select()
-        .from(this.constructor.tableName)
-        .where("id", this.id)
-        .first()
-        .catch(err => {
-          console.log(`Error caught: ${err.message}`);
-        });
 
-      if (row && row.length) {
-        await db
+      if (this.id) {
+        const row = await db
           .connection()
+          .select()
+          .from(this.constructor.tableName)
           .where("id", this.id)
-          .update(toSave)
-          .into(this.constructor.tableName);
+          .first()
+          .catch(err => {
+            console.log(`Error caught: ${err.message}`);
+          });
+
+        if (row && row.length) {
+          await db
+            .connection()
+            .where("id", this.id)
+            .update(toSave)
+            .into(this.constructor.tableName);
+        } else {
+          return false;
+        }
       } else {
-        await db
+        const result = await db
           .connection()
+          .returning(["id"])
           .insert(toSave)
           .into(this.constructor.tableName);
+
+        if (typeof result[0] === "object") {
+          this.id = result[0].id;
+        } else {
+          this.id = result[0];
+        }
       }
 
       return true;

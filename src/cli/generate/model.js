@@ -72,7 +72,7 @@ module.exports = async function(dir, name, attrs) {
       await knex.schema.createTable('${NounHelper.toPluralResource(
         name
       )}', (table) => {
-        table.uuid('id').primary();
+        table.bigIncrements('id').primary();
         ${attrs.reduce((acc, curr) => {
           if (curr.type !== "references") {
             acc += `table.${curr.type}('${curr.name}');\n`;
@@ -80,7 +80,7 @@ module.exports = async function(dir, name, attrs) {
 
           if (curr.type === "references") {
             belongsTo.push(`${NounHelper.toPluralResource(curr.name)}`);
-            acc += `table.uuid('${NounHelper.toSingularResource(
+            acc += `table.bigInteger('${NounHelper.toSingularResource(
               curr.name
             )}_id').notNullable();\n`;
             acc += `table.foreign("${NounHelper.toSingularResource(
