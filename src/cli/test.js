@@ -1,5 +1,5 @@
-const UnitTest = require("../../src/test/UnitTest");
-const IntegrationTest = require("../../src/test/IntegrationTest");
+const UnitTest = require("../test/UnitTest");
+const IntegrationTest = require("../test/IntegrationTest");
 
 async function runTests(activeInstance) {
   const tests = Object.getOwnPropertyNames(
@@ -56,7 +56,7 @@ module.exports = async function(tests) {
         }
       } else {
         throw new Error(
-          `${tests[k]} not instanceof UnitTest or IntegrationTest`
+          `${tests[k]} not instanceof UnitTest or IntegrationTest.`
         );
       }
     }
