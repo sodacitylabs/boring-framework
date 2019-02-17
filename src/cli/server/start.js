@@ -1,7 +1,7 @@
 "use strict";
 
 const http = require("http");
-const Router = require("../../core/router");
+const Router = require("../../core/Router");
 const { spawnSync } = require("child_process");
 
 module.exports = function(cb) {

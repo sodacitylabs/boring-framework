@@ -1,10 +1,10 @@
 "use strict";
 
-const CoreConfig = require("../Config");
+const CoreConfig = require("./Config");
 const fs = require("fs");
-const CookieHelper = require("../helpers/CookieHelper");
-const NounHelper = require("../helpers/NounHelper");
-const UrlHelper = require("../helpers/UrlHelper");
+const CookieHelper = require("./helpers/CookieHelper");
+const NounHelper = require("./helpers/NounHelper");
+const UrlHelper = require("./helpers/UrlHelper");
 
 let routes = []; // private route tree
 const fileTypeTranslations = {
@@ -211,9 +211,9 @@ async function invokeAction(req, res, dir, controller, action) {
     }
 
     res.redirectTo = redirectTo.bind(res);
-    res.send = require("./send").bind(res);
+    res.send = require("./decorators/send").bind(res);
     res.render = function(data) {
-      require("./render").call(this, dir, controller, action, data);
+      require("./decorators/render").call(this, dir, controller, action, data);
     }.bind(res);
 
     await parseBody(req);
