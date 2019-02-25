@@ -30,7 +30,8 @@
   },
   "main": "./src/core/index.js",
   "files": [
-    "src/*"
+    "src/*",
+    ".nvmrc"
   ],
   "scripts": {
     "lint": "./node_modules/.bin/eslint --color src",
