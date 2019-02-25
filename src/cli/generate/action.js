@@ -4,81 +4,58 @@ const CoreConfig = require("../../core/Config");
 const fs = require("fs");
 const { spawnSync } = require("child_process");
 
+const CREATING_PREFIX = `Creating  `;
+
 /**
- * Create an action on an already existing controller
+ * @function
+ * @description adds additional action to existing controller file
+ *
+ * @param {string} root - root directory to start looking for files
+ * @param {string} controller - controller name
+ * @param {string} action - action name to create
+ *
+ * @returns {null}
  */
-module.exports = function(root, name, action) {
-  const creatingPrefix = `Creating  `;
-
-  if (!name) {
-    throw new Error(
-      `Generating an action for a controller requires a controller name`
-    );
-  }
-
-  if (!action) {
-    throw new Error(
-      `Generating an action for a controller requires an action name`
-    );
-  }
-
-  if (CoreConfig.actionNames.indexOf(action) === -1) {
-    throw new Error(`Action ${action} is not a valid action name.`);
-  }
-
-  if (name[0] !== name[0].toUpperCase()) {
-    name[0] = name[0].toUpperCase();
-  }
-
-  action = action.toLowerCase();
-
-  if (!fs.existsSync(`${root}/app/controllers/${name}.js`)) {
-    throw new Error(`Controller ${name} does not exist.`);
-  }
-
-  if (
-    CoreConfig.viewActionNames.indexOf(action) !== -1 &&
-    !fs.existsSync(`${root}/app/views/${name}`)
-  ) {
-    console.log(`${creatingPrefix} views folder at ${root}/app/views/${name}`);
-    fs.mkdirSync(`${root}/app/views/${name}`);
-  }
-
-  let Controller = require(`${root}/app/controllers/${name}.js`);
-  let controllerFile = fs
-    .readFileSync(`${root}/app/controllers/${name}.js`)
-    .toString();
-
-  if (
-    Object.getOwnPropertyNames(Controller).filter(
-      p => p.trim() === action.trim()
-    ).length
-  ) {
-    throw new Error(`Action ${action} already exists for controller ${name}.`);
-  }
+module.exports = function(root, controller, action) {
+  requireArguments(root, controller, action);
+  validateArguments(root, controller, action);
 
   const controllers = `${root}/app/controllers`;
-  const views = `${root}/app/views`;
+  const Controller = require(`${root}/app/controllers/${controller}.js`);
 
-  if (action && CoreConfig.viewActionNames.indexOf(action) !== -1) {
-    console.log(
-      `${creatingPrefix} view at ${views}/${name}/${action}.html.ejs`
-    );
-    fs.writeFileSync(
-      `${views}/${name}/${action}.html.ejs`,
-      `<h1>${name}#${action}</h1>\n<p>Find me in app/views/${name}/${action}.html.ejs</p>`,
-      "utf8"
-    );
-  }
+  preventDuplicateAction(Controller, action);
+  makeViewsDirectory(root, controller, action);
+  writeViewTemplate(root, controller, action);
 
-  console.log(`${creatingPrefix} action for ${controllers}/${name}.js`);
+  const fileContents = buildClassContents(Controller, action);
 
+  overwriteControllerFile(
+    root,
+    `${controllers}/${controller}.js`,
+    Controller,
+    fileContents
+  );
+};
+
+/**
+ * @function buildClassContents
+ * @private
+ * @description accumulates all the class functions and contents
+ *
+ * @param {class} controller - required controller module
+ * @param {string} action - action name to create
+ *
+ * @throws {Error}
+ * @returns {null}
+ */
+function buildClassContents(controller, action) {
   let fileContents = "";
 
   // todo: should maintain the functions in abc order and write file contents for
   // new action inside the foreach for better diffs
 
-  let properties = Object.getOwnPropertyNames(Controller);
+  // todo: maybe simplify this block a bit
+  let properties = Object.getOwnPropertyNames(controller);
   properties.push(`${action}`);
   properties = properties.sort((a, b) => a[0].localeCompare(b[0]));
   properties.forEach(p => {
@@ -89,7 +66,7 @@ module.exports = function(root, name, action) {
         fileContents += `static async ${action}(req, res) { res.render(); }\n`;
       }
     } else if (CoreConfig.actionNames.indexOf(p) !== -1) {
-      const descriptor = Object.getOwnPropertyDescriptor(Controller, p);
+      const descriptor = Object.getOwnPropertyDescriptor(controller, p);
 
       fileContents += "static " + descriptor.value.toString() + "\n";
     }
@@ -97,23 +74,158 @@ module.exports = function(root, name, action) {
 
   // todo: verify that the new file's contents length are as expected
 
+  return fileContents;
+}
+
+/**
+ * @function makeViewsDirectory
+ * @private
+ * @description if view action and first view action for controller, create views subdirectory
+ *
+ * @param {string} root - root directory to start looking for files
+ * @param {string} controller - controller name
+ * @param {string} action - action name to create
+ *
+ * @returns {null}
+ */
+function makeViewsDirectory(root, controller, action) {
+  if (
+    CoreConfig.viewActionNames.indexOf(action) !== -1 &&
+    !fs.existsSync(`${root}/app/views/${controller}`)
+  ) {
+    console.log(
+      `${CREATING_PREFIX} views folder at ${root}/app/views/${controller}`
+    );
+    fs.mkdirSync(`${root}/app/views/${controller}`);
+  }
+}
+
+/**
+ * @function preventDuplicateAction
+ * @private
+ * @description prevents trying to add the same action more than once
+ *
+ * @param {class} controller - required controller module
+ * @param {string} action - action name to create
+ *
+ * @throws {Error}
+ * @returns {null}
+ */
+function preventDuplicateAction(controller, action) {
+  if (
+    Object.getOwnPropertyNames(controller).filter(
+      p => p.trim() === action.trim()
+    ).length
+  ) {
+    throw new Error(
+      `Action ${action} already exists for controller ${controller}.`
+    );
+  }
+}
+
+/**
+ * @function overwriteControllerFile
+ * @private
+ * @description overwrite existing controller class' contents with new contents
+ *
+ * @param {string} root - root directory to start looking for files
+ * @param {string} filePath - filePath to the controller
+ * @param {class} controller - the required controller class
+ * @param {string} contents - contents of the controller class to recreate
+ *
+ * @returns {null}
+ */
+function overwriteControllerFile(root, filePath, controller, contents) {
+  let controllerFile = fs.readFileSync(filePath).toString();
+
   fs.writeFileSync(
-    `${root}/app/controllers/${name}.js`,
+    filePath,
     controllerFile.replace(
-      /(class (\w*)Controller)([\s\w]*)({(\s*))([\w\n\s\t();,{}!#./*@$:=`[\]"]*)(};)/g,
-      `class ${Controller.name} extends RequestController {
-        ${fileContents}
+      /(class (\w*)Controller)([\s\w]*)({(\s*))([\w\n\s\t();,{}!#./*@$:=`[\]"|'&_?]*)(};)/g,
+      `class ${controller.name} extends RequestController {
+        ${contents}
       };`
     ),
     "utf8"
   );
 
-  spawnSync(
-    `${root}/node_modules/.bin/prettier "${root}/app/controllers/${name}.js" --write`,
-    {
-      stdio: `inherit`,
-      shell: true,
-      cwd: root
-    }
-  );
-};
+  spawnSync(`${root}/node_modules/.bin/prettier "${filePath}" --write`, {
+    stdio: `inherit`,
+    shell: true,
+    cwd: root
+  });
+}
+
+/**
+ * @function requireArguments
+ * @private
+ * @description check if all values provided and are valid values
+ *
+ * @param {string} root - root directory to start looking for files
+ * @param {string} controller - controller name
+ * @param {string} action - action name to create
+ *
+ * @throws {Error}
+ * @returns {null}
+ */
+function requireArguments(root, controller, action) {
+  if (!controller) {
+    throw new Error(
+      `Generating an action for a controller requires a controller name`
+    );
+  }
+
+  if (!action) {
+    throw new Error(
+      `Generating an action for a controller requires an action name`
+    );
+  }
+}
+
+/**
+ * @function validateArguments
+ * @private
+ * @description check if all values are semantically valid
+ *
+ * @param {string} root - root directory to start looking for files
+ * @param {string} controller - controller name
+ * @param {string} action - action name to create
+ *
+ * @throws {Error}
+ * @returns {null}
+ */
+function validateArguments(root, controller, action) {
+  if (CoreConfig.actionNames.indexOf(action) === -1) {
+    throw new Error(`Action ${action} is not a valid action name.`);
+  }
+
+  if (!fs.existsSync(`${root}/app/controllers/${controller}.js`)) {
+    throw new Error(`Controller ${controller} does not exist.`);
+  }
+}
+
+/**
+ * @function writeViewTemplate
+ * @private
+ * @description creates basic view template if action is a view action
+ *
+ * @param {string} root - root directory to start looking for files
+ * @param {string} controller - controller name
+ * @param {string} action - action name to create
+ *
+ * @returns {null}
+ */
+function writeViewTemplate(root, controller, action) {
+  const views = `${root}/app/views`;
+
+  if (CoreConfig.viewActionNames.indexOf(action) !== -1) {
+    console.log(
+      `${CREATING_PREFIX} view at ${views}/${controller}/${action}.html.ejs`
+    );
+    fs.writeFileSync(
+      `${views}/${controller}/${action}.html.ejs`,
+      `<h1>${controller}#${action}</h1>\n<p>Find me in app/views/${controller}/${action}.html.ejs</p>`,
+      "utf8"
+    );
+  }
+}
