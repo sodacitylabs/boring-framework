@@ -141,7 +141,7 @@ function overwriteControllerFile(root, filePath, controller, contents) {
   fs.writeFileSync(
     filePath,
     controllerFile.replace(
-      /(class (\w*)Controller)([\s\w]*)({(\s*))([\w\n\s\t();,{}!#./*@$:=`[\]"|'&_?]*)(};)/g,
+      /(class (\w*)Controller)([\s\w]*)({(\s*))([\w\n\s\t();,{}!#./*@$:=`[\]"|'&_?-]*)(};)/g,
       `class ${controller.name} extends RequestController {
         ${contents}
       };`
