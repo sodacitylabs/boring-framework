@@ -2,26 +2,16 @@
 
 const CoreConfig = require("./Config");
 const fs = require("fs");
+const AssetHelper = require("./helpers/AssetHelper");
 const CookieHelper = require("./helpers/CookieHelper");
 const NounHelper = require("./helpers/NounHelper");
 const UrlHelper = require("./helpers/UrlHelper");
 
 let routes = []; // private route tree
-const fileTypeTranslations = {
-  css: "text/css",
-  gif: "image/gif",
-  jpg: "image/jpg",
-  jpeg: "image/jpeg",
-  js: "application/javascript",
-  png: "image/png",
-  svg: "image/svg+xml",
-  ico: "image/x-icon",
-  txt: "text/plain"
-};
 
 class Router {
   /**
-   * @description - route incoming http requests to an action
+   * @description - route incoming http requests to a controller action
    *
    * @param {*} req - core Node.js request object
    * @param {*} res - core Node.js response object
@@ -54,7 +44,7 @@ class Router {
     }
 
     if (urlObj.pathname.startsWith("/assets")) {
-      return serveAsset(req, res);
+      return AssetHelper.serve(req, res);
     }
 
     return routeToAction(req, res);
@@ -189,15 +179,6 @@ class Router {
  *
  */
 
-function redirectTo(target) {
-  if (typeof target === "string") {
-    this.writeHead(303, {
-      Location: target
-    });
-    this.end();
-  }
-}
-
 async function invokeAction(req, res, dir, controller, action) {
   try {
     // todo: normalize the controller
@@ -210,7 +191,7 @@ async function invokeAction(req, res, dir, controller, action) {
       );
     }
 
-    res.redirectTo = redirectTo.bind(res);
+    res.redirectTo = require("./decorators/redirect").bind(res);
     res.send = require("./decorators/send").bind(res);
     res.render = function(data) {
       require("./decorators/render").call(this, dir, controller, action, data);
@@ -400,35 +381,6 @@ function routeToAction(req, res) {
   }
 
   recurse(0);
-}
-
-function serveAsset(req, res) {
-  try {
-    const dir = process.cwd();
-    const urlObj = UrlHelper.parse(req.url);
-    const assetPath = urlObj.pathname.split("/assets/").splice(1)[0];
-    const asset = fs.readFileSync(`${dir}/public/assets/${assetPath}`);
-    const ext = assetPath.split(".").splice(1)[0];
-    const type = fileTypeTranslations[ext] || undefined;
-
-    if (asset && type) {
-      res.writeHead(200, {
-        "Content-Length": Buffer.byteLength(asset),
-        "Content-Type": type,
-        "Cache-Control": "public, max-age=31557600"
-      });
-      res.write(asset, "binary");
-      res.end();
-    } else {
-      throw new Error(`asset not found`);
-    }
-  } catch (ex) {
-    res.writeHead(400, {
-      "Content-Length": Buffer.byteLength("")
-    });
-    res.write("");
-    res.end();
-  }
 }
 
 module.exports = Router;
