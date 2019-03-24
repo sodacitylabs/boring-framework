@@ -1,7 +1,7 @@
 "use strict";
 
 const ejs = require("ejs");
-const fs = require("fs");
+const TemplateHelper = require("../helpers/TemplateHelper");
 
 function linkTo(title, target) {
   return `<a href="${target}">${title}</a>`;
@@ -18,10 +18,7 @@ module.exports = function(dir, controller, action, data) {
       data = {};
     }
 
-    const template = fs.readFileSync(
-      `${dir}/app/views/${controller}/${action}.html.ejs`,
-      "utf8"
-    );
+    const template = TemplateHelper.load(dir, controller, action);
     const rendered = ejs.render(template, Object.assign(data, { linkTo }), {
       views: [`${dir}/app/views`]
     });
