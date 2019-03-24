@@ -313,8 +313,9 @@ function routeToAction(req, res) {
       if (idx === 0) {
         req.params.id = urlArray[1];
       } else {
-        req.params[`${controller.slice(0, controller.length - 1)}_id`] =
-          urlArray[idx + 1];
+        req.params[
+          `${controller.slice(0, controller.length - 1)}_id`.toLowerCase()
+        ] = urlArray[idx + 1];
       }
 
       return invokeAction(req, res, dir, controller, "edit");
@@ -326,8 +327,9 @@ function routeToAction(req, res) {
       if (idx === 0) {
         req.params.id = urlArray[1];
       } else {
-        req.params[`${controller.slice(0, controller.length - 1)}_id`] =
-          urlArray[idx + 1];
+        req.params[
+          `${controller.slice(0, controller.length - 1)}_id`.toLowerCase()
+        ] = urlArray[idx + 1];
       }
 
       return invokeAction(req, res, dir, controller, "show");
@@ -339,8 +341,9 @@ function routeToAction(req, res) {
       if (idx === 0) {
         req.params.id = urlArray[1];
       } else {
-        req.params[`${controller.slice(0, controller.length - 1)}_id`] =
-          urlArray[idx + 1];
+        req.params[
+          `${controller.slice(0, controller.length - 1)}_id`.toLowerCase()
+        ] = urlArray[idx + 1];
       }
 
       return invokeAction(req, res, dir, controller, "find");
@@ -352,8 +355,9 @@ function routeToAction(req, res) {
       if (idx === 0) {
         req.params.id = urlArray[1];
       } else {
-        req.params[`${controller.slice(0, controller.length - 1)}_id`] =
-          urlArray[idx + 1];
+        req.params[
+          `${controller.slice(0, controller.length - 1)}_id`.toLowerCase()
+        ] = urlArray[idx + 1];
       }
 
       return invokeAction(req, res, dir, controller, "update");
@@ -365,16 +369,18 @@ function routeToAction(req, res) {
       if (idx === 0) {
         req.params.id = urlArray[1];
       } else {
-        req.params[`${controller.slice(0, controller.length - 1)}_id`] =
-          urlArray[idx + 1];
+        req.params[
+          `${controller.slice(0, controller.length - 1)}_id`.toLowerCase()
+        ] = urlArray[idx + 1];
       }
 
       return invokeAction(req, res, dir, controller, "destroy");
     }
 
     if (controller) {
-      req.params[`${controller.slice(0, controller.length - 1)}_id`] =
-        urlArray[idx + 1];
+      req.params[
+        `${controller.slice(0, controller.length - 1)}_id`.toLowerCase()
+      ] = urlArray[idx + 1];
     }
 
     recurse(idx + 2);
