@@ -9,6 +9,10 @@ const UrlHelper = require("./helpers/UrlHelper");
 
 let routes = []; // private route tree
 
+let redirectDecorator = require("./decorators/redirect");
+let renderDecorator = require("./decorators/render");
+let sendDecorator = require("./decorators/send");
+
 class Router {
   /**
    * @description - route incoming http requests to a controller action
@@ -191,10 +195,10 @@ async function invokeAction(req, res, dir, controller, action) {
       );
     }
 
-    res.redirectTo = require("./decorators/redirect").bind(res);
-    res.send = require("./decorators/send").bind(res);
+    res.redirectTo = redirectDecorator.bind(res);
+    res.send = sendDecorator.bind(res);
     res.render = function(data) {
-      require("./decorators/render").call(this, dir, controller, action, data);
+      renderDecorator.call(this, dir, controller, action, data);
     }.bind(res);
 
     await parseBody(req);
