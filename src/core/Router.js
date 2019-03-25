@@ -21,8 +21,6 @@ class Router {
    * @param {*} res - core Node.js response object
    */
   static incoming(req, res) {
-    console.log(`Incoming ${req.method} request to ${req.url}`);
-
     const dir = process.cwd();
     const projectConfig = require(`${dir}/config`);
     const urlObj = UrlHelper.parse(req.url);
