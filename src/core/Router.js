@@ -9,6 +9,13 @@ const UrlHelper = require("./helpers/UrlHelper");
 
 let routes = []; // private route tree
 
+let redirectDecorator = require("./decorators/redirect");
+let renderDecorator = require("./decorators/render");
+let sendDecorator = require("./decorators/send");
+
+const dir = process.cwd();
+const projectConfig = require(`${dir}/config`);
+
 class Router {
   /**
    * @description - route incoming http requests to a controller action
@@ -17,10 +24,6 @@ class Router {
    * @param {*} res - core Node.js response object
    */
   static incoming(req, res) {
-    console.log(`Incoming ${req.method} request to ${req.url}`);
-
-    const dir = process.cwd();
-    const projectConfig = require(`${dir}/config`);
     const urlObj = UrlHelper.parse(req.url);
 
     req.hash = urlObj.hash;
@@ -54,8 +57,6 @@ class Router {
    * @description - load route tree based on controllers, model associates, etc.
    */
   static load() {
-    const dir = process.cwd();
-
     if (!fs.existsSync(`${dir}/app/controllers`)) {
       throw new Error(
         `Cannot locate app/controllers in directory ${dir}. Ensure Boring was started in the same filepath as your package.json and that app/controllers exists.`
@@ -191,10 +192,10 @@ async function invokeAction(req, res, dir, controller, action) {
       );
     }
 
-    res.redirectTo = require("./decorators/redirect").bind(res);
-    res.send = require("./decorators/send").bind(res);
+    res.redirectTo = redirectDecorator.bind(res);
+    res.send = sendDecorator.bind(res);
     res.render = function(data) {
-      require("./decorators/render").call(this, dir, controller, action, data);
+      renderDecorator.call(this, dir, controller, action, data);
     }.bind(res);
 
     await parseBody(req);
@@ -255,7 +256,6 @@ function routingError(req, res) {
 }
 
 function routeToAction(req, res) {
-  const dir = process.cwd();
   const urlObj = UrlHelper.parse(req.url);
   const urlArray = urlObj.pathname.split("/").splice(1);
   const browserRequest = req.headers.accept.indexOf("html") !== -1;
