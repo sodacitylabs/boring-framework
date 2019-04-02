@@ -49,7 +49,7 @@ module.exports = function(name, root) {
           ext: "js json ejs"
         },
         dependencies: {
-          "@sodacitylabs/boring-framework": "0.10.1",
+          "@sodacitylabs/boring-framework": "0.11.0",
           ejs: "2.6.1",
           knex: "0.16.3",
           lodash: "4.17.11",

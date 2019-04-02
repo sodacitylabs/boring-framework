@@ -1,5 +1,6 @@
 "use strict";
 
+const _ = require("lodash");
 const CoreConfig = require("./Config");
 const fs = require("fs");
 const AssetHelper = require("./helpers/AssetHelper");
@@ -258,8 +259,10 @@ function routingError(req, res) {
 function routeToAction(req, res) {
   const urlObj = UrlHelper.parse(req.url);
   const urlArray = urlObj.pathname.split("/").splice(1);
-  const browserRequest = req.headers.accept.indexOf("html") !== -1;
-  const apiRequest = req.headers.accept.indexOf("json") !== -1;
+  const browserRequest =
+    (_.get(req, "headers.accept") || "").indexOf("html") !== -1;
+  const apiRequest =
+    (_.get(req, "headers.accept") || "").indexOf("json") !== -1;
 
   /**
    * @description - recurses down the routes tree to match URL against
