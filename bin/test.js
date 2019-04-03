@@ -10,14 +10,10 @@ async function test() {
 
     tests = tests.concat(
       fs
-        .readdirSync(`${testDirectory}/model`)
-        .map(f => `${testDirectory}/model/${f}`)
-    );
-    tests = tests.concat(
-      fs
         .readdirSync(`${testDirectory}/helpers`)
         .map(f => `${testDirectory}/helpers/${f}`)
     );
+    tests = tests.concat(`${testDirectory}/ActiveRecordTest.js`);
 
     runTests(tests);
   } catch (ex) {
