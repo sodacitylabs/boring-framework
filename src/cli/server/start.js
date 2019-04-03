@@ -1,7 +1,7 @@
 "use strict";
 
 const http = require("http");
-const Router = require("../../core/Router");
+const Router = require("../../core/RouterV2");
 const { spawnSync } = require("child_process");
 
 module.exports = function(cb) {
@@ -9,9 +9,10 @@ module.exports = function(cb) {
   const config = require(`${dir}/config`);
   const port = config.server.port || 3000;
   const start = Date.now();
-  const instance = http.createServer(Router.incoming);
+  const router = new Router(config, dir);
+  const instance = http.createServer(router.incoming);
 
-  Router.load();
+  router.load();
 
   spawnSync(`cp -R app/assets/images/. public/assets/images`, {
     stdio: `inherit`,

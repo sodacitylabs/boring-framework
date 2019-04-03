@@ -14,6 +14,7 @@ async function test() {
         .map(f => `${testDirectory}/helpers/${f}`)
     );
     tests = tests.concat(`${testDirectory}/ActiveRecordTest.js`);
+    tests = tests.concat(`${testDirectory}/RouterTest.js`);
 
     runTests(tests);
   } catch (ex) {
