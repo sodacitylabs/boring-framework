@@ -1,6 +1,5 @@
 "use strict";
 
-const _ = require("lodash");
 const CoreConfig = require("../core/Config");
 const fs = require("fs");
 
@@ -15,11 +14,10 @@ module.exports = function() {
 
   if (!fs.existsSync(`${dir}/app/controllers`)) {
     console.log(
-      `${_.padEnd(headers[0], 8, " ")}${_.padEnd(
-        headers[1],
+      `${headers[0].padEnd(8, " ")}${headers[1].padEnd(
         25,
         " "
-      )}${_.padEnd(headers[2], 25, " ")}`
+      )}${headers[2].padEnd(25, " ")}`
     );
     return;
   }
@@ -197,20 +195,18 @@ module.exports = function() {
   }
 
   console.log(
-    `${_.padEnd(headers[0], 8, " ")}${_.padEnd(
-      headers[1],
+    `${headers[0].padEnd(8, " ")}${headers[1].padEnd(
       Math.max(25, maxURILength + 5),
       " "
-    )}${_.padEnd(headers[2], Math.max(25, maxActionLength + 5), " ")}`
+    )}${headers[2].padEnd(Math.max(25, maxActionLength + 5), " ")}`
   );
 
   routes.forEach(r => {
     console.log(
-      `${_.padEnd(r.verb, 8, " ")}${_.padEnd(
-        r.uri,
+      `${r.verb.padEnd(8, " ")}${r.uri.padEnd(
         Math.max(25, maxURILength + 5),
         " "
-      )}${_.padEnd(r.action, Math.max(25, maxActionLength + 5), " ")}`
+      )}${r.action.padEnd(Math.max(25, maxActionLength + 5), " ")}`
     );
   });
 
@@ -219,8 +215,7 @@ module.exports = function() {
       `${"GET".padEnd(8, " ")}${"/".padEnd(
         Math.max(25, maxURILength + 5),
         " "
-      )}${_.padEnd(
-        _.get(projectConfig, "routes.root"),
+      )}${projectConfig.routes.root.padEnd(
         Math.max(25, maxActionLength + 5),
         " "
       )}`
