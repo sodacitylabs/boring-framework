@@ -1,4 +1,4 @@
-const Boring = require("../../src/core");
+const Boring = require("../src/core");
 const UnitTest = Boring.Test.UnitTest;
 
 module.exports = class ActiveRecordTest extends UnitTest {
