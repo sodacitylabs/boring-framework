@@ -5,19 +5,9 @@ const SendDecorator = require("../decorators/send");
 
 module.exports = class ResponseHelper {
   static decorate(res, ctx) {
-    const args = _.pick(ctx, [
-      "projectDirectory",
-      "controller",
-      "action",
-      "data"
-    ]);
+    const args = _.pick(ctx, ["projectDirectory", "controller", "action"]);
 
-    if (
-      !args.projectDirectory ||
-      !args.controller ||
-      !args.action ||
-      !args.data
-    ) {
+    if (!args.projectDirectory || !args.controller || !args.action) {
       throw new Error(
         `Not enough context provided to decorate response object`
       );

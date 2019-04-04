@@ -14,8 +14,7 @@ module.exports = class ResponseHelperTest extends UnitTest {
     ResponseHelper.decorate(res, {
       projectDirectory: "/dir",
       controller: "Articles",
-      action: "index",
-      data: {}
+      action: "index"
     });
 
     this.assert(typeof res.redirectTo).equals("function");
