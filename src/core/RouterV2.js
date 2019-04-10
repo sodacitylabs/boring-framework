@@ -173,6 +173,7 @@ Router.prototype.routes = function() {
  * @description - reads config object for a root route config and parses that
  */
 function _parseRootAction() {
+  // TODO: move to ConfigHelper?
   const rootAction = _.get(projectConfig, "routes.root") || "";
 
   if (!rootAction || !rootAction.length) {
