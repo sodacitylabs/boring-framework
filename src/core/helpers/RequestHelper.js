@@ -126,6 +126,10 @@ module.exports = class RequestHelper {
           action: "delete"
         };
       }
+
+      req.params[
+        `${controller.slice(0, controller.length - 1)}_id`.toLowerCase()
+      ] = urlArray[i + 1];
     }
   }
 
