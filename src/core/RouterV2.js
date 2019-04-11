@@ -263,6 +263,7 @@ async function _invokeAction(req, res, controller, action) {
 
     actionFunction(req, res);
   } catch (ex) {
+    console.error(`Error Invoking Action :: ${ex.message}`);
     _routingError(req, res, 404);
   }
 }
@@ -275,7 +276,7 @@ async function _invokeAction(req, res, controller, action) {
  */
 function _routeToAction(req, res) {
   try {
-    const [controller, action] = RequestHelper.getAction(req);
+    const { controller, action } = RequestHelper.getAction(req);
 
     if (!routes[controller]) {
       throw new Error(
@@ -285,6 +286,7 @@ function _routeToAction(req, res) {
 
     return _invokeAction(req, res, controller, action);
   } catch (ex) {
+    console.error(`Error Routing To Action :: ${ex.message}`);
     return _routingError(req, res, 200);
   }
 }

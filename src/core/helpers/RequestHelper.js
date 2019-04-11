@@ -137,7 +137,7 @@ module.exports = class RequestHelper {
       req,
       {
         hash: urlObj.hash,
-        path: urlObj.path,
+        path: urlObj.pathname,
         query: urlObj.query,
         params: {}, // this gets populated during the action invocation step
         cookies: cookieObj
