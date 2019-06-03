@@ -61,9 +61,9 @@ function buildClassContents(controller, action) {
   properties.forEach(p => {
     if (p === action) {
       if (CoreConfig.viewActionNames.indexOf(action) === -1) {
-        fileContents += `static async ${action}(req, res) { res.send(204); }\n`;
+        fileContents += `static async ${action}(req, res) { try { res.send(204); } catch(ex) { res.send(500); } }\n`;
       } else if (CoreConfig.viewActionNames.indexOf(action) !== -1) {
-        fileContents += `static async ${action}(req, res) { res.render(); }\n`;
+        fileContents += `static async ${action}(req, res) { try { res.render(); } catch(ex) { res.send(500); } }\n`;
       }
     } else if (CoreConfig.actionNames.indexOf(p) !== -1) {
       const descriptor = Object.getOwnPropertyDescriptor(controller, p);
