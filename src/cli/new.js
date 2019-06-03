@@ -37,6 +37,7 @@ module.exports = function(name, root) {
       {
         name: name,
         scripts: {
+          lint: "./node_modules/.bin/eslint --color app config test",
           start: "./node_modules/.bin/boring server",
           test: "./node_modules/.bin/boring test"
         },
