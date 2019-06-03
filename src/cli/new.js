@@ -12,6 +12,7 @@ module.exports = function(name, root) {
   const nodeVersion = fs
     .readFileSync(path.resolve(__dirname, "../../.nvmrc"))
     .toString();
+  const boringPkg = require("../../package.json");
   const projectDirectory = `${root}/${name}`;
   const creatingPrefix = `Creating  `;
   const installPrefix = `Installing`;
@@ -41,7 +42,7 @@ module.exports = function(name, root) {
           test: "./node_modules/.bin/boring test"
         },
         engines: {
-          node: require("../../package.json").engines.node
+          node: boringPkg.engines.node
         },
         nodemonConfig: {
           watch: ["config/", "app/"],
@@ -49,7 +50,7 @@ module.exports = function(name, root) {
           ext: "js json ejs"
         },
         dependencies: {
-          "@sodacitylabs/boring-framework": "0.12.2",
+          "@sodacitylabs/boring-framework": boringPkg.version,
           ejs: "2.6.1",
           knex: "0.16.3",
           lodash: "4.17.11",
