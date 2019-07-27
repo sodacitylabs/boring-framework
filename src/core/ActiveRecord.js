@@ -35,7 +35,7 @@ module.exports = class ActiveRecord {
   static async all() {
     try {
       const Model = ActiveRecordCache.Model.find(this.modelName);
-      const columns = await ActiveRecordCache.Column.find(this.tableName);
+      const columns = await ActiveRecordCache.Columns.find(this.tableName);
       const rows = await db
         .connection()
         .select()
@@ -72,7 +72,7 @@ module.exports = class ActiveRecord {
   static async create(attrs) {
     try {
       const Model = ActiveRecordCache.Model.find(this.modelName);
-      const columns = await ActiveRecordCache.Column.find(this.tableName);
+      const columns = await ActiveRecordCache.Columns.find(this.tableName);
       const cases = mapColumnsToSnake(columns);
       const toCreate = Object.keys(attrs).reduce((acc, curr) => {
         const validColumn = cases.filter(c => c.camel === curr);
@@ -168,7 +168,7 @@ module.exports = class ActiveRecord {
         findAttrs[snake.join("")] = attrs[a];
       });
 
-      const columns = await ActiveRecordCache.Column.find(this.tableName);
+      const columns = await ActiveRecordCache.Columns.find(this.tableName);
       const rows = await db
         .connection()
         .select()
@@ -210,7 +210,7 @@ module.exports = class ActiveRecord {
 
   async save() {
     try {
-      const columns = await ActiveRecordCache.Column.find(
+      const columns = await ActiveRecordCache.Columns.find(
         this.constructor.tableName
       );
       const cases = mapColumnsToSnake(columns);

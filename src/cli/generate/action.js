@@ -49,32 +49,25 @@ module.exports = function(root, controller, action) {
  * @returns {null}
  */
 function buildClassContents(controller, action) {
-  let fileContents = "";
+  let match = controller
+    .toString()
+    .match(
+      /(class (\w*)Controller)([\s\w]*)({(\s*))([\w\n\s\t();,{}!#./*@$:=`[\]"|'&_?-]*)(};?)/g
+    )[0];
 
-  // todo: should maintain the functions in abc order and write file contents for
-  // new action inside the foreach for better diffs
+  if (CoreConfig.viewActionNames.indexOf(action) === -1) {
+    return `${match.substring(
+      0,
+      match.length - 1
+    )} static async ${action}(req, res) { try { res.send(204); } catch(ex) { res.send(500); } }\n };`;
+  } else if (CoreConfig.viewActionNames.indexOf(action) !== -1) {
+    return `${match.substring(
+      0,
+      match.length - 1
+    )} static async ${action}(req, res) { try { res.render(); } catch(ex) { res.send(500); } }\n };`;
+  }
 
-  // todo: maybe simplify this block a bit
-  let properties = Object.getOwnPropertyNames(controller);
-  properties.push(`${action}`);
-  properties = properties.sort((a, b) => a[0].localeCompare(b[0]));
-  properties.forEach(p => {
-    if (p === action) {
-      if (CoreConfig.viewActionNames.indexOf(action) === -1) {
-        fileContents += `static async ${action}(req, res) { try { res.send(204); } catch(ex) { res.send(500); } }\n`;
-      } else if (CoreConfig.viewActionNames.indexOf(action) !== -1) {
-        fileContents += `static async ${action}(req, res) { try { res.render(); } catch(ex) { res.send(500); } }\n`;
-      }
-    } else if (CoreConfig.actionNames.indexOf(p) !== -1) {
-      const descriptor = Object.getOwnPropertyDescriptor(controller, p);
-
-      fileContents += "static " + descriptor.value.toString() + "\n";
-    }
-  });
-
-  // todo: verify that the new file's contents length are as expected
-
-  return fileContents;
+  return match;
 }
 
 /**
@@ -141,10 +134,8 @@ function overwriteControllerFile(root, filePath, controller, contents) {
   fs.writeFileSync(
     filePath,
     controllerFile.replace(
-      /(class (\w*)Controller)([\s\w]*)({(\s*))([\w\n\s\t();,{}!#./*@$:=`[\]"|'&_?-]*)(};)/g,
-      `class ${controller.name} extends RequestController {
-        ${contents}
-      };`
+      /(class (\w*)Controller)([\s\w]*)({(\s*))([\w\n\s\t();,{}!#./*@$:=`[\]"|'&_?-]*)(};?)/g,
+      contents
     ),
     "utf8"
   );

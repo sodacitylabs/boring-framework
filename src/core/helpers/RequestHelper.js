@@ -70,7 +70,7 @@ module.exports = class RequestHelper {
       if (isEditAction) {
         req.params.id = urlArray[1];
         req.params[
-          `${controller.slice(0, controller.length - 1)}_id`.toLowerCase()
+          `${NounHelper.toSingularResource(controller)}_id`.toLowerCase()
         ] = urlArray[i + 1];
 
         return {
@@ -82,7 +82,7 @@ module.exports = class RequestHelper {
       if (isShowAction) {
         req.params.id = urlArray[1];
         req.params[
-          `${controller.slice(0, controller.length - 1)}_id`.toLowerCase()
+          `${NounHelper.toSingularResource(controller)}_id`.toLowerCase()
         ] = urlArray[i + 1];
 
         return {
@@ -94,7 +94,7 @@ module.exports = class RequestHelper {
       if (isFindAction) {
         req.params.id = urlArray[1];
         req.params[
-          `${controller.slice(0, controller.length - 1)}_id`.toLowerCase()
+          `${NounHelper.toSingularResource(controller)}_id`.toLowerCase()
         ] = urlArray[i + 1];
 
         return {
@@ -106,7 +106,7 @@ module.exports = class RequestHelper {
       if (isUpdateAction) {
         req.params.id = urlArray[1];
         req.params[
-          `${controller.slice(0, controller.length - 1)}_id`.toLowerCase()
+          `${NounHelper.toSingularResource(controller)}_id`.toLowerCase()
         ] = urlArray[i + 1];
 
         return {
@@ -118,17 +118,17 @@ module.exports = class RequestHelper {
       if (isDeleteAction) {
         req.params.id = urlArray[1];
         req.params[
-          `${controller.slice(0, controller.length - 1)}_id`.toLowerCase()
+          `${NounHelper.toSingularResource(controller)}_id`.toLowerCase()
         ] = urlArray[i + 1];
 
         return {
           controller,
-          action: "delete"
+          action: "destroy"
         };
       }
 
       req.params[
-        `${controller.slice(0, controller.length - 1)}_id`.toLowerCase()
+        `${NounHelper.toSingularResource(controller)}_id`.toLowerCase()
       ] = urlArray[i + 1];
     }
   }
