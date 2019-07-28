@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/sodacitylabs/boring-framework/wiki/Home-Page",
   "engines": {
-    "node": ">=10.14.0"
+    "node": ">=12.7.0"
   },
   "bin": {
     "boring": "./src/cli/index.js"
@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "ejs": "2.6.1",
-    "lodash": "4.17.11",
+    "lodash": "4.17.15",
     "maildev": "1.0.0",
     "nodemailer": "5.1.1",
     "nodemailer-html-to-text": "3.0.0",
@@ -54,10 +54,10 @@
     "uuid": "3.3.2"
   },
   "devDependencies": {
-    "eslint": "5.16.0",
+    "eslint": "6.1.0",
     "eslint-plugin-jest": "22.3.0",
-    "eslint-config-prettier": "4.0.0",
-    "eslint-plugin-prettier": "3.0.1",
-    "prettier": "1.16.4"
+    "eslint-config-prettier": "6.0.0",
+    "eslint-plugin-prettier": "3.1.0",
+    "prettier": "1.18.2"
   }
 }

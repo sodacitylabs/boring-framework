@@ -53,17 +53,16 @@ module.exports = function(name, root) {
         dependencies: {
           "@sodacitylabs/boring-framework": boringPkg.version,
           ejs: "2.6.1",
-          knex: "0.16.3",
-          lodash: "4.17.11",
+          knex: "0.19.1",
+          lodash: "4.17.15",
           nodemon: "1.18.9",
-          sqlite3: "4.0.6",
-          uuid: "3.3.2"
+          sqlite3: "4.0.9"
         },
         devDependencies: {
-          eslint: "5.14.0",
-          "eslint-config-prettier": "4.0.0",
-          "eslint-plugin-prettier": "3.0.1",
-          prettier: "1.16.4"
+          eslint: "6.1.0",
+          "eslint-config-prettier": "6.0.0",
+          "eslint-plugin-prettier": "3.1.0",
+          prettier: "1.18.2"
         }
       },
       null,

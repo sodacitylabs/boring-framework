@@ -156,7 +156,7 @@ module.exports = class RequestHelperTest extends UnitTest {
     this.assert(req.params.article_id).equals("123");
   }
 
-  async "finds delete action for DELETE /articles/:id"() {
+  async "finds destroy action for DELETE /articles/:id"() {
     let req = {
       isApiRequest: true,
       method: "DELETE",
@@ -166,8 +166,22 @@ module.exports = class RequestHelperTest extends UnitTest {
     let result = RequestHelper.getAction(req);
 
     this.assert(result.controller).equals("Articles");
-    this.assert(result.action).equals("delete");
+    this.assert(result.action).equals("destroy");
     this.assert(req.params.id).equals("123");
     this.assert(req.params.article_id).equals("123");
+  }
+
+  async "maps params properly for /blog_posts/:id/comments"() {
+    let req = {
+      isApiRequest: true,
+      method: "POST",
+      path: "/blog_posts/1/comments",
+      params: {}
+    };
+    let result = RequestHelper.getAction(req);
+
+    this.assert(result.controller).equals("Comments");
+    this.assert(result.action).equals("create");
+    this.assert(req.params.blog_post_id).equals("1");
   }
 };
