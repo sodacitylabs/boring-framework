@@ -8,7 +8,7 @@ const { spawnSync } = require("child_process");
 /**
  * Create a new project at the specified directory as the root
  */
-module.exports = function(name, root) {
+module.exports = function (name, root) {
   const nodeVersion = fs
     .readFileSync(path.resolve(__dirname, "../../.nvmrc"))
     .toString();
@@ -75,7 +75,7 @@ module.exports = function(name, root) {
   console.log(`${creatingPrefix} .gitignore`);
   fs.writeFileSync(
     `${projectDirectory}/.gitignore`,
-    `node_modules\npublic\nlog\ntmp/*\ndb/sqlite.db\n`,
+    `node_modules\npublic\n!public/robots.txt\nlog\ntmp/*\ndb/sqlite.db\n`,
     "utf8"
   );
 
@@ -99,6 +99,14 @@ module.exports = function(name, root) {
   for (let i = 0; i < CoreConfig.seedDirectories.length; i++) {
     fs.mkdirSync(`${projectDirectory}/${CoreConfig.seedDirectories[i]}`);
   }
+
+  // robots.txt
+  console.log(`${creatingPrefix} robots.txt`);
+  fs.writeFileSync(
+    `${projectDirectory}/public/robots.txt`,
+    'User-agent: *\nAllow: /\n',
+    "utf8"
+  );
 
   // base config.js file
   console.log(`${creatingPrefix} base config for project`);
@@ -251,10 +259,10 @@ module.exports = function(name, root) {
   fs.writeFileSync(
     `${projectDirectory}/bin/boring.sh`,
     "#!/bin/bash\n" +
-      "array=( $@ )\n" +
-      "len=${#array[@]}\n" +
-      "_args=${array[@]:0:$len}\n\n" +
-      "./node_modules/.bin/boring $_args",
+    "array=( $@ )\n" +
+    "len=${#array[@]}\n" +
+    "_args=${array[@]:0:$len}\n\n" +
+    "./node_modules/.bin/boring $_args",
     "utf8"
   );
 
