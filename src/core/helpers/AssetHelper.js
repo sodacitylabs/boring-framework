@@ -1,8 +1,6 @@
 const fs = require("fs");
 const UrlHelper = require("./UrlHelper");
 
-let robots;
-
 module.exports = class AssetHelper {
   /**
    * @description returns a map of file extensions to their MIME types
