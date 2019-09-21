@@ -32,7 +32,7 @@ function Router(_projectConfig, _projectDirectory) {
  * @param {*} req - core Node.js request object
  * @param {*} res - core Node.js response object
  */
-Router.prototype.incoming = function(req, res) {
+Router.prototype.incoming = function (req, res) {
   RequestHelper.decorate(req);
 
   if (req.path === "/") {
@@ -43,6 +43,8 @@ Router.prototype.incoming = function(req, res) {
     return AssetHelper.serve(req, res);
   } else if (req.path === "/favicon.ico") {
     return _routingError(req, res, 200);
+  } else if (req.path === "/robots.txt") {
+    return AssetHelper.robots(req, res);
   }
 
   _routeToAction(req, res);
@@ -51,7 +53,7 @@ Router.prototype.incoming = function(req, res) {
 /**
  * @description - load route tree based on controllers, model associates, etc.
  */
-Router.prototype.load = function() {
+Router.prototype.load = function () {
   if (!fs.existsSync(`${projectDirectory}/app/controllers`)) {
     throw new Error(
       `Cannot locate app/controllers in directory ${projectDirectory}. Ensure Boring was started in the same filepath as your package.json and that app/controllers exists.`
@@ -63,7 +65,7 @@ Router.prototype.load = function() {
   for (let i = 0; i < controllerFiles.length; i++) {
     const ControllerDefinition = require(`${projectDirectory}/app/controllers/${
       controllerFiles[i]
-    }`);
+      }`);
     const controllerName = ControllerDefinition.name.split("Controller")[0];
     const actions = Object.getOwnPropertyNames(ControllerDefinition)
       .filter(p => Config.actionNames.indexOf(p) !== -1)
@@ -165,7 +167,7 @@ Router.prototype.load = function() {
 /**
  * @description - return routing tree
  */
-Router.prototype.routes = function() {
+Router.prototype.routes = function () {
   return routes;
 };
 

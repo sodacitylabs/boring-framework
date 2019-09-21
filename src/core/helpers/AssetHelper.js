@@ -65,4 +65,31 @@ module.exports = class AssetHelper {
       res.end();
     }
   }
+
+  /**
+   * @description - serve a robots.txt file
+   *
+   * @param {*} req - core Node.js request object
+   * @param {*} res - core Node.js response object
+   */
+  static robots(req, res) {
+    try {
+      const dir = process.cwd();
+      const robots = fs.readFileSync(`${dir}/public/robots.txt`);
+
+      res.writeHead(200, {
+        "Content-Length": Buffer.byteLength(robots),
+        "Content-Type": "text/plain",
+        "Cache-Control": "public, max-age=86400"
+      });
+      res.write(robots, "binary");
+      res.end();
+    } catch (ex) {
+      res.writeHead(400, {
+        "Content-Length": Buffer.byteLength()
+      });
+      res.write("");
+      res.end();
+    }
+  }
 };
