@@ -132,7 +132,9 @@ module.exports = async function(dir, name, attrs) {
   fs.writeFileSync(
     modelTestFile,
     `
-    const Model = require('${modelFile}');
+    const Model = require('../../app/models/${NounHelper.getSingularForm(
+      name
+    )}.js');
 
     test('returns false', () => {
       return false;
