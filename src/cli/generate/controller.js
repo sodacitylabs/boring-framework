@@ -46,7 +46,7 @@ module.exports = function(root, name) {
   fs.writeFileSync(
     testFile,
     `
-    const Controller = require('${root}/app/controllers/${name}.js');
+    const Controller = require('../../app/controllers/${name}.js');
 
     test('returns false', () => {
       return false;
