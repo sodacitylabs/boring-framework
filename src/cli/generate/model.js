@@ -46,7 +46,7 @@ module.exports = async function(dir, name, attrs) {
   const modelFile = `${dir}/app/models/${NounHelper.getSingularForm(name)}.js`;
   const modelTestFile = `${dir}/test/models/${NounHelper.getSingularForm(
     name
-  )}Test.js`;
+  )}.test.js`;
 
   if (fs.existsSync(migrationFile)) {
     throw new Error(
@@ -132,25 +132,13 @@ module.exports = async function(dir, name, attrs) {
   fs.writeFileSync(
     modelTestFile,
     `
-    const db = require('../../db');
-    const Boring = require('@sodacitylabs/boring-framework');
-    const UnitTest = Boring.Test.UnitTest;
-
-    module.exports = class ${NounHelper.getSingularForm(
+    const Model = require('../../app/models/${NounHelper.getSingularForm(
       name
-    )}Test extends UnitTest {
-      constructor(attrs) {
-        super(attrs);
-      }
+    )}.js');
 
-      // async "returns true"() {
-      //   return this.assert(true).equals(true);
-      // }
-
-      // async "returns false"() {
-      //   return this.assert(true).equals(false);
-      // }
-    };
+    test('returns false', () => {
+      return false;
+    });
     `,
     "utf8"
   );

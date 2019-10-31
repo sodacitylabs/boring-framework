@@ -37,10 +37,12 @@
     "lint": "./node_modules/.bin/eslint --color src",
     "publish": "",
     "postpublish": "PACKAGE_VERSION=$(cat package.json | grep \\\"version\\\" | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && git tag v$PACKAGE_VERSION && git push upstream --tags",
-    "test": "node ./bin/test.js"
+    "test": "node_modules/.bin/jest --forceExit --coverage --runInBand test"
   },
   "dependencies": {
     "ejs": "2.6.1",
+    "eslint-plugin-jest": "22.3.0",
+    "jest": "24.9.0",
     "lodash": "4.17.15",
     "maildev": "1.1.0",
     "nodemailer": "6.3.0",
@@ -58,5 +60,45 @@
     "eslint-config-prettier": "6.0.0",
     "eslint-plugin-prettier": "3.1.0",
     "prettier": "1.18.2"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "testURL": "http://localhost",
+    "bail": false,
+    "verbose": true,
+    "testMatch": [
+      "<rootDir>/test/**/*.test.js?(x)"
+    ],
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/test/setup/fileMock.js",
+      "\\.(css|less)$": "<rootDir>/test/setup/styleMock.js"
+    },
+    "collectCoverage": true,
+    "coverageDirectory": "<rootDir>/coverage",
+    "collectCoverageFrom": [
+      "src/core/**/*.js*",
+      "!src/core/helpers/AssetHelper.js",
+      "!src/core/helpers/TemplateHelper.js",
+      "!src/core/Database.js",
+      "!src/core/ActiveRecord.js",
+      "!src/core/ActiveRecordCache.js",
+      "!src/core/Mailer.js",
+      "!src/core/RouterV2.js",
+      "!src/core/RequestController.js",
+      "!src/core/decorators/render.js",
+      "src/test/**/*.js*"
+    ],
+    "coverageReporters": [
+      "html",
+      "text",
+      "text-summary"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80
+      }
+    }
   }
 }

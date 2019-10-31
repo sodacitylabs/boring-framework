@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const { spawn } = require("child_process");
+const { spawn, spawnSync } = require("child_process");
 
 const [, , ...args] = process.argv;
 const dir = process.cwd();
@@ -205,35 +204,12 @@ function startServer() {
 
 function runTests() {
   try {
-    const dir = process.cwd();
-    const testDirectory = `${dir}/test`;
-
-    let tests = [];
-
-    try {
-      tests = tests.concat(
-        fs
-          .readdirSync(`${testDirectory}/controllers`)
-          .map(f => `${testDirectory}/controllers/${f}`)
-      );
-    } catch (ex) {
-      console.warn(`No controller tests found. Skipping.`);
-    }
-
-    try {
-      tests = tests.concat(
-        fs
-          .readdirSync(`${testDirectory}/models`)
-          .map(f => `${testDirectory}/models/${f}`)
-      );
-    } catch (ex) {
-      console.warn(`No model tests found. Skipping.`);
-    }
-
     require("./server/start")(async function() {
-      await require("./test")(tests);
-
-      process.exit(0);
+      spawnSync(`npm test`, {
+        stdio: `inherit`,
+        shell: true,
+        cwd: dir
+      });
     });
   } catch (ex) {
     console.error(`Error running tests: ${ex.message}`);

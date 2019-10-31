@@ -41,25 +41,16 @@ module.exports = function(root, name) {
     "utf8"
   );
 
-  const testFile = `${root}/test/controllers/${name}ControllerTest.js`;
+  const testFile = `${root}/test/controllers/${name}Controller.test.js`;
 
   fs.writeFileSync(
     testFile,
     `
-    const Boring = require('@sodacitylabs/boring-framework');
-    const IntegrationTest = Boring.Test.IntegrationTest;
+    const Controller = require('../../app/controllers/${name}.js');
 
-    module.exports = class ${name}ControllerTest extends IntegrationTest {
-      constructor(attrs) {
-        super(attrs);
-      }
-      // async "returns true"() {
-      //   return true;
-      // }
-      // async "fails"() {
-      //   throw new Error("test failed");
-      // }
-    };
+    test('returns false', () => {
+      return false;
+    });
     `,
     "utf8"
   );
