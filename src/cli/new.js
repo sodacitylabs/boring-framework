@@ -8,7 +8,7 @@ const { spawnSync } = require("child_process");
 /**
  * Create a new project at the specified directory as the root
  */
-module.exports = function (name, root) {
+module.exports = function(name, root) {
   const nodeVersion = fs
     .readFileSync(path.resolve(__dirname, "../../.nvmrc"))
     .toString();
@@ -40,7 +40,8 @@ module.exports = function (name, root) {
         scripts: {
           lint: "./node_modules/.bin/eslint --color app config test",
           start: "./node_modules/.bin/boring server",
-          test: "./node_modules/.bin/boring test"
+          test:
+            "./node_modules/.bin/jest --forceExit --coverage --runInBand test"
         },
         engines: {
           node: boringPkg.engines.node
@@ -62,7 +63,34 @@ module.exports = function (name, root) {
           eslint: "6.1.0",
           "eslint-config-prettier": "6.0.0",
           "eslint-plugin-prettier": "3.1.0",
+          "eslint-plugin-jest": "22.3.0",
+          jest: "24.9.0",
           prettier: "1.18.2"
+        },
+        jest: {
+          testEnvironment: "jsdom",
+          testURL: "http://localhost",
+          bail: false,
+          verbose: true,
+          testMatch: ["<rootDir>/test/**/*.test.js"],
+          moduleNameMapper: {
+            "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
+              "<rootDir>/test/setup/fileMock.js",
+            "\\.(css|less)$": "<rootDir>/test/setup/styleMock.js"
+          },
+          moduleFileExtensions: ["js"],
+          moduleDirectories: ["node_modules"],
+          collectCoverage: true,
+          coverageDirectory: "<rootDir>/coverage",
+          collectCoverageFrom: ["app/{controllers,models}/**/*.js*"],
+          coverageReporters: ["html", "text", "text-summary"],
+          coverageThreshold: {
+            global: {
+              branches: 85,
+              functions: 85,
+              lines: 85
+            }
+          }
         }
       },
       null,
@@ -75,7 +103,7 @@ module.exports = function (name, root) {
   console.log(`${creatingPrefix} .gitignore`);
   fs.writeFileSync(
     `${projectDirectory}/.gitignore`,
-    `node_modules\npublic\n!public/robots.txt\nlog\ntmp/*\ndb/sqlite.db\n`,
+    `node_modules\npublic\n!public/robots.txt\nlog\ntmp/*\ndb/sqlite.db\ncoverage\n`,
     "utf8"
   );
 
@@ -104,7 +132,7 @@ module.exports = function (name, root) {
   console.log(`${creatingPrefix} robots.txt`);
   fs.writeFileSync(
     `${projectDirectory}/public/robots.txt`,
-    'User-agent: *\nAllow: /\n',
+    "User-agent: *\nAllow: /\n",
     "utf8"
   );
 
@@ -221,7 +249,6 @@ module.exports = function (name, root) {
     ),
     "utf8"
   );
-
   // eslint files to ignore
   console.log(`${creatingPrefix} .eslintignore`);
   fs.writeFileSync(
@@ -234,6 +261,54 @@ module.exports = function (name, root) {
   fs.writeFileSync(
     `${projectDirectory}/.prettierignore`,
     `node_modules\npackage.json\napp/assets\ntmp\npublic\nlogs\nsqlite.db`,
+    "utf8"
+  );
+
+  // eslint for tests
+  console.log(`${creatingPrefix}/test .eslintrc.json`);
+  fs.writeFileSync(
+    `${projectDirectory}/test/.eslintrc.json`,
+    JSON.stringify(
+      {
+        env: {
+          es6: true,
+          node: true,
+          "jest/globals": true
+        },
+        parserOptions: {
+          ecmaVersion: 2017
+        },
+        extends: [
+          "eslint:recommended",
+          "plugin:jest/recommended",
+          "plugin:jest/style"
+        ],
+        rules: {
+          "no-console": ["warn"],
+          "no-empty": [
+            "error",
+            {
+              allowEmptyCatch: true
+            }
+          ]
+        }
+      },
+      null,
+      2
+    ),
+    "utf8"
+  );
+
+  console.log(`${creatingPrefix} jest test setups`);
+  fs.mkdirSync(`${projectDirectory}/test/setup`);
+  fs.writeFileSync(
+    `${projectDirectory}/test/setup/styleMock.js`,
+    `module.exports = {};\n`,
+    "utf8"
+  );
+  fs.writeFileSync(
+    `${projectDirectory}/test/setup/fileMock.js`,
+    `module.exports = 'test-file-stub';\n`,
     "utf8"
   );
 
@@ -259,10 +334,10 @@ module.exports = function (name, root) {
   fs.writeFileSync(
     `${projectDirectory}/bin/boring.sh`,
     "#!/bin/bash\n" +
-    "array=( $@ )\n" +
-    "len=${#array[@]}\n" +
-    "_args=${array[@]:0:$len}\n\n" +
-    "./node_modules/.bin/boring $_args",
+      "array=( $@ )\n" +
+      "len=${#array[@]}\n" +
+      "_args=${array[@]:0:$len}\n\n" +
+      "./node_modules/.bin/boring $_args",
     "utf8"
   );
 

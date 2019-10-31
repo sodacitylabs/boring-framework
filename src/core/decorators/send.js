@@ -9,7 +9,7 @@ module.exports = function(code, data) {
       const content = typeof data === "object" ? JSON.stringify(data) : data;
       this.writeHead(code, {
         "Content-Length": Buffer.byteLength(content),
-        "Content-Type": "application/json"
+        "Content-Type": "application/json" // todo: what if this was a string?
       });
       this.write(content);
     } else {
