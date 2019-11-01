@@ -1,17 +1,7 @@
 "use strict";
 
 module.exports = {
-  actionNames: [
-    "create",
-    "destroy",
-    "edit",
-    "find",
-    "index",
-    "list",
-    "new",
-    "show",
-    "update"
-  ],
+  actionNames: ["create", "destroy", "edit", "index", "new", "show", "update"],
   seedDirectories: [
     "app",
     "app/assets",

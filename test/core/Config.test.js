@@ -9,13 +9,11 @@ test("contains a property for view-based actions", () => {
 });
 
 test("contains a property for all actions", () => {
-  expect(Config.actionNames).toHaveLength(9);
+  expect(Config.actionNames).toHaveLength(7);
   expect(Config.actionNames).toContain("create");
   expect(Config.actionNames).toContain("destroy");
   expect(Config.actionNames).toContain("edit");
-  expect(Config.actionNames).toContain("find");
   expect(Config.actionNames).toContain("index");
-  expect(Config.actionNames).toContain("list");
   expect(Config.actionNames).toContain("new");
   expect(Config.actionNames).toContain("show");
   expect(Config.actionNames).toContain("update");

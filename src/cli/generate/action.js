@@ -59,12 +59,12 @@ function buildClassContents(controller, action) {
     return `${match.substring(
       0,
       match.length - 1
-    )} static async ${action}(req, res) { try { res.send(204); } catch(ex) { res.send(500); } }\n };`;
+    )} static async ${action}(req, res) { try { res.code(204).send(); } catch(ex) { res.code(500).send(); } }\n };`;
   } else if (CoreConfig.viewActionNames.indexOf(action) !== -1) {
     return `${match.substring(
       0,
       match.length - 1
-    )} static async ${action}(req, res) { try { res.render(); } catch(ex) { res.send(500); } }\n };`;
+    )} static async ${action}(req, res) { try { res.render(); } catch(ex) { res.code(500).send(); } }\n };`;
   }
 
   return match;

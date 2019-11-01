@@ -4,6 +4,7 @@ const Config = require("./Config");
 const fs = require("fs");
 const RequestHelper = require("./helpers/RequestHelper");
 const ResponseHelper = require("./helpers/ResponseHelper");
+const NounHelper = require("./helpers/NounHelper");
 
 let projectConfig;
 let projectDirectory;
@@ -27,45 +28,47 @@ function Router(_projectConfig, _projectDirectory) {
 }
 
 /**
- * @description - route incoming http requests to a controller action
- *
- * @param {*} req - core Node.js request object
- * @param {*} res - core Node.js response object
- */
-Router.prototype.incoming = function (req, res) {
-  RequestHelper.decorate(req);
-
-  if (req.path === "/") {
-    return _routeToRoot(req, res);
-  }
-
-  if (req.path.startsWith("/assets")) {
-    return AssetHelper.serve(req, res);
-  } else if (req.path === "/favicon.ico") {
-    return _routingError(req, res, 200);
-  } else if (req.path === "/robots.txt") {
-    return AssetHelper.robots(req, res);
-  }
-
-  _routeToAction(req, res);
-};
-
-/**
  * @description - load route tree based on controllers, model associates, etc.
  */
-Router.prototype.load = function () {
+Router.prototype.load = function() {
   if (!fs.existsSync(`${projectDirectory}/app/controllers`)) {
     throw new Error(
       `Cannot locate app/controllers in directory ${projectDirectory}. Ensure Boring was started in the same filepath as your package.json and that app/controllers exists.`
     );
   }
 
+  const rootAction = _parseRootAction();
+
+  if (!rootAction) {
+    routes.push({
+      action: `default`,
+      method: "GET",
+      url: "/",
+      handler: (req, res) => {
+        const welcome = Config.templates.welcome();
+
+        return res
+          .code(200)
+          .header("Content-Length", Buffer.byteLength(welcome))
+          .header("Content-Type", "text/html")
+          .send(welcome);
+      }
+    });
+  } else {
+    routes.push({
+      action: `${rootAction.controller}#${rootAction.action}`,
+      method: "GET",
+      url: "/",
+      handler: (req, res) => {
+        _invokeAction(req, res, rootAction.controller, rootAction.action);
+      }
+    });
+  }
+
   const controllerFiles = fs.readdirSync(`${projectDirectory}/app/controllers`);
 
   for (let i = 0; i < controllerFiles.length; i++) {
-    const ControllerDefinition = require(`${projectDirectory}/app/controllers/${
-      controllerFiles[i]
-      }`);
+    const ControllerDefinition = require(`${projectDirectory}/app/controllers/${controllerFiles[i]}`);
     const controllerName = ControllerDefinition.name.split("Controller")[0];
     const actions = Object.getOwnPropertyNames(ControllerDefinition)
       .filter(p => Config.actionNames.indexOf(p) !== -1)
@@ -75,86 +78,71 @@ Router.prototype.load = function () {
       continue;
     }
 
-    routes[controllerName] = {
-      handlers: [],
-      ":id": {
-        handlers: []
-      }
-    };
-
     for (let j = 0; j < actions.length; j++) {
       const action = actions[j];
 
       switch (action) {
         case "create":
-          routes[controllerName].handlers.push({
-            verb: "POST",
-            accepts: "application/json",
-            fn: ControllerDefinition[action]
+          routes.push({
+            action,
+            method: "POST",
+            url: `/${NounHelper.toPluralResource(controllerName)}`,
+            handler: (req, res) =>
+              _invokeAction(req, res, controllerName, action)
           });
           break;
         case "destroy":
-          routes[controllerName][":id"].handlers.push({
-            verb: "DELETE",
-            accepts: "application/json",
-            fn: ControllerDefinition[action]
+          routes.push({
+            action,
+            method: "DELETE",
+            url: `/${NounHelper.toPluralResource(controllerName)}/:id`,
+            handler: (req, res) =>
+              _invokeAction(req, res, controllerName, action)
           });
           break;
         case "edit":
-          routes[controllerName][":id"]["edit"] = {
-            handlers: [
-              {
-                verb: "GET",
-                accepts: "application/html",
-                fn: ControllerDefinition[action]
-              }
-            ]
-          };
-          break;
-        case "find":
-          routes[controllerName][":id"].handlers.push({
-            verb: "GET",
-            accepts: "application/json",
-            fn: ControllerDefinition[action]
+          routes.push({
+            action,
+            method: "GET",
+            url: `/${NounHelper.toPluralResource(controllerName)}/:id/edit`,
+            handler: (req, res) =>
+              _invokeAction(req, res, controllerName, action)
           });
           break;
         case "index":
-          routes[controllerName].handlers.push({
-            verb: "GET",
-            accepts: "application/html",
-            fn: ControllerDefinition[action]
-          });
-          break;
-        case "list":
-          routes[controllerName].handlers.push({
-            verb: "GET",
-            accepts: "application/json",
-            fn: ControllerDefinition[action]
+          routes.push({
+            action,
+            method: "GET",
+            url: `/${NounHelper.toPluralResource(controllerName)}`,
+            handler: (req, res) =>
+              _invokeAction(req, res, controllerName, action)
           });
           break;
         case "new":
-          routes[controllerName]["new"] = {
-            handlers: [
-              {
-                verb: "GET",
-                accepts: "application/html",
-                fn: ControllerDefinition[action]
-              }
-            ]
-          };
+          routes.push({
+            action,
+            method: "GET",
+            url: `/${NounHelper.toPluralResource(controllerName)}/new`,
+            handler: (req, res) =>
+              _invokeAction(req, res, controllerName, action)
+          });
           break;
         case "show":
-          routes[controllerName][":id"].handlers.push({
-            verb: "GET",
-            accepts: "application/html",
-            fn: ControllerDefinition[action]
+          routes.push({
+            action,
+            method: "GET",
+            url: `/${NounHelper.toPluralResource(controllerName)}/:id`,
+            handler: (req, res) =>
+              _invokeAction(req, res, controllerName, action)
           });
           break;
         case "update":
-          routes[controllerName][":id"].handlers.push({
-            verb: "PUT",
-            accepts: "application/json",
-            fn: ControllerDefinition[action]
+          routes.push({
+            action,
+            method: "PUT",
+            url: `/${NounHelper.toPluralResource(controllerName)}/:id`,
+            handler: (req, res) =>
+              _invokeAction(req, res, controllerName, action)
           });
           break;
         default:
@@ -162,12 +150,14 @@ Router.prototype.load = function () {
       }
     }
   }
+
+  return routes;
 };
 
 /**
  * @description - return routing tree
  */
-Router.prototype.routes = function () {
+Router.prototype.routes = function() {
   return routes;
 };
 
@@ -176,7 +166,7 @@ Router.prototype.routes = function () {
  */
 function _parseRootAction() {
   // TODO: move to ConfigHelper?
-  const rootAction = _.get(projectConfig, "routes.root") || "";
+  const rootAction = _.get(projectConfig, "routes['/']") || "";
 
   if (!rootAction || !rootAction.length) {
     return null;
@@ -192,28 +182,6 @@ function _parseRootAction() {
     controller: split[0],
     action: split[1]
   };
-}
-
-/**
- * @description - route incoming http requests for "/" to welcome page or declared root action
- *
- * @param {*} req - core Node.js request object
- * @param {*} res - core Node.js response object
- */
-function _routeToRoot(req, res) {
-  const rootAction = _parseRootAction();
-
-  if (!rootAction) {
-    const welcome = Config.templates.welcome();
-
-    res.writeHead(200, {
-      "Content-Length": Buffer.byteLength(welcome),
-      "Content-Type": "text/html"
-    });
-    return res.end(welcome);
-  }
-
-  _invokeAction(req, res, rootAction.controller, rootAction.action);
 }
 
 /**
@@ -267,29 +235,6 @@ async function _invokeAction(req, res, controller, action) {
   } catch (ex) {
     console.error(`Error Invoking Action :: ${ex.message}`);
     _routingError(req, res, 404);
-  }
-}
-
-/**
- * @description - parse a request's url to determine the controller / action to route to
- *
- * @param {*} req - core Node.js request object
- * @param {*} res - core Node.js response object
- */
-function _routeToAction(req, res) {
-  try {
-    const { controller, action } = RequestHelper.getAction(req);
-
-    if (!routes[controller]) {
-      throw new Error(
-        `Controller ${controller} found in URL (${req.url}) does not exist`
-      );
-    }
-
-    return _invokeAction(req, res, controller, action);
-  } catch (ex) {
-    console.error(`Error Routing To Action :: ${ex.message}`);
-    return _routingError(req, res, 200);
   }
 }
 

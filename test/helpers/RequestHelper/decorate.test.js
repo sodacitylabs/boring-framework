@@ -54,18 +54,6 @@ test("finds index action for GET /articles", () => {
   expect(result.action).toBe("index");
 });
 
-test("finds list action for GET /articles", () => {
-  let req = {
-    isApiRequest: true,
-    method: "GET",
-    path: "/articles"
-  };
-  let result = RequestHelper.getAction(req);
-
-  expect(result.controller).toBe("Articles");
-  expect(result.action).toBe("list");
-});
-
 test("finds create action for POST /articles", () => {
   let req = {
     isApiRequest: true,
@@ -116,21 +104,6 @@ test("finds show action for GET /articles/:id", () => {
 
   expect(result.controller).toBe("Articles");
   expect(result.action).toBe("show");
-  expect(req.params.id).toBe("123");
-  expect(req.params.article_id).toBe("123");
-});
-
-test("finds find action for GET /articles/:id", () => {
-  let req = {
-    isApiRequest: true,
-    method: "GET",
-    path: "/articles/123",
-    params: {}
-  };
-  let result = RequestHelper.getAction(req);
-
-  expect(result.controller).toBe("Articles");
-  expect(result.action).toBe("find");
   expect(req.params.id).toBe("123");
   expect(req.params.article_id).toBe("123");
 });

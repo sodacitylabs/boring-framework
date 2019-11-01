@@ -1,7 +1,6 @@
 const _ = require("lodash");
 const RedirectDecorator = require("../decorators/redirect");
 const RenderDecorator = require("../decorators/render");
-const SendDecorator = require("../decorators/send");
 
 module.exports = class ResponseHelper {
   static decorate(res, ctx) {
@@ -14,7 +13,6 @@ module.exports = class ResponseHelper {
     }
 
     res.redirectTo = RedirectDecorator.bind(res);
-    res.send = SendDecorator.bind(res);
     res.render = function(data) {
       RenderDecorator.call(
         this,

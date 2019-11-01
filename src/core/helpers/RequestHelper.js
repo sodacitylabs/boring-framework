@@ -14,8 +14,6 @@ module.exports = class RequestHelper {
         req.method === "GET" &&
         urlArray.length === i + 1 &&
         req.isBrowserRequest;
-      const isListAction =
-        req.method === "GET" && urlArray.length === i + 1 && req.isApiRequest;
       const isCreateAction =
         req.method === "POST" && urlArray.length === i + 1 && req.isApiRequest;
       const isNewAction =
@@ -32,8 +30,6 @@ module.exports = class RequestHelper {
         req.method === "GET" &&
         urlArray.length === i + 2 &&
         req.isBrowserRequest;
-      const isFindAction =
-        req.method === "GET" && urlArray.length === i + 2 && req.isApiRequest;
       const isUpdateAction =
         req.method === "PUT" && urlArray.length === i + 2 && req.isApiRequest;
       const isDeleteAction =
@@ -45,11 +41,6 @@ module.exports = class RequestHelper {
         return {
           controller,
           action: "index"
-        };
-      } else if (isListAction) {
-        return {
-          controller,
-          action: "list"
         };
       }
 
@@ -88,18 +79,6 @@ module.exports = class RequestHelper {
         return {
           controller,
           action: "show"
-        };
-      }
-
-      if (isFindAction) {
-        req.params.id = urlArray[1];
-        req.params[
-          `${NounHelper.toSingularResource(controller)}_id`.toLowerCase()
-        ] = urlArray[i + 1];
-
-        return {
-          controller,
-          action: "find"
         };
       }
 

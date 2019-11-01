@@ -1,18 +1,21 @@
 "use strict";
 
-const http = require("http");
 const Router = require("../../core/RouterV2");
 const { spawnSync } = require("child_process");
+const fastify = require("fastify")({ logger: true });
+const path = require("path");
 
-module.exports = function(cb) {
+module.exports = async function(cb) {
   const dir = process.cwd();
   const config = require(`${dir}/config`);
   const port = config.server.port || 3000;
   const start = Date.now();
   const router = new Router(config, dir);
-  const instance = http.createServer(router.incoming);
+  const routes = router.load();
 
-  router.load();
+  routes.forEach(r => {
+    fastify.route(r);
+  });
 
   spawnSync(`cp -R app/assets/images/. public/assets/images`, {
     stdio: `inherit`,
@@ -20,8 +23,18 @@ module.exports = function(cb) {
     cwd: dir
   });
 
-  instance.listen({ port }, () => {
-    console.log(
+  fastify.register(require("fastify-static"), {
+    root: path.join(dir, "public")
+  });
+
+  fastify.listen({ port }, err => {
+    if (err) {
+      fastify.log.error(`server failed to start from ${err.message}`);
+
+      return process.exit(1);
+    }
+
+    fastify.log.info(
       `server listening on port ${port}. Startup took ${Date.now() - start}ms`
     );
 
