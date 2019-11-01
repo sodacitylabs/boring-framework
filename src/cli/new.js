@@ -54,6 +54,8 @@ module.exports = function(name, root) {
         dependencies: {
           "@sodacitylabs/boring-framework": boringPkg.version,
           ejs: "2.6.1",
+          fastify: "2.10.0",
+          "fastify-static": "2.5.0",
           knex: "0.19.1",
           lodash: "4.17.15",
           nodemon: "1.18.9",

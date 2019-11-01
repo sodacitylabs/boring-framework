@@ -12,7 +12,6 @@ test("decorates request based on incoming http information", () => {
   });
 
   expect(typeof res.redirectTo).toBe("function");
-  expect(typeof res.send).toBe("function");
   expect(typeof res.render).toBe("function");
 });
 

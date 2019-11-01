@@ -42,6 +42,8 @@
   "dependencies": {
     "ejs": "2.6.1",
     "eslint-plugin-jest": "22.3.0",
+    "fastify": "2.10.0",
+    "fastify-static": "2.5.0",
     "jest": "24.9.0",
     "lodash": "4.17.15",
     "maildev": "1.1.0",

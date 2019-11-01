@@ -46,35 +46,6 @@ test("correctly handles GET to /blog_posts/1/comments for browser requests", () 
   expect(action).toBe("index");
 });
 
-test("correctly handles GET to /blog_posts for api requests", () => {
-  let req = {
-    url: "http://www.test.com/blog_posts",
-    path: "/blog_posts",
-    method: "GET",
-    isApiRequest: true
-  };
-
-  const { controller, action } = RequestHelper.getAction(req);
-
-  expect(controller).toBe("BlogPosts");
-  expect(action).toBe("list");
-});
-
-test("correctly handles GET to /blog_posts/1/comments for api requests", () => {
-  let req = {
-    url: "http://www.test.com/blog_posts/1/comments",
-    path: "/blog_posts/1/comments",
-    method: "GET",
-    params: {},
-    isApiRequest: true
-  };
-
-  const { controller, action } = RequestHelper.getAction(req);
-
-  expect(controller).toBe("Comments");
-  expect(action).toBe("list");
-});
-
 test("correctly handles POST to /blog_posts for api requests", () => {
   let req = {
     url: "http://www.test.com/blog_posts",
@@ -191,36 +162,6 @@ test("correctly handles GET to /blog_posts/1/comments/1 for browser requests", (
 
   expect(controller).toBe("Comments");
   expect(action).toBe("show");
-});
-
-test("correctly handles GET to /blog_posts/1 for api requests", () => {
-  let req = {
-    url: "http://www.test.com/blog_posts/1",
-    path: "/blog_posts/1",
-    method: "GET",
-    params: {},
-    isApiRequest: true
-  };
-
-  const { controller, action } = RequestHelper.getAction(req);
-
-  expect(controller).toBe("BlogPosts");
-  expect(action).toBe("find");
-});
-
-test("correctly handles GET to /blog_posts/1/comments/1 for api requests", () => {
-  let req = {
-    url: "http://www.test.com/blog_posts/1/comments/1",
-    path: "/blog_posts/1/comments/1",
-    method: "GET",
-    params: {},
-    isApiRequest: true
-  };
-
-  const { controller, action } = RequestHelper.getAction(req);
-
-  expect(controller).toBe("Comments");
-  expect(action).toBe("find");
 });
 
 test("correctly handles PUT to /blog_posts/1 for api requests", () => {

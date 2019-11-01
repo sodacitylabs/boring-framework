@@ -23,14 +23,13 @@ module.exports = function(dir, controller, action, data) {
       views: [`${dir}/app/views`]
     });
 
-    this.writeHead(200, {
-      "Content-Length": Buffer.byteLength(rendered),
-      "Content-Type": "text/html"
-    });
-    this.end(rendered);
+    this.code(200)
+      .header("Content-Length", Buffer.byteLength(rendered))
+      .header("Content-Type", "text/html")
+      .send(rendered);
   } catch (ex) {
     console.error(`Error rendering template: ${ex.message}`);
-    this.writeHead(400);
-    this.end();
+
+    this.code(400).send();
   }
 };
