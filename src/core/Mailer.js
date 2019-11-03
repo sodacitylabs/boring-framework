@@ -26,9 +26,7 @@ module.exports = class Mailer {
           break;
         default:
           throw new Error(
-            `Mailer plugin type of ${
-              projectConfig.mailer.plugin
-            } is currently not supported`
+            `Mailer plugin type of ${projectConfig.mailer.plugin} is currently not supported`
           );
       }
     }
@@ -38,17 +36,7 @@ module.exports = class Mailer {
 
   static async deliverLater(path, data, args) {
     process.nextTick(async () => {
-      const template = fs.readFileSync(
-        `${dir}/app/views/mailers/${path}.html.ejs`,
-        "utf8"
-      );
-      const rendered = ejs.render(template, data, {
-        views: [`${dir}/app/views`]
-      });
-
-      await this.transport.sendMail(
-        Object.assign({}, args, { html: rendered })
-      );
+      await this.deliverNow(path, data, args);
     });
 
     return true;
