@@ -79,8 +79,6 @@
     "coverageDirectory": "<rootDir>/coverage",
     "collectCoverageFrom": [
       "src/core/**/*.js*",
-      "!src/core/helpers/AssetHelper.js",
-      "!src/core/helpers/TemplateHelper.js",
       "!src/core/Database.js",
       "!src/core/ActiveRecord.js",
       "!src/core/ActiveRecordCache.js",
