@@ -174,42 +174,42 @@ module.exports = function(name, root) {
     "use strict";
 
     const merge = require("lodash/merge");
-    const all = require("./all");
+    const all = require("./environments/all");
     const environment = process.env.NODE_ENV;
 
     let secretsConfig = {};
     let envConfig = {};
 
     try {
-      envConfig = require(\`./\${environment}\`);
-      secretsConfig = require(\`./\${environment}.secrets\`);
+      envConfig = require(\`./environments/\${environment}\`);
+      secretsConfig = require(\`./environments/\${environment}.secrets\`);
     } catch (e) {}
     module.exports = merge({}, all, envConfig, secretsConfig);
     `,
     "utf8"
   );
   fs.writeFileSync(
-    `${projectDirectory}/config/all.js`,
+    `${projectDirectory}/config/environments/all.js`,
     `module.exports = ${projectConfig};`,
     "utf8"
   );
   fs.writeFileSync(
-    `${projectDirectory}/config/development.secrets.js`,
+    `${projectDirectory}/config/environments/development.secrets.js`,
     `module.exports = {};`,
     "utf8"
   );
   fs.writeFileSync(
-    `${projectDirectory}/config/development.js`,
+    `${projectDirectory}/config/environments/development.js`,
     `module.exports = {};`,
     "utf8"
   );
   fs.writeFileSync(
-    `${projectDirectory}/config/test.js`,
+    `${projectDirectory}/config/environments/test.js`,
     `module.exports = {};`,
     "utf8"
   );
   fs.writeFileSync(
-    `${projectDirectory}/config/production.js`,
+    `${projectDirectory}/config/environments/production.js`,
     `module.exports = {};`,
     "utf8"
   );

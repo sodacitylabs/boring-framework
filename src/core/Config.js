@@ -12,6 +12,7 @@ module.exports = {
     "app/views/mailers",
     "bin",
     "config",
+    "config/environments",
     "db",
     "db/migrations",
     "public",
