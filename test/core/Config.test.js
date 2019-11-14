@@ -20,7 +20,7 @@ test("contains a property for all actions", () => {
 });
 
 test("contains a property for all seeded folders", () => {
-  expect(Config.seedDirectories).toHaveLength(19);
+  expect(Config.seedDirectories).toHaveLength(20);
   expect(Config.seedDirectories).toContain("app");
   expect(Config.seedDirectories).toContain("app/assets");
   expect(Config.seedDirectories).toContain("app/assets/images");
@@ -30,6 +30,7 @@ test("contains a property for all seeded folders", () => {
   expect(Config.seedDirectories).toContain("app/views/mailers");
   expect(Config.seedDirectories).toContain("bin");
   expect(Config.seedDirectories).toContain("config");
+  expect(Config.seedDirectories).toContain("config/environments");
   expect(Config.seedDirectories).toContain("db");
   expect(Config.seedDirectories).toContain("db/migrations");
   expect(Config.seedDirectories).toContain("public");
