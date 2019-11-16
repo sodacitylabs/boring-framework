@@ -1,12 +1,9 @@
-const _ = require("lodash");
-const AssetHelper = require("./helpers/AssetHelper");
 const Config = require("./Config");
 const fs = require("fs");
 const RequestHelper = require("./helpers/RequestHelper");
 const ResponseHelper = require("./helpers/ResponseHelper");
 const NounHelper = require("./helpers/NounHelper");
 
-let projectConfig;
 let projectDirectory;
 let routes = []; // private route tree
 
@@ -23,7 +20,6 @@ function Router(_projectConfig, _projectDirectory) {
     );
   }
 
-  projectConfig = _projectConfig;
   projectDirectory = _projectDirectory;
 }
 
@@ -35,34 +31,6 @@ Router.prototype.load = function() {
     throw new Error(
       `Cannot locate app/controllers in directory ${projectDirectory}. Ensure Boring was started in the same filepath as your package.json and that app/controllers exists.`
     );
-  }
-
-  const rootAction = _parseRootAction();
-
-  if (!rootAction) {
-    routes.push({
-      action: `default`,
-      method: "GET",
-      url: "/",
-      handler: (req, res) => {
-        const welcome = Config.templates.welcome();
-
-        return res
-          .code(200)
-          .header("Content-Length", Buffer.byteLength(welcome))
-          .header("Content-Type", "text/html")
-          .send(welcome);
-      }
-    });
-  } else {
-    routes.push({
-      action: `${rootAction.controller}#${rootAction.action}`,
-      method: "GET",
-      url: "/",
-      handler: (req, res) => {
-        _invokeAction(req, res, rootAction.controller, rootAction.action);
-      }
-    });
   }
 
   const controllerFiles = fs.readdirSync(`${projectDirectory}/app/controllers`);
@@ -151,6 +119,28 @@ Router.prototype.load = function() {
     }
   }
 
+  const routeRegisterFunction = require(`${projectDirectory}/config/routes.js`);
+
+  routeRegisterFunction(_get, _post, _put, _delete);
+
+  const rootAction = routes.filter(r => r.url === "/" && r.method === "GET")[0];
+
+  if (!rootAction) {
+    routes.push({
+      method: "GET",
+      url: "/",
+      handler: (req, res) => {
+        const welcome = Config.templates.welcome();
+
+        return res
+          .code(200)
+          .header("Content-Length", Buffer.byteLength(welcome))
+          .header("Content-Type", "text/html")
+          .send(welcome);
+      }
+    });
+  }
+
   return routes;
 };
 
@@ -160,29 +150,6 @@ Router.prototype.load = function() {
 Router.prototype.routes = function() {
   return routes;
 };
-
-/**
- * @description - reads config object for a root route config and parses that
- */
-function _parseRootAction() {
-  // TODO: move to ConfigHelper?
-  const rootAction = _.get(projectConfig, "routes['/']") || "";
-
-  if (!rootAction || !rootAction.length) {
-    return null;
-  }
-
-  const split = rootAction.split("#");
-
-  if (split.length !== 2) {
-    return null;
-  }
-
-  return {
-    controller: split[0],
-    action: split[1]
-  };
-}
 
 /**
  * @description - route incoming http requests for "/" to welcome page or declared root action
@@ -236,6 +203,37 @@ async function _invokeAction(req, res, controller, action) {
     console.error(`Error Invoking Action :: ${ex.message}`);
     _routingError(req, res, 404);
   }
+}
+
+function _registerRoute(method, route, controllerAndAction) {
+  const split = controllerAndAction.split("#");
+  const controllerName = split[0];
+  const action = split[1];
+
+  // TODO: check for an already existing route / method entry
+
+  routes.push({
+    action,
+    method,
+    url: route,
+    handler: (req, res) => _invokeAction(req, res, controllerName, action)
+  });
+}
+
+function _get(route, controllerAndAction) {
+  _registerRoute("GET", route, controllerAndAction);
+}
+
+function _post(route, controllerAndAction) {
+  _registerRoute("POST", route, controllerAndAction);
+}
+
+function _put(route, controllerAndAction) {
+  _registerRoute("PUT", route, controllerAndAction);
+}
+
+function _delete(route, controllerAndAction) {
+  _registerRoute("DELETE", route, controllerAndAction);
 }
 
 module.exports = Router;

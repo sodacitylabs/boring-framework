@@ -26,6 +26,9 @@ module.exports = function(name, root) {
     );
   }
 
+  // TODO: introduce artificial delays between steps with better messaging / colors
+  //       to describe whats happening and why
+
   // root project
   console.log(`${creatingPrefix} project root at ${projectDirectory}`);
   fs.mkdirSync(projectDirectory);
@@ -158,9 +161,6 @@ module.exports = function(name, root) {
           ignoreTLS: true
         }
       },
-      routes: {
-        root: "" // special route in the form controller#action
-      },
       server: {
         port: 3000
       }
@@ -211,6 +211,20 @@ module.exports = function(name, root) {
   fs.writeFileSync(
     `${projectDirectory}/config/environments/production.js`,
     `module.exports = {};`,
+    "utf8"
+  );
+
+  // base routes.js file
+  console.log(`${creatingPrefix} base routes for project`);
+  fs.writeFileSync(
+    `${projectDirectory}/config/routes.js`,
+    `
+    "use strict";
+
+    module.exports = function(get, post, put, del) { // eslint-disable-line no-unused-vars
+      // Using these functions, register routes i.e. get("/", "ControllerName#action")
+    };
+    `,
     "utf8"
   );
 
