@@ -35,9 +35,10 @@
   ],
   "scripts": {
     "lint": "./node_modules/.bin/eslint --color src",
+    "prepublish": "npm test",
     "publish": "",
     "postpublish": "PACKAGE_VERSION=$(cat package.json | grep \\\"version\\\" | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && git tag v$PACKAGE_VERSION && git push upstream --tags",
-    "test": "node_modules/.bin/jest --forceExit --coverage --runInBand test"
+    "test": "npm run lint && node_modules/.bin/jest --forceExit --coverage --runInBand test"
   },
   "dependencies": {
     "ejs": "2.6.1",

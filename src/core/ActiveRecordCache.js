@@ -1,6 +1,8 @@
 const cwd = process.cwd();
 const db = require("./Database");
 
+let columnsSemaphore = false;
+
 function ActiveRecordCache() {
   let ModelCache = {};
   let ColumnsCache = {};
@@ -17,13 +19,17 @@ function ActiveRecordCache() {
     },
     Columns: {
       find: async table => {
-        if (!ColumnsCache[table]) {
+        if (!ColumnsCache[table] && !columnsSemaphore) {
+          columnsSemaphore = true;
+
           const columns = await db
             .connection()
             .table(table)
             .columnInfo();
 
-          ColumnsCache[table] = columns;
+          if (!ColumnsCache[table]) {
+            ColumnsCache[table] = columns; // eslint-disable-line require-atomic-updates
+          }
         }
 
         return ColumnsCache[table];
