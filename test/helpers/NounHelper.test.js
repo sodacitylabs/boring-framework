@@ -23,3 +23,7 @@ test("converts BlogPost to blog_posts", () => {
 test("converts BlogPosts to blog_posts", () => {
   expect(NounHelper.toPluralResource("BlogPost")).toBe("blog_posts");
 });
+
+test("converts BlogPost to blogPost", () => {
+  expect(NounHelper.getCamelCaseSingularForm("BlogPost")).toBe("blogPost");
+});

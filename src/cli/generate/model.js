@@ -62,16 +62,15 @@ module.exports = async function(dir, name, attrs) {
 
   let belongsTo = [];
 
+  const tableName = NounHelper.toPluralResource(name);
+  const modelName = NounHelper.getSingularForm(name);
+
   fs.writeFileSync(
     migrationFile,
     `
     exports.up = async function(knex) {
-      await knex.schema.dropTableIfExists('${NounHelper.toPluralResource(
-        name
-      )}');
-      await knex.schema.createTable('${NounHelper.toPluralResource(
-        name
-      )}', (table) => {
+      await knex.schema.dropTableIfExists('${tableName}');
+      await knex.schema.createTable('${tableName}', (table) => {
         table.bigIncrements('id').primary();
         ${attrs.reduce((acc, curr) => {
           if (curr.type !== "references") {
@@ -79,10 +78,12 @@ module.exports = async function(dir, name, attrs) {
           }
 
           if (curr.type === "references") {
-            belongsTo.push(`${NounHelper.toPluralResource(curr.name)}`);
+            belongsTo.push(`${curr.name}`);
+
             acc += `table.bigInteger('${NounHelper.toSingularResource(
               curr.name
             )}_id').notNullable();\n`;
+
             acc += `table.foreign("${NounHelper.toSingularResource(
               curr.name
             )}_id").references("id").inTable("${NounHelper.toPluralResource(
@@ -105,25 +106,20 @@ module.exports = async function(dir, name, attrs) {
     "utf8"
   );
 
+  const belongsToRelations =
+    belongsTo.length && _buildBelongsToRelation(modelName, belongsTo);
+
   fs.writeFileSync(
     modelFile,
     `
     const Boring = require('@sodacitylabs/boring-framework');
     const ActiveRecord = Boring.Model.ActiveRecord;
+    ${(belongsTo.length &&
+      belongsTo.reduce((acc, curr) => `const ${curr} = require('./${curr}')`),
+    "")}
 
-    module.exports = class ${NounHelper.getSingularForm(
-      name
-    )} extends ActiveRecord {
-      constructor(attrs) {
-        super(attrs);
-      }
-      ${
-        belongsTo.length
-          ? `get belongsTo() {
-        return ${JSON.stringify(belongsTo)};
-      }`
-          : "get belongsTo() { return []; }"
-      }
+    module.exports = class ${modelName} extends ActiveRecord {
+      ${belongsTo.length && belongsToRelations}
     };
     `,
     "utf8"
@@ -143,6 +139,8 @@ module.exports = async function(dir, name, attrs) {
     "utf8"
   );
 
+  // TODO: write the inverse relation mapping to the parent?
+
   spawnSync(`${dir}/node_modules/.bin/prettier "${migrationFile}" --write`, {
     stdio: `inherit`,
     shell: true,
@@ -159,3 +157,38 @@ module.exports = async function(dir, name, attrs) {
     cwd: dir
   });
 };
+
+/**
+ *
+ * @param {*} sourceModel the source model ie. "Comment"
+ * @param {*} relatedModels array of related models ie. ["BlogPost"]
+ */
+function _buildBelongsToRelation(sourceModel, relatedModels) {
+  const relationsAsString = relatedModels.reduce((acc, curr) => {
+    const camelizedRelatedModelName = NounHelper.getCamelCaseSingularForm(curr);
+    const sourceTableName = NounHelper.toPluralResource(sourceModel);
+    const relatedIdColumnName = `${NounHelper.toSingularResource(curr)}_id`;
+    const relatedTableName = NounHelper.toPluralResource(curr);
+
+    acc += `
+      ${camelizedRelatedModelName}: {
+        relation: ActiveRecord.BelongsToOneRelation,
+        modelClass: ${curr},
+        join: {
+          from: '${sourceTableName}.${relatedIdColumnName}',
+          to: '${relatedTableName}.id'
+        }
+      }
+    `;
+
+    return acc;
+  }, "");
+
+  return `
+    static get relationMappings() {
+      return {
+        ${relationsAsString}
+      };
+    };
+  `;
+}
