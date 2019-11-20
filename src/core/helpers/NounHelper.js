@@ -1,4 +1,5 @@
 const pluralize = require("pluralize");
+const _ = require("lodash");
 
 module.exports = class NounHelper {
   /**
@@ -21,6 +22,15 @@ module.exports = class NounHelper {
    */
   static getPluralForm(val) {
     return pluralize.plural(val);
+  }
+
+  /**
+   * @description given a noun, convert to its' singular form in camelCase
+   * @example BlogPost returns blogPost
+   * @param {*} val the noun
+   */
+  static getCamelCaseSingularForm(val) {
+    return _.camelCase(pluralize.singular(val));
   }
 
   /**
