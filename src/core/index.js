@@ -7,5 +7,6 @@ module.exports = {
   Mailer: require("./Mailer"),
   Model: {
     ActiveRecord: require("./ActiveRecord")
-  }
+  },
+  Router: require("./RouterV2")
 };
