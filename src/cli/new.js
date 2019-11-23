@@ -43,8 +43,7 @@ module.exports = function(name, root) {
         scripts: {
           lint: "./node_modules/.bin/eslint --color app config test",
           start: "./node_modules/.bin/boring server",
-          test:
-            "./node_modules/.bin/jest --forceExit --coverage --runInBand test"
+          test: "./node_modules/.bin/boring test"
         },
         engines: {
           node: boringPkg.engines.node
@@ -95,7 +94,8 @@ module.exports = function(name, root) {
               functions: 85,
               lines: 85
             }
-          }
+          },
+          setupFiles: ["<rootDir>/test/setup/fastify.js"]
         }
       },
       null,
@@ -325,6 +325,27 @@ module.exports = function(name, root) {
   fs.writeFileSync(
     `${projectDirectory}/test/setup/fileMock.js`,
     `module.exports = 'test-file-stub';\n`,
+    "utf8"
+  );
+  fs.writeFileSync(
+    `${projectDirectory}/test/setup/fastify.js`,
+    `
+    const Boring = require('@sodacitylabs/boring-framework');
+    const Router = Boring.Router;
+    const path = require('path');
+    const Fastify = require('fastify');
+
+    const rootDirectory = path.resolve(__dirname + '/../../');
+    const router = new Router(require(rootDirectory + '/config'), rootDirectory);
+    const routes = router.load();
+    const fastify = new Fastify({ logger: false });
+
+    routes.forEach(r => {
+      fastify.route(r);
+    });
+
+    global.fastify = fastify;
+    `,
     "utf8"
   );
 

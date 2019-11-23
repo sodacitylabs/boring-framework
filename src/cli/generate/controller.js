@@ -48,7 +48,7 @@ module.exports = function(root, name) {
     `
     const Controller = require('../../app/controllers/${name}.js');
 
-    test('returns false', () => {
+    test('returns false', async () => {
       return false;
     });
     `,

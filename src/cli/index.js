@@ -204,13 +204,14 @@ function startServer() {
 
 function runTests() {
   try {
-    require("./server/start")(async function() {
-      spawnSync(`npm test`, {
+    spawnSync(
+      `./node_modules/.bin/jest --forceExit --coverage --runInBand test`,
+      {
         stdio: `inherit`,
         shell: true,
         cwd: dir
-      });
-    });
+      }
+    );
   } catch (ex) {
     console.error(`Error running tests: ${ex.message}`);
     process.exit(1);

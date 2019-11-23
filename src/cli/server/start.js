@@ -17,14 +17,19 @@ module.exports = async function(cb) {
     fastify.route(r);
   });
 
+  if (cb) {
+    cb(fastify);
+    return;
+  }
+
+  fastify.register(require("fastify-static"), {
+    root: path.join(dir, "public")
+  });
+
   spawnSync(`cp -R app/assets/images/. public/assets/images`, {
     stdio: `inherit`,
     shell: true,
     cwd: dir
-  });
-
-  fastify.register(require("fastify-static"), {
-    root: path.join(dir, "public")
   });
 
   fastify.listen({ port }, err => {
@@ -37,9 +42,5 @@ module.exports = async function(cb) {
     fastify.log.info(
       `server listening on port ${port}. Startup took ${Date.now() - start}ms`
     );
-
-    if (cb) {
-      cb();
-    }
   });
 };
