@@ -5,7 +5,7 @@ const { spawnSync } = require("child_process");
 const fastify = require("fastify")({ logger: true });
 const path = require("path");
 
-module.exports = async function(cb) {
+module.exports = async function() {
   const dir = process.cwd();
   const config = require(`${dir}/config`);
   const port = config.server.port || 3000;
@@ -16,11 +16,6 @@ module.exports = async function(cb) {
   routes.forEach(r => {
     fastify.route(r);
   });
-
-  if (cb) {
-    cb(fastify);
-    return;
-  }
 
   fastify.register(require("fastify-static"), {
     root: path.join(dir, "public")
