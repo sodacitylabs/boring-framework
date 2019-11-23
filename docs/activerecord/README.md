@@ -3,6 +3,7 @@ ActiveRecord is the M in MVC - the model - which is the layer for representing b
 
 One key point of ActiveRecord is that your objects will have both the shape of your data, as well as logic for manipulating that data. Using ActiveRecord effectively will keep your data and logic isolated to a Model, as well as writing less database access code. Using ActiveRecord conventions will significantly lessen the overhead of maintaining and interacting with your database.
 
+In Boring, ActiveRecord Models are simply a light wrapper around [Objection.js](https://vincit.github.io/objection.js/api/model/). Anything you can do with Objection, you can do inside of ActiveRecord. The functions provided by ActiveRecord are more for convenience than anything else.
 
 ## Core Features
 ActiveRecords have a limited set of functions that you'll commonly use to interact with your database.
@@ -14,8 +15,6 @@ ActiveRecords have a limited set of functions that you'll commonly use to intera
 | `destroy` | delete a row from your database based on the model's `id` |
 | `find` | find a row from your database based on the given `id` value |
 | `findBy` | find multiple rows from your database based on provided key/value pairs |
-| `new` | create an ActiveRecord object without saving to the database |
-| `save` | insert or update a row in the database based on the model values |
 | `update` | update a row in the database based on the model values |
 
 
@@ -36,20 +35,16 @@ ActiveRecord has conventions for building database tables as well. For table nam
 | id | id |
 |  | blog_post_id |
 
-By default, `id` columns are `uuid` types. This helps to avoid out of space issues with standard auto-incrementing numbers as well as contention amongst resources. Additonal columns for record keeping will be used for when records were created and last updated.
+By default, `id` columns are `bigInt` types. This helps to avoid out of space issues with standard auto-incrementing numbers as well as contention amongst resources. Additonal columns for record keeping will be used for when records were created and last updated.
 
 ## Creating Models
 Creating ActiveRecord Models is quick and easy. Suppose you already have a table, Authors, that was not created via Boring. You can create a new model like so:
 
-```
-const db = require('../../db');
-const Boring = require('@sodacitylabs/boring-framework');
+```javascript
+const Boring = require("@sodacitylabs/boring-framework");
 const ActiveRecord = Boring.Model.ActiveRecord;
 
-module.exports = class Author extends ActiveRecord {
-  constructor(attrs) {
-    super(attrs);
-  }
+module.exports = class Authors extends ActiveRecord {
 };
 ```
 
@@ -66,25 +61,79 @@ static get tableName() {
 ## Migrations
 ActiveRecord Migrations are managed via [Knex](https://knexjs.org/). An example of a migration file might look like:
 
-```
+```javascript
 exports.up = async function(knex) {
-  await knex.schema.dropTableIfExists('blog_posts');
-  await knex.schema.createTable('blog_posts', (table) => {
-    table.uuid('id').primary();
-    table.string('title');
-    table.text('text');
+  await knex.schema.dropTableIfExists("blog_posts");
+  await knex.schema.createTable("blog_posts", table => {
+    table.bigIncrements("id").primary();
+    table.string("title");
+    table.text("text");
 
     table.timestamps(true, true);
   });
 };
 
 exports.down = async function(knex) {
-  await knex.schema.dropTableIfExists('blog_posts');
+  await knex.schema.dropTableIfExists("blog_posts");
 };
 ```
 
 ## Validations
-Currently, it isnt possible to add validations. This is currently a potential candidate as part of the V1 Release.
+Validations can be done by implementing the `jsonSchema` property provided by [Objection.js](https://vincit.github.io/objection.js/api/model/). Per the documentation:
 
-## Callbacks
-Currently, it isnt possible to add callbacks. This is not currently planned as part of any release.
+```javascript
+  // Optional JSON schema. This is not the database schema!
+  // No tables or columns are generated based on this. This is only
+  // used for input validation. Whenever a model instance is created
+  // either explicitly or implicitly it is checked against this schema.
+  // See http://json-schema.org/ for more info.
+  static get jsonSchema () {
+    return {
+      type: 'object',
+      required: ['firstName', 'lastName'],
+
+      properties: {
+        id: {
+          type: 'integer'
+        },
+        parentId: {
+          type: ['integer', 'null']
+        },
+        firstName: {
+          type: 'string',
+          minLength: 1,
+          maxLength: 255
+        },
+        lastName: {
+          type: 'string',
+          minLength: 1,
+          maxLength: 255
+        },
+        age: {
+          type: 'number'
+        },
+
+        // Properties defined as objects or arrays are
+        // automatically converted to JSON strings when
+        // writing to database and back to objects and arrays
+        // when reading from database. To override this
+        // behaviour, you can override the
+        // Model.jsonAttributes property.
+        address: {
+          type: 'object',
+          properties: {
+            street: {
+              type: 'string'
+            },
+            city: {
+              type: 'string'
+            },
+            zipCode: {
+              type: 'string'
+            }
+          }
+        }
+      }
+    };
+  }
+```

@@ -115,7 +115,9 @@ module.exports = async function(dir, name, attrs) {
     const Boring = require('@sodacitylabs/boring-framework');
     const ActiveRecord = Boring.Model.ActiveRecord;
     ${(belongsTo.length &&
-      belongsTo.reduce((acc, curr) => `const ${curr} = require('./${curr}')`),
+      belongsTo.reduce(
+        (acc, curr) => (acc += `const ${curr} = require('./${curr}')\n`)
+      ),
     "")}
 
     module.exports = class ${modelName} extends ActiveRecord {

@@ -29,19 +29,17 @@ When dealing with Views for rendering UIs the same naming conventions are:
 | `GET` | `/messages/:id/edit` | `edit` | a UI with a form to update a message |
 
 Those functions are then implemented in your Controllers like so:
-```
-const Boring = require('@sodacitylabs/boring-framework');
+```javascript
+const Boring = require("@sodacitylabs/boring-framework");
 const RequestController = Boring.Controller.RequestController;
-const Article = require('../models/Article');
-const uuid = require('uuid');
 
-module.exports = class ArticlesController extends RequestController {
-  static async create(req, res) {
-    const post = new Article({id: uuid.v4(), title: req.body.title, text: req.body.text});
-
-    await post.save();
-
-    res.redirectTo(`/articles/${post.id}`);
+module.exports = class HelloController extends RequestController {
+  static async index(req, res) {
+    try {
+      res.render();
+    } catch (ex) {
+      res.code(500).send();
+    }
   }
 };
 ```
@@ -49,7 +47,7 @@ module.exports = class ArticlesController extends RequestController {
 ## URL Handling
 When an incoming HTTP Request is seen, Boring will attempt to parse the URL enough to determine which Controller / Action to send the Request and Response to. URLs are pattern-matched as shown above so getting a specific Customer at `/customers/123456` would map to `/customers/:id`. The Request object in your controller would then have a `params` property on it that looks like:
 
-```
+```javascript
 req: {
   params: {
     id: 1234567
@@ -60,7 +58,7 @@ req: {
 
 For POST and PUT based HTTP requests, Boring will also attach a `body` property to the Request that might look something like:
 
-```
+```javascript
 req: {
   body: {
     name: {
@@ -74,7 +72,7 @@ req: {
 
 You can also parse the URL yourself in your code, should you need to, to get query string, hash, etc. information like so:
 
-```
+```javascript
 const url = require('url'); // require in the Node.js module
 
 const parsedURL = url.parse(req.url); // parse the URL in your Controller code
