@@ -46,8 +46,6 @@ module.exports = function(root, name) {
   fs.writeFileSync(
     testFile,
     `
-    const Controller = require('../../app/controllers/${name}.js');
-
     test('returns false', async () => {
       return false;
     });

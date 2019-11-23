@@ -1,5 +1,5 @@
 # The Boring Framework
-Welcome to The Boring Framework, a [Rails](https://rubyonrails.org/)-inspired MVC framework for [Node.js](https://nodejs.org). Boring helps you do just that, create your turn wiring-up code into boring tasks (and maintain them) without having to put all the pieces together yourself; just focus on solving _your_ problems.
+Welcome to The Boring Framework, a [Rails](https://rubyonrails.org/)-inspired MVC framework for [Node.js](https://nodejs.org). Boring helps you do just that, it turns wiring-up code into boring tasks (and maintain them) without having to put all the pieces together yourself; just focus on solving _your_ problems.
 
 ## Getting Started
 It's easy to get started with The Boring Framework. Check out the guide [here](https://github.com/sodacitylabs/boring-framework/docs/tutorials/getting-started.md) to create your website, server and database (or hook up your own).

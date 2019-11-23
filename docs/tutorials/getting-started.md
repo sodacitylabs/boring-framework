@@ -1,5 +1,5 @@
 # Getting Started with The Boring Framework
-This guide covers getting a simple application up and running with Boring. That application will have a webserver, Controllers to handle incoming http requests to that server, a database with migrations and Models to interact with that database.
+This guide covers getting a simple application up and running with Boring. That application will have a webserver to listen for incoming http requests, Controllers to handle those http requests, a database with migrations and Models to interact with that database.
 
 This guide tries it's best to assume you have no prior experience with Boring and to some degree MVC and REST. It does assume you have familiarity with HTML, CSS, Javascript and specifically Node.js. If you don't then you'll find it to be hard to learn.
 
@@ -17,19 +17,19 @@ This guide will assume you are using NVM. Again, it isn't required but it will h
 
 ### Installing The Boring Framework
 To install Boring, use `npm` to install it globally:
-```
+```bash
 $ npm install -g @sodacitylabs/boring-framework
 ```
 
 ### Creating your project directory
 Like other popular frameworks such as [Ruby on Rails](https://rubyonrails.org/), Boring has a Command Line Interface (CLI) that you will use to do most of the tasks you'd normally have to do manually. One of these commands that we'll use now is the `new` command which creates a new Project. In your terminal you can run:
-```
+```bash
 $ boring new blog
 ```
-This created your new `Blog` project in a folder named `blog`. It also installed your `node_modules` for you.
+This created your new project in a folder named `blog`. It also installed your `node_modules` for you.
 
 You can now start building your blog by navigating into that folder:
-```
+```bash
 $ cd blog
 ```
 From there you can see the different folders and files that were created for you:
@@ -39,6 +39,7 @@ From there you can see the different folders and files that were created for you
 | app/ | The main code for your application. You'll focus on this folder for the remainder of this guide. |
 | bin/ | Scripts that you use to setup, update, deploy or run your application. |
 | config/ | Configuration for your application's routes, database etc. |
+| config/ | Code coverage html and stats from Jest |
 | db/ | Your database connection, migrations, etc. |
 | node_modules/ | Your installed npm dependencies |
 | public/ | Your static assets i.e. images, fonts, pre-compiled css and js |
@@ -58,7 +59,7 @@ To start building our web application we'll implement "Hello, World" with Boring
 
 ### Starting the web server
 Technically, you already have a web app to run. To see it, run:
-```
+```bash
 $ ./bin/boring.sh server
 ```
 
@@ -70,20 +71,20 @@ To stop the web server, hit Ctrl+C in the terminal window where it's running. To
 To see anything other than the welcome aboard page we need to create both a _Controller_ and a _View_.
 
 A Controller's purpose is to take incoming HTTP requests and return HTML, JSON, etc. How that is done is called an _Action_. Actions are just functions. _Routing_ decides which Action should handle a particular HTTP request. To create a new Controller you need to "generate" it via the `generate` command. Let's generate our "Hello" controller with an Action called "index":
-```
+```bash
 $ ./bin/boring.sh generate controller Hello index
 ```
 You'll see that several folders and files are created for you. Open the `app/views/hello/index.html.ejs` file and delete all the code and replace it with:
-```
+```html
 <h1>Hello, World!</h1>
 ```
 
 ### Setting a default Page
 To tell Boring that you want your "Hello, World" page to be your default HTML page, open `config/routes.js` and set the default Controller and Action to send requests to:
-```
+```javascript
 get("/","Hello#index");
 ```
-This tells Boring that any requests to the "/" URL of your server should send that request to the hello Controller's index Action. Start the web server again and go to [http://localhost:3000](http://localhost:3000). You should see your "Hello, World" page.
+This tells Boring that any requests to the "/" URL of your server should send that request to the Hello Controller's index Action. Start the web server again and go to [http://localhost:3000](http://localhost:3000). You should see your "Hello, World" page.
 
 ## Building our Blog
 You've seen the basics of creating Controllers, Actions and Views. Now let's put them to good use and build our Blog application.
@@ -91,7 +92,7 @@ You've seen the basics of creating Controllers, Actions and Views. Now let's put
 Most web applications are going to center around _Resources_ and the CRUD operations for them. Resources are just a collection of similar things such as messages, objects or animals. They can be Created, Read, Updated and Destroyed.
 
 To see what routes we've defined in our application, we can use the `routes` command:
-```
+```bash
 $ ./bin/boring.sh routes
 ```
 this will print all our defined routes by finding every action defined in the app:
@@ -110,17 +111,17 @@ Routing Error
 No route matches [GET] "/blog_posts/new"
 ```
 This error page shows because we need both an BlogPosts Controller as well as a `new` action defined for it. To create a page for creating new BlogPosts we can use the command line:
-```
+```bash
 $ ./bin/boring.sh generate controller BlogPosts new
 ```
 You can now open `app/views/blog_posts/new.html.ejs` and replace all the html code with:
-```
+```html
 <h1>New BlogPost</h1>
 ```
 Refresh the page and you should see your title!
 
 To create BlogPosts we'll need a form in our HTML. Add this code below your title:
-```
+```html
 <form id="createPostForm" action="/blog_posts" method="POST">
   <label for="title">Title</label>
   <input type="text" name="title">
@@ -156,37 +157,42 @@ To create BlogPosts we'll need a form in our HTML. Add this code below your titl
   }());
 </script>
 ```
-If you submit the form, you'll see another routing error because we haven't created an Action to handle
-BlogPost creation. Let's do that now.
+If you submit the form, you'll see another routing error because we haven't created an Action to handle BlogPost creation. Let's do that now.
 
 ### Saving new BlogPosts
 To be able to create our BlogPosts, we need a `create` Action for our BlogPosts Controller. Let's do that now:
-```
+```bash
 $ ./bin/boring.sh generate action create BlogPosts
 ```
 If you resubmit the form, you'll notice that nothing happens. That's because Boring sends back an HTTP response of `204 No Content` by default for unimplemented JSON endpoints. Our create endpoint will save BlogPosts into our database.
 
 To save our BlogPosts we need to create a _Model_. Models use singular names but are stored in our database in tables with pluralized names. To create our BlogPosts Model we run:
-```
+```bash
 $ ./bin/boring.sh generate model BlogPost title:string text:text
 ```
 You just created a new Model with 2 attributes: title and text. Those attributes are automatically mapped to the `blog_posts` table created by the database _Migration_. Migrations make it easy to create and modify tables as well as other tasks for managing your database. Migration files always start with a timestamp to ensure that they're run in chronological order. To run your migrations we can use the CLI again:
-```
+```bash
 $ ./bin/boring.sh migrate up
 ```
 
 Next we'll update our `create` Action to save our form's data into the database. Update the `create` endpoint to create an instance of your BlogPost model and then save it to the database. Then redirect to that BlogPosts' details page:
-```
-const Boring = require('@sodacitylabs/boring-framework');
-const RequestController = Boring.Controller.RequestController;
+```javascript
+// ... other code
 const BlogPost = require('../models/BlogPost');
 
 module.exports = class BlogPostsController extends RequestController {
   // .... other code
   static async create(req, res) {
-    const post = await BlogPost.create({ title: req.body.title, text: req.body.text });
+    try {
+      const post = await BlogPost.create({
+        title: req.body.title,
+        text: req.body.text
+      });
 
-    res.code(201).send(`/blog_posts/${post.id}`);
+      res.code(201).send(`/blog_posts/${post.id}`);
+    } catch (ex) {
+      res.code(500).send();
+    }
   }
   // .... other code
 };
@@ -194,22 +200,26 @@ module.exports = class BlogPostsController extends RequestController {
 If you reload your webpage and web server then you'll be able to submit the form and once again you'll see a Routing Error. That's because we haven't defined our `show` action for viewing the details for a specific BlogPost. Thus, the redirect to the route `/blog_post/:id` fails.
 
 ### Showing a BlogPosts' details
-To see the details of an BlogPost we need `GET /blog_posts/:id` route that will use our BlogPosts Controller's `show` action to render a UI. The special `:id` gets filled in by Boring for incoming HTTP requests and should be the `id` for a particular BlogPost. Let's add the show action now:
-```
+To see the details of a BlogPost we need a `GET /blog_posts/:id` route that will use our BlogPosts Controller's `show` action to render a UI. The special `:id` gets filled in by Boring for incoming HTTP requests and should be the `id` for a particular BlogPost. Let's add the show action now:
+```bash
 $ ./bin/boring.sh generate action show BlogPosts
 ```
 You'll notice that we created a `show` action function in our BlogPosts controller. Replace it's contents with this:
-```
+```javascript
 static async show(req, res) {
-  const post = await BlogPost.find(req.params.id);
+  try {
+    const post = await BlogPost.find(req.params.id);
 
-  res.render({
-    post
-  });
+    res.render({
+      post
+    });
+  } catch (ex) {
+    res.code(500).send();
+  }
 }
 ```
 `Find` is a function of ActiveRecord Models that looks for a specific `id` in your database. Passing the `post` variable to the render function makes sure that we can reference it in our Embedded Javascript (EJS) templates. Now replace the contents of the `show` view with:
-```
+```html
 <p>
   <strong>Title:</strong>
   <%- post.title %>
@@ -224,21 +234,25 @@ With this you can create new blog posts and view their details!
 
 ### Listing All BlogPosts
 We need a way to view all the BlogPosts in our Blog. To do that we use the `index` action to render a list. Let's create our `index` action:
-```
+```bash
 $ ./bin/boring.sh generate action index BlogPosts
 ```
 If you replace the `index` action function with:
-```
+```javascript
 static async index(req, res) {
-  const posts = await BlogPost.all();
+  try {
+    const posts = await BlogPost.all();
 
-  res.render({
-    posts
-  });
+    res.render({
+      posts
+    });
+  } catch (ex) {
+    res.code(500).send();
+  }
 }
 ```
 and replace your `index` view with:
-```
+```html
 <table>
   <tr>
     <th>Title</th>
@@ -259,12 +273,12 @@ Now if you go to [http://localhost:3000/blog_posts](http://localhost:3000/blog_p
 
 ### Linking our Views
 Let's take a moment to link all of the pages we've built so far to each other. For our Hello, World page lets add a link to all the posts:
-```
+```html
 <h1>Hello, World!</h1>
 <a href="http://localhost:3000/blog_posts">My Blog</a>
 ```
-then on our `/blog_posts` list add a link to creating a new post above our `table`:
-```
+then on our `/blog_posts` index view, add a link to creating a new post above our `table`:
+```html
 <a href="http://localhost:3000/blog_posts/new">New Blog Post</a>
 ```
 Now all of our separate Views are linked together!
@@ -272,21 +286,25 @@ Now all of our separate Views are linked together!
 ### Updating BlogPosts
 To update an existing post, we need to `edit` it. The `edit` Action will show a form with the BlogPosts'
 values filled in that we can change. To do that, create the edit action on the command line:
-```
+```bash
 $ ./bin/boring.sh generate action edit BlogPosts
 ```
 Then we can add code to our `edit` action to pass the existing BlogPosts to the edit View (it will look _very_ familiar):
-```
+```javascript
 static async edit(req, res) {
-  const post = await BlogPost.find(req.params.id);
+  try {
+    const post = await BlogPost.find(req.params.id);
 
-  res.render({
-    post
-  });
+    res.render({
+      post
+    });
+  } catch (ex) {
+    res.code(500).send();
+  }
 }
 ```
 And then we just need to create our HTML form in our edit View:
-```
+```html
 <h1>Edit Post</h1>
 <form id="editForm" action="/blog_posts/<%- post.id %>" method="PUT">
   <label for="title">Title</label>
@@ -325,46 +343,54 @@ And then we just need to create our HTML form in our edit View:
 </script>
 ```
 Notice that instead of a POST to `/blog_posts` we are going to PUT to `/blog_posts/:id` instead. This will go to our `update` action that we define via:
-```
+```bash
 $ ./bin/boring.sh generate action update BlogPosts
 ```
 Then we can add the following code to make sure that we save the new values:
-```
+```javascript
 static async update(req, res) {
-  const post = await BlogPost.find(req.params.id);
+  try {
+    const post = await BlogPost.find(req.params.id);
 
-  await post.update({
-    title: req.body.title,
-    text: req.body.text
-  });
+    await post.update({
+      title: req.body.title,
+      text: req.body.text
+    });
 
-  res.code(200).send(`/blog_posts/${post.id}`);
+    res.code(200).send(`/blog_posts/${post.id}`);
+  } catch (ex) {
+    res.code(500).send();
+  }
 }
 ```
-Finally, we want to show a link to edit each post in our list and on the `show` View for each BlogPosts. Add this to your forEach in your `index` View:
-```
+Finally, we want to show a link to edit each post in our list on the `show` View for each BlogPost. Add this to your forEach in your `index` View:
+```html
 <td><a href="/blog_posts/<%- post.id %>/edit">Edit</a></td>
 ```
 
 ### Deleting BlogPosts
 We use the `destroy` Action to delete a BlogPost. That will be a `DELETE /blog_posts/:id` HTTP request. Create your delete action:
-```
+```bash
 $ ./bin/boring.sh generate action destroy BlogPosts
 ```
 Then add the code to our destroy action:
-```
+```javascript
 static async destroy(req, res) {
-  await BlogPost.destroy(req.params.id);
+  try {
+    await BlogPost.destroy(req.params.id);
 
-  res.code(200).send("/blog_posts");
+    res.code(200).send("/blog_posts");
+  } catch (ex) {
+    res.code(500).send();
+  }
 }
 ```
-Finally just add a Delete link to our `table`:
-```
+Finally just add a Delete link to our `table` in our `index` View:
+```html
 <td><a class="delete-link" data-delete="<%- post.id %>" href="#">Delete</a></td>
 ```
-and a little Javascript to our page to make the clicks work:
-```
+and a little Javascript to the `index` pageView to make the clicks work:
+```html
 <script type="text/javascript">
   (function() {
     var deleteLinks = document.querySelectorAll(".delete-link");
@@ -394,21 +420,21 @@ and a little Javascript to our page to make the clicks work:
 
 Congratulations! You can now list, create, show, update and delete BlogPosts for your Blog.
 
-## Adding Comments
-Now lets add the ability for people to comment on our BlogPosts. To do that we'll need to _associate_ any Comment in our system with the BlogPost the comment was left on. To do that, we create a new model with a special key pair of `blog_post:references` like so:
-```
+## Commenting on BlogPosts
+Now lets add the ability for people to comment on our BlogPosts. To do that we'll need to _associate_ any Comment in our system with the BlogPost the comment was left on. To do that, we create a new model with a special key pair of `BlogPost:references` like so:
+```bash
 $ ./bin/boring.sh generate model Comment commenter:string body:text BlogPost:references
 ```
 Now let's talk about what we just did with that keyword.
 
 ### Associating Database Tables
 If you look at the migration file that was created, you'll see something different than our prior migration:
-```
+```javascript
 table.bigIncrements('blog_post_id').notNullable();
 table.foreign("blog_post_id").references("id").inTable("blog_posts");
 ```
 Then in the Comment Model you'll notice an attribute that says a Comment _belongs to_ a BlogPost:
-```
+```javascript
 static get relationMappings() {
   return {
     blogPost: {
@@ -423,40 +449,33 @@ static get relationMappings() {
 };
 ```
 Now migrate the database again in the terminal to create the new `comments` table:
-```
+```bash
 $ ./bin/boring.sh migrate up
 ```
 To wrap up, you need to edit the BlogPost Model to add a property to show it `has many Comments`:
-```
+```javascript
   static get relationMappings() {
-  return {
-    comments: {
-      relation: ActiveRecord.HasManyRelation,
-      modelClass: Comment,
-      join: {
-        from: 'blog_posts.id',
-        to: 'comments.blog_post_id'
+    return {
+      comments: {
+        relation: ActiveRecord.HasManyRelation,
+        modelClass: Comment,
+        join: {
+          from: 'blog_posts.id',
+          to: 'comments.blog_post_id'
+        }
       }
-    }
+    };
   };
-};
 ```
 These properties allow you to have an instance of a BlogPost `post` where you can reference the property `comments` to get a list of Comments for that BlogPost. We'll discuss these more in-depth in another tutorial.
 
-### Nested Routes
-By associating our 2 Models, we're saying that URLs for Comments should be prepended with `/blog_posts/:id`. That's not always the case but for now we're going to assume so. That means these routes are treated the same:
-```
-GET /blog_posts/:blog_post_id/comments/:comment_id
-GET /comments/:id
-```
-
 ### Creating Comments
 To begin creating Comments, we need to create a controller:
-```
+```bash
 $ ./bin/boring.sh generate controller Comments
 ```
 To begin creating comments, we'll update our `show` BlogPost template to have a form for creating new comments. Add the following code to it:
-```
+```html
 <form id="createCommentForm" method="POST">
   <label for="title">Commenter</label>
   <input type="text" name="commenter">
@@ -494,38 +513,44 @@ To begin creating comments, we'll update our `show` BlogPost template to have a 
 </script>
 ```
 To handle our form submissions we need to add a `create` Action to our Comments Controller to save it in the database. Let's do that in the CLI now:
-```
+```bash
 $ ./bin/boring.sh generate action create Comments
 ```
 Then we can update our create Comment Action:
-```
-const BlogPost = require('../models/BlogPost');
+```javascript
+// ... other code
 const Comment = require('../models/Comment');
 
 module.exports = class CommentsController {
+  // ... other code
   static async create(req, res) {
-    const comment = await Comment.create({
-      commenter: req.body.commenter,
-      body: req.body.body,
-      blogPostId: req.body.blogPostId
-    });
+    try {
+      const comment = await Comment.create({
+        commenter: req.body.commenter,
+        body: req.body.body,
+        blogPostId: req.body.blogPostId
+      });
 
-    res.code(201).send(`/blog_posts/${blogPostId}`);
+      res.code(201).send(`/blog_posts/${req.body.blogPostId}`);
+    } catch (ex) {
+      res.code(500).send();
+    }
   }
+  // ... other code
 };
 ```
 Next we can load the comments for our BlogPost by importing our Comment model and updating our BlogPost Controller's `show` Action to load comments:
-```
+```javascript
 const Comment = require('../models/Comment');
 ```
-and
-```
+then after finding our `post` in our `show` Action:
+```javascript
 post.comments = await Comment.findBy({
   blogPostId: post.id
 });
 ```
 and then we can show the comments in our `blog_posts/show.html.ejs` View like so:
-```
+```html
 <table>
   <tr>
     <th>Title</th>
@@ -543,17 +568,17 @@ and then we can show the comments in our `blog_posts/show.html.ejs` View like so
 ```
 If you reload your page, you should see your comments!
 
-## Deleting Comments
+### Deleting Comments
 Our last feature is the ability to delete comments from internet trolls. To do this we need to implement a `destroy` action for our Comments Controller:
-```
+```bash
 $ ./bin/boring.sh generate action destroy Comments
 ```
 Then we add a delete link in the `show` View:
-```
+```html
 <td><a href="#" data-target-action="delete" data-target-id="<%- comment.id %>">Delete</a></td>
 ```
 Then we need to wire up click handlers for the anchor tags to perform an http DELETE instead:
-```
+```html
 <script type="text/javascript">
   (function() {
 
@@ -569,7 +594,7 @@ Then we need to wire up click handlers for the anchor tags to perform an http DE
           xhr.setRequestHeader('Accept', 'application/json');
           xhr.onreadystatechange = function() {
             if (xhr.status === 200 && xhr.readyState === 4) {
-              window.location.href = xhr.responseURL;
+              window.location.href = xhr.responseText;
               return;
             }
           };
@@ -583,13 +608,20 @@ Then we need to wire up click handlers for the anchor tags to perform an http DE
 </script>
 ```
 Next we need to just wire that up in our Comments controller:
-```
+```javascript
 static async destroy(req, res) {
-  const comment = await Comment.find(req.params["id"]);
+  try {
+    const comment = await Comment.find(req.params["id"]);
 
-  await Comment.destroy(comment.id);
+    await Comment.destroy(comment.id);
 
-  res.code(201).send(`/blog_posts/${comment.blogPostId}`);
+    res.code(200).send(`/blog_posts/${comment.blogPostId}`);
+  } catch (ex) {
+    res.code(500).send();
+  }
 }
 ```
 Congratulations! Now you can delete comments on your posts.
+
+## Summary
+You've now seen the basics of creating a web application with Boring. There are far more advanced topics to touch on that Boring makes easy for developers. These topics include, but arent limited to, sending emails, unit testing, etc.

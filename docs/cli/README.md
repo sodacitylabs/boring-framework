@@ -24,7 +24,7 @@ This command syncs your database with your migrations file to make sure the data
 This runs your test suite.
 
 ## Server
-This starts your web server and begins listening for incoming HTTP requests. By default, the server listens on port 3000 but you can change this by modifying the port specified in `/config/all.js`. To enable watching of your files to restart the server, pass an additional `--reload` arg to this command.
+This starts your web server and begins listening for incoming HTTP requests. By default, the server listens on port 3000 but you can change this by modifying the port specified in `/config/environments/all.js`. To enable watching of your files to restart the server, pass an additional `--reload` arg to this command.
 
 However, you are not limited to these commands. As you become more comfortable using Boring, you'll potentially want to use some additional helper commands. Those are:
 
@@ -35,12 +35,6 @@ However, you are not limited to these commands. As you become more comfortable u
 | routes | This lists all the routes that your code will respond to |
 | todo | This will crawl your code for fixme, todo, note comments |
 
-## About
-**WIP**
-
-## Compile
-**WIP**
-
 ## Routes
 The `routes` command will crawl your project for Controllers and Actions to print them out to the console. An example might look something like this:
 
@@ -48,6 +42,3 @@ The `routes` command will crawl your project for Controllers and Actions to prin
 | ------------- | ------- | ---- |
 | GET | /hello | hello#index |
 | GET | / | hello#index |
-
-## Todo
-**WIP**

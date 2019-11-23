@@ -221,7 +221,8 @@ module.exports = function(name, root) {
     `
     "use strict";
 
-    module.exports = function(get, post, put, del) { // eslint-disable-line no-unused-vars
+    /* eslint-disable-next-line no-unused-vars */
+    module.exports = function(get, post, put, del) {
       // Using these functions, register routes i.e. get("/", "ControllerName#action")
     };
     `,
