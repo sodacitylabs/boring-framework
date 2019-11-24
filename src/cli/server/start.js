@@ -27,6 +27,18 @@ module.exports = async function() {
     cwd: dir
   });
 
+  spawnSync("kill -9 $(lsof -i tcp:1025) 2> /dev/null", {
+    stdio: `inherit`,
+    shell: true,
+    cwd: dir
+  });
+
+  spawnSync("kill -9 $(lsof -i tcp:1080) 2> /dev/null", {
+    stdio: `inherit`,
+    shell: true,
+    cwd: dir
+  });
+
   fastify.listen({ port }, err => {
     if (err) {
       fastify.log.error(`server failed to start from ${err.message}`);
