@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
-// const { spawn, spawnSync } = require("child_process");
-const InterpreterContext = require("./Interpreter").InterpreterContext;
-const ServerExpression = require("./Interpreter").ServerExpression;
+const InterpreterContext = require("./InterpreterContext");
+const ServerExpression = require("./expressions/ServerExpression");
 
 (async () => {
   try {
@@ -32,9 +31,6 @@ const ServerExpression = require("./Interpreter").ServerExpression;
 //     break;
 //   case "routes":
 //     showRoutes();
-//     break;
-//   case "server":
-//     startServer();
 //     break;
 //   case "test":
 //     runTests();
@@ -174,44 +170,6 @@ const ServerExpression = require("./Interpreter").ServerExpression;
 //     require("./routes")();
 //   } catch (ex) {
 //     console.error(`Error building routes: ${ex.message}`);
-//     process.exit(1);
-//   }
-// }
-
-// function startServer() {
-//   try {
-//     const projectConfig = require(`${dir}/config`);
-//     const reload = args[1] && args[1] === "--reload";
-
-//     if (projectConfig.mailer.default) {
-//       spawn(`./node_modules/.bin/maildev`, {
-//         stdio: `inherit`,
-//         shell: true,
-//         cwd: dir
-//       });
-//     }
-
-//     if (reload) {
-//       const nodemon = require(`${dir}/node_modules/nodemon`);
-
-//       nodemon({});
-
-//       nodemon
-//         .on("start", function() {
-//           console.log("Server has started");
-//         })
-//         .on("quit", function() {
-//           console.log("Server has quit");
-//           process.exit();
-//         })
-//         .on("restart", function(files) {
-//           console.log("Server restarted due to: ", files);
-//         });
-//     } else {
-//       require("./server/start")(null, reload);
-//     }
-//   } catch (ex) {
-//     console.error(`Error running server: ${ex.message}`);
 //     process.exit(1);
 //   }
 // }
