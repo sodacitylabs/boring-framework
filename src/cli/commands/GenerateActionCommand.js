@@ -1,40 +1,35 @@
-"use strict";
-
-const CoreConfig = require("../../core/Config");
-const fs = require("fs");
 const { spawnSync } = require("child_process");
-
+const Command = require("./Command");
+const fs = require("fs");
 const CREATING_PREFIX = `Creating  `;
+const CoreConfig = require("../../core/Config");
 
-/**
- * @function
- * @description adds additional action to existing controller file
- *
- * @param {string} root - root directory to start looking for files
- * @param {string} controller - controller name
- * @param {string} action - action name to create
- *
- * @returns {null}
- */
-module.exports = function(root, controller, action) {
-  requireArguments(root, controller, action);
-  validateArguments(root, controller, action);
+module.exports = class GenerateActionCommand extends Command {
+  execute(context) {
+    const root = process.cwd();
+    const inputs = context.getInput();
+    const action = inputs[2];
+    const controller = inputs[3];
 
-  const controllers = `${root}/app/controllers`;
-  const Controller = require(`${root}/app/controllers/${controller}.js`);
+    requireArguments(root, controller, action);
+    validateArguments(root, controller, action);
 
-  preventDuplicateAction(Controller, action);
-  makeViewsDirectory(root, controller, action);
-  writeViewTemplate(root, controller, action);
+    const controllers = `${root}/app/controllers`;
+    const Controller = require(`${root}/app/controllers/${controller}.js`);
 
-  const fileContents = buildClassContents(Controller, action);
+    preventDuplicateAction(Controller, action);
+    makeViewsDirectory(root, controller, action);
+    writeViewTemplate(root, controller, action);
 
-  overwriteControllerFile(
-    root,
-    `${controllers}/${controller}.js`,
-    Controller,
-    fileContents
-  );
+    const fileContents = buildClassContents(Controller, action);
+
+    overwriteControllerFile(
+      root,
+      `${controllers}/${controller}.js`,
+      Controller,
+      fileContents
+    );
+  }
 };
 
 /**

@@ -3,6 +3,8 @@
 const InterpreterContext = require("./InterpreterContext");
 const ServerExpression = require("./expressions/ServerExpression");
 const NewExpression = require("./expressions/NewExpression");
+const GenerateControllerExpression = require("./expressions/GenerateControllerExpression");
+const GenerateActionExpression = require("./expressions/GenerateActionExpression");
 
 (async () => {
   try {
@@ -11,6 +13,8 @@ const NewExpression = require("./expressions/NewExpression");
     const tree = [];
     tree.push(new ServerExpression());
     tree.push(new NewExpression());
+    tree.push(new GenerateControllerExpression());
+    tree.push(new GenerateActionExpression());
 
     tree.forEach(expression => expression.interpret(context));
 
@@ -47,12 +51,6 @@ const NewExpression = require("./expressions/NewExpression");
 //     }
 
 //     switch (args[1]) {
-//       case "action":
-//         generateAction();
-//         break;
-//       case "controller":
-//         generateController();
-//         break;
 //       case "migration":
 //         generateMigration();
 //         break;
@@ -65,32 +63,6 @@ const NewExpression = require("./expressions/NewExpression");
 //     }
 //   } catch (ex) {
 //     console.error(`Error generating: ${ex.message}`);
-//     process.exit(1);
-//   }
-// }
-
-// function generateAction() {
-//   try {
-//     const action = args[2];
-//     const controller = args[3];
-
-//     require("./generate/action")(dir, controller, action);
-//   } catch (ex) {
-//     console.error(`Error creating an action: ${ex.message}`);
-//     process.exit(1);
-//   }
-// }
-
-// function generateController() {
-//   try {
-//     const name = args[2];
-
-//     require("./generate/controller")(dir, name);
-
-//     const actions = args.slice(3);
-//     actions.forEach(a => require("./generate/action")(dir, name, a));
-//   } catch (ex) {
-//     console.error(`Error creating a controller: ${ex.message}`);
 //     process.exit(1);
 //   }
 // }
