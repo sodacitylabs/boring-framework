@@ -6,6 +6,7 @@ const NewExpression = require("./expressions/NewExpression");
 const GenerateControllerExpression = require("./expressions/GenerateControllerExpression");
 const GenerateActionExpression = require("./expressions/GenerateActionExpression");
 const RoutesExpression = require("./expressions/RoutesExpression");
+const GenerateModelExpression = require("./expressions/GenerateModelExpression");
 
 (async () => {
   try {
@@ -16,6 +17,7 @@ const RoutesExpression = require("./expressions/RoutesExpression");
     tree.push(new NewExpression());
     tree.push(new GenerateControllerExpression());
     tree.push(new GenerateActionExpression());
+    tree.push(new GenerateModelExpression());
     tree.push(new RoutesExpression());
 
     tree.forEach(expression => expression.interpret(context));
@@ -56,9 +58,6 @@ const RoutesExpression = require("./expressions/RoutesExpression");
 //       case "migration":
 //         generateMigration();
 //         break;
-//       case "model":
-//         generateModel();
-//         break;
 //       default:
 //         console.error(`Unknown argument ${args[1]} for generate command`);
 //         process.exit(1);
@@ -76,24 +75,6 @@ const RoutesExpression = require("./expressions/RoutesExpression");
 //     require("./generate/migration")(dir, fileName);
 //   } catch (ex) {
 //     console.error(`Error creating a migration: ${ex.message}`);
-//     process.exit(1);
-//   }
-// }
-
-// function generateModel() {
-//   try {
-//     const model = args[2];
-//     const attrs = args.slice(3).map(attr => {
-//       const pair = attr.split(":");
-//       return {
-//         name: pair[0],
-//         type: pair[1]
-//       };
-//     });
-
-//     require("./generate/model")(dir, model, attrs);
-//   } catch (ex) {
-//     console.error(`Error creating a model: ${ex.message}`);
 //     process.exit(1);
 //   }
 // }
