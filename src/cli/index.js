@@ -7,6 +7,7 @@ const GenerateControllerExpression = require("./expressions/GenerateControllerEx
 const GenerateActionExpression = require("./expressions/GenerateActionExpression");
 const RoutesExpression = require("./expressions/RoutesExpression");
 const GenerateModelExpression = require("./expressions/GenerateModelExpression");
+const GenerateMigrationExpression = require("./expressions/GenerateMigrationExpression");
 
 (async () => {
   try {
@@ -18,6 +19,7 @@ const GenerateModelExpression = require("./expressions/GenerateModelExpression")
     tree.push(new GenerateControllerExpression());
     tree.push(new GenerateActionExpression());
     tree.push(new GenerateModelExpression());
+    tree.push(new GenerateMigrationExpression());
     tree.push(new RoutesExpression());
 
     tree.forEach(expression => expression.interpret(context));
@@ -31,14 +33,8 @@ const GenerateModelExpression = require("./expressions/GenerateModelExpression")
 })();
 
 // switch (cmd) {
-//   case "generate":
-//     generate();
-//     break;
 //   case "migrate":
 //     migrateDatabase();
-//     break;
-//   case "routes":
-//     showRoutes();
 //     break;
 //   case "test":
 //     runTests();
@@ -46,37 +42,6 @@ const GenerateModelExpression = require("./expressions/GenerateModelExpression")
 //   default:
 //     console.error(`Unknown command ${cmd} and args phrase`);
 //     process.exit(1);
-// }
-
-// function generate() {
-//   try {
-//     if (!args[1]) {
-//       throw new Error("nothing to generate");
-//     }
-
-//     switch (args[1]) {
-//       case "migration":
-//         generateMigration();
-//         break;
-//       default:
-//         console.error(`Unknown argument ${args[1]} for generate command`);
-//         process.exit(1);
-//     }
-//   } catch (ex) {
-//     console.error(`Error generating: ${ex.message}`);
-//     process.exit(1);
-//   }
-// }
-
-// function generateMigration() {
-//   try {
-//     const fileName = args[2];
-
-//     require("./generate/migration")(dir, fileName);
-//   } catch (ex) {
-//     console.error(`Error creating a migration: ${ex.message}`);
-//     process.exit(1);
-//   }
 // }
 
 // function migrateDatabase() {
@@ -107,15 +72,6 @@ const GenerateModelExpression = require("./expressions/GenerateModelExpression")
 //     }
 //   } catch (ex) {
 //     console.error(`Error migrating db: ${ex.message}`);
-//     process.exit(1);
-//   }
-// }
-
-// function showRoutes() {
-//   try {
-//     require("./routes")();
-//   } catch (ex) {
-//     console.error(`Error building routes: ${ex.message}`);
 //     process.exit(1);
 //   }
 // }
