@@ -1,6 +1,8 @@
 const { spawn, spawnSync } = require("child_process");
 const Command = require("./Command");
 const path = require("path");
+const Router = require("../../core/RouterV2");
+const Fastify = require("fastify");
 
 module.exports = class ServerCommand extends Command {
   execute(context) {
@@ -26,8 +28,7 @@ module.exports = class ServerCommand extends Command {
           console.log("Server restarted due to: ", files);
         });
     } else {
-      const Router = require("../core/RouterV2");
-      const fastify = require("fastify")({ logger: true });
+      const fastify = new Fastify({ logger: true });
       const port = projectConfig.server.port || 3000;
       const start = Date.now();
       const router = new Router(projectConfig, dir);

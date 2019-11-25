@@ -1,5 +1,6 @@
 const { spawnSync } = require("child_process");
 const Command = require("./Command");
+const CoreConfig = require("../../core/Config");
 const path = require("path");
 const fs = require("fs");
 
@@ -9,9 +10,9 @@ module.exports = class NewCommand extends Command {
     const inputs = context.getInput();
     const name = inputs[1];
     const nodeVersion = fs
-      .readFileSync(path.resolve(__dirname, "../../.nvmrc"))
+      .readFileSync(path.resolve(__dirname, "../../../.nvmrc"))
       .toString();
-    const boringPkg = require("../../package.json");
+    const boringPkg = require("../../../package.json");
     const projectDirectory = `${root}/${name}`;
     const creatingPrefix = `Creating  `;
     const installPrefix = `Installing`;
