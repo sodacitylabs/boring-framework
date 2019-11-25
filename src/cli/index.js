@@ -8,6 +8,7 @@ const GenerateActionExpression = require("./expressions/GenerateActionExpression
 const RoutesExpression = require("./expressions/RoutesExpression");
 const GenerateModelExpression = require("./expressions/GenerateModelExpression");
 const GenerateMigrationExpression = require("./expressions/GenerateMigrationExpression");
+const MigrateExpression = require("./expressions/MigrateExpression");
 
 (async () => {
   try {
@@ -21,6 +22,7 @@ const GenerateMigrationExpression = require("./expressions/GenerateMigrationExpr
     tree.push(new GenerateModelExpression());
     tree.push(new GenerateMigrationExpression());
     tree.push(new RoutesExpression());
+    tree.push(new MigrateExpression());
 
     tree.forEach(expression => expression.interpret(context));
 
@@ -33,47 +35,12 @@ const GenerateMigrationExpression = require("./expressions/GenerateMigrationExpr
 })();
 
 // switch (cmd) {
-//   case "migrate":
-//     migrateDatabase();
-//     break;
 //   case "test":
 //     runTests();
 //     break;
 //   default:
 //     console.error(`Unknown command ${cmd} and args phrase`);
 //     process.exit(1);
-// }
-
-// function migrateDatabase() {
-//   try {
-//     const direction = args[1];
-//     const db = require(`${dir}/db`);
-
-//     if (direction === "up") {
-//       db.migrate
-//         .latest({
-//           directory: `${dir}/db/migrations`
-//         })
-//         .then(function() {
-//           console.log(`Done migrating db`);
-//           process.exit(0);
-//         });
-//     } else if (direction === "down") {
-//       db.migrate
-//         .rollback({
-//           directory: `${dir}/db/migrations`
-//         })
-//         .then(function() {
-//           console.log(`Done rolling back db`);
-//           process.exit(0);
-//         });
-//     } else {
-//       throw new Error(`migration direction of ${direction} is not supported.`);
-//     }
-//   } catch (ex) {
-//     console.error(`Error migrating db: ${ex.message}`);
-//     process.exit(1);
-//   }
 // }
 
 // function runTests() {

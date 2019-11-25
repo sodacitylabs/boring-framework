@@ -1,7 +1,7 @@
 const InterpreterExpression = require("./InterpreterExpression");
 const GenerateMigrationCommand = require("../commands/GenerateMigrationCommand");
 
-module.exports = class GenerateActionExpression extends InterpreterExpression {
+module.exports = class GenerateMigrationExpression extends InterpreterExpression {
   interpret(context) {
     const inputs = context.getInput();
 
