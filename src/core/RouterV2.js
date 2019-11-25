@@ -52,6 +52,7 @@ Router.prototype.load = function() {
       switch (action) {
         case "create":
           routes.push({
+            controller: controllerName,
             action,
             method: "POST",
             url: `/${NounHelper.toPluralResource(controllerName)}`,
@@ -61,6 +62,7 @@ Router.prototype.load = function() {
           break;
         case "destroy":
           routes.push({
+            controller: controllerName,
             action,
             method: "DELETE",
             url: `/${NounHelper.toPluralResource(controllerName)}/:id`,
@@ -70,6 +72,7 @@ Router.prototype.load = function() {
           break;
         case "edit":
           routes.push({
+            controller: controllerName,
             action,
             method: "GET",
             url: `/${NounHelper.toPluralResource(controllerName)}/:id/edit`,
@@ -79,6 +82,7 @@ Router.prototype.load = function() {
           break;
         case "index":
           routes.push({
+            controller: controllerName,
             action,
             method: "GET",
             url: `/${NounHelper.toPluralResource(controllerName)}`,
@@ -88,6 +92,7 @@ Router.prototype.load = function() {
           break;
         case "new":
           routes.push({
+            controller: controllerName,
             action,
             method: "GET",
             url: `/${NounHelper.toPluralResource(controllerName)}/new`,
@@ -97,6 +102,7 @@ Router.prototype.load = function() {
           break;
         case "show":
           routes.push({
+            controller: controllerName,
             action,
             method: "GET",
             url: `/${NounHelper.toPluralResource(controllerName)}/:id`,
@@ -106,6 +112,7 @@ Router.prototype.load = function() {
           break;
         case "update":
           routes.push({
+            controller: controllerName,
             action,
             method: "PUT",
             url: `/${NounHelper.toPluralResource(controllerName)}/:id`,
@@ -127,6 +134,8 @@ Router.prototype.load = function() {
 
   if (!rootAction) {
     routes.push({
+      action: "",
+      controller: "",
       method: "GET",
       url: "/",
       handler: (req, res) => {
@@ -207,16 +216,17 @@ async function _invokeAction(req, res, controller, action) {
 
 function _registerRoute(method, route, controllerAndAction) {
   const split = controllerAndAction.split("#");
-  const controllerName = split[0];
+  const controller = split[0];
   const action = split[1];
 
   // TODO: check for an already existing route / method entry
 
   routes.push({
+    controller,
     action,
     method,
     url: route,
-    handler: (req, res) => _invokeAction(req, res, controllerName, action)
+    handler: (req, res) => _invokeAction(req, res, controller, action)
   });
 }
 

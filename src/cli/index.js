@@ -5,6 +5,7 @@ const ServerExpression = require("./expressions/ServerExpression");
 const NewExpression = require("./expressions/NewExpression");
 const GenerateControllerExpression = require("./expressions/GenerateControllerExpression");
 const GenerateActionExpression = require("./expressions/GenerateActionExpression");
+const RoutesExpression = require("./expressions/RoutesExpression");
 
 (async () => {
   try {
@@ -15,6 +16,7 @@ const GenerateActionExpression = require("./expressions/GenerateActionExpression
     tree.push(new NewExpression());
     tree.push(new GenerateControllerExpression());
     tree.push(new GenerateActionExpression());
+    tree.push(new RoutesExpression());
 
     tree.forEach(expression => expression.interpret(context));
 
