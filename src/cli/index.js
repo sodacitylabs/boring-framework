@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-const InterpreterContext = require("./InterpreterContext");
-const ServerExpression = require("./expressions/ServerExpression");
-const NewExpression = require("./expressions/NewExpression");
-const GenerateControllerExpression = require("./expressions/GenerateControllerExpression");
-const GenerateActionExpression = require("./expressions/GenerateActionExpression");
-const RoutesExpression = require("./expressions/RoutesExpression");
-const GenerateModelExpression = require("./expressions/GenerateModelExpression");
-const GenerateMigrationExpression = require("./expressions/GenerateMigrationExpression");
-const MigrateExpression = require("./expressions/MigrateExpression");
-const TestExpression = require("./expressions/TestExpression");
+const InterpreterContext = require("./Interpreter/InterpreterContext");
+const ServerExpression = require("./Interpreter/Expressions/Server");
+const NewExpression = require("./Interpreter/Expressions/New");
+const GenerateControllerExpression = require("./Interpreter/Expressions/GenerateController");
+const GenerateActionExpression = require("./Interpreter/Expressions/GenerateAction");
+const RoutesExpression = require("./Interpreter/Expressions/Routes");
+const GenerateModelExpression = require("./Interpreter/Expressions/GenerateModel");
+const GenerateMigrationExpression = require("./Interpreter/Expressions/GenerateMigration");
+const MigrateExpression = require("./Interpreter/Expressions/Migrate");
+const TestExpression = require("./Interpreter/Expressions/Test");
 
 (async () => {
   try {

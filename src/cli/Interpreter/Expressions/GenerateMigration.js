@@ -1,5 +1,5 @@
-const InterpreterExpression = require("./InterpreterExpression");
-const GenerateMigrationCommand = require("../commands/GenerateMigrationCommand");
+const InterpreterExpression = require("../InterpreterExpression");
+const GenerateMigrationCommand = require("../../Command/GenerateMigration");
 
 module.exports = class GenerateMigrationExpression extends InterpreterExpression {
   interpret(context) {

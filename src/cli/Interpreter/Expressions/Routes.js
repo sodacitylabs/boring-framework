@@ -1,5 +1,5 @@
-const InterpreterExpression = require("./InterpreterExpression");
-const RoutesCommand = require("../commands/RoutesCommand");
+const InterpreterExpression = require("../InterpreterExpression");
+const RoutesCommand = require("../../Command/Routes");
 
 module.exports = class RoutesExpression extends InterpreterExpression {
   interpret(context) {

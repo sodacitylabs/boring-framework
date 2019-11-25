@@ -1,5 +1,5 @@
-const InterpreterExpression = require("./InterpreterExpression");
-const NewCommand = require("../commands/NewCommand");
+const InterpreterExpression = require("../InterpreterExpression");
+const NewCommand = require("../../Command/New");
 
 module.exports = class NewExpression extends InterpreterExpression {
   interpret(context) {

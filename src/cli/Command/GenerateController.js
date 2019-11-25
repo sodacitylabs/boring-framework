@@ -1,8 +1,8 @@
 const { spawnSync } = require("child_process");
 const Command = require("./Command");
 const fs = require("fs");
-const InterpreterContext = require("../InterpreterContext");
-const GenerateActionExpression = require("../expressions/GenerateActionExpression");
+const InterpreterContext = require("../Interpreter/InterpreterContext");
+const GenerateActionExpression = require("../Interpreter/Expressions/GenerateAction");
 
 module.exports = class GenerateControllerCommand extends Command {
   execute(context) {

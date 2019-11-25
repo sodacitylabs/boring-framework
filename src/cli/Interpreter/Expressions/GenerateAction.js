@@ -1,5 +1,5 @@
-const InterpreterExpression = require("./InterpreterExpression");
-const GenerateActionCommand = require("../commands/GenerateActionCommand");
+const InterpreterExpression = require("../InterpreterExpression");
+const GenerateActionCommand = require("../../Command/GenerateAction");
 
 module.exports = class GenerateActionExpression extends InterpreterExpression {
   interpret(context) {

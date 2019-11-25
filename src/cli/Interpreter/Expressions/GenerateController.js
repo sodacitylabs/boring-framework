@@ -1,5 +1,5 @@
-const InterpreterExpression = require("./InterpreterExpression");
-const GenerateControllerCommand = require("../commands/GenerateControllerCommand");
+const InterpreterExpression = require("../InterpreterExpression");
+const GenerateControllerCommand = require("../../Command/GenerateController");
 
 module.exports = class GenerateControllerExpression extends InterpreterExpression {
   interpret(context) {
