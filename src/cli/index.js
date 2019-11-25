@@ -9,6 +9,7 @@ const RoutesExpression = require("./expressions/RoutesExpression");
 const GenerateModelExpression = require("./expressions/GenerateModelExpression");
 const GenerateMigrationExpression = require("./expressions/GenerateMigrationExpression");
 const MigrateExpression = require("./expressions/MigrateExpression");
+const TestExpression = require("./expressions/TestExpression");
 
 (async () => {
   try {
@@ -23,6 +24,7 @@ const MigrateExpression = require("./expressions/MigrateExpression");
     tree.push(new GenerateMigrationExpression());
     tree.push(new RoutesExpression());
     tree.push(new MigrateExpression());
+    tree.push(new TestExpression());
 
     tree.forEach(expression => expression.interpret(context));
 
@@ -33,28 +35,3 @@ const MigrateExpression = require("./expressions/MigrateExpression");
     process.exit(1);
   }
 })();
-
-// switch (cmd) {
-//   case "test":
-//     runTests();
-//     break;
-//   default:
-//     console.error(`Unknown command ${cmd} and args phrase`);
-//     process.exit(1);
-// }
-
-// function runTests() {
-//   try {
-//     spawnSync(
-//       `./node_modules/.bin/jest --forceExit --coverage --runInBand test`,
-//       {
-//         stdio: `inherit`,
-//         shell: true,
-//         cwd: dir
-//       }
-//     );
-//   } catch (ex) {
-//     console.error(`Error running tests: ${ex.message}`);
-//     process.exit(1);
-//   }
-// }
