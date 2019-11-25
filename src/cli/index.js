@@ -2,6 +2,7 @@
 
 const InterpreterContext = require("./InterpreterContext");
 const ServerExpression = require("./expressions/ServerExpression");
+const NewExpression = require("./expressions/NewExpression");
 
 (async () => {
   try {
@@ -9,6 +10,8 @@ const ServerExpression = require("./expressions/ServerExpression");
 
     const tree = [];
     tree.push(new ServerExpression());
+    tree.push(new NewExpression());
+
     tree.forEach(expression => expression.interpret(context));
 
     const command = context.getOutput();
@@ -25,9 +28,6 @@ const ServerExpression = require("./expressions/ServerExpression");
 //     break;
 //   case "migrate":
 //     migrateDatabase();
-//     break;
-//   case "new":
-//     newProject();
 //     break;
 //   case "routes":
 //     showRoutes();
@@ -152,15 +152,6 @@ const ServerExpression = require("./expressions/ServerExpression");
 //     }
 //   } catch (ex) {
 //     console.error(`Error migrating db: ${ex.message}`);
-//     process.exit(1);
-//   }
-// }
-
-// function newProject() {
-//   try {
-//     require("./new")(args[1], dir);
-//   } catch (ex) {
-//     console.error(`Error creating new project: ${ex.message}`);
 //     process.exit(1);
 //   }
 // }
