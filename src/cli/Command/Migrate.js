@@ -1,6 +1,6 @@
 const Command = require("./Command");
 
-module.exports = class NewCommand extends Command {
+module.exports = class MigrateCommand extends Command {
   execute(context) {
     const dir = process.cwd();
     const inputs = context.getInput();

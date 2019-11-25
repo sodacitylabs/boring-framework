@@ -6,6 +6,12 @@
 module.exports = function InterpreterContext(args) {
   const _input = [...args.slice(2)];
 
+  if (!_input.length) {
+    throw new Error(
+      `No arguments provided. Did you forget to include a command?`
+    );
+  }
+
   return {
     getInput: function() {
       return [..._input];

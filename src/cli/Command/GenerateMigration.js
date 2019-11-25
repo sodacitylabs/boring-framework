@@ -2,7 +2,7 @@ const fs = require("fs");
 const { spawnSync } = require("child_process");
 const Command = require("./Command");
 
-module.exports = class GenerateModelCommand extends Command {
+module.exports = class GenerateMigrationCommand extends Command {
   execute(context) {
     const dir = process.cwd();
     const inputs = context.getInput();
