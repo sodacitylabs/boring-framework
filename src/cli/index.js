@@ -1,10 +1,18 @@
 #!/usr/bin/env node
 
 const InterpreterContext = require("./Interpreter/InterpreterContext");
+const NewExpression = require("./Interpreter/Expressions/New");
 
 (async () => {
   try {
-    const context = new InterpreterContext(process.argv); // eslint-disable-line
+    const context = new InterpreterContext(process.argv);
+
+    const tree = [];
+    tree.push(new NewExpression());
+    tree.forEach(expression => expression.interpret(context));
+
+    const command = context.getOutput();
+    command.execute(context);
   } catch (ex) {
     console.error(ex);
   }
@@ -24,7 +32,6 @@ switch (cmd) {
     migrateDatabase();
     break;
   case "new":
-    newProject();
     break;
   case "routes":
     showRoutes();
@@ -152,15 +159,6 @@ function migrateDatabase() {
     }
   } catch (ex) {
     console.error(`Error migrating db: ${ex.message}`);
-    process.exit(1);
-  }
-}
-
-function newProject() {
-  try {
-    require("./new")(args[1], dir);
-  } catch (ex) {
-    console.error(`Error creating new project: ${ex.message}`);
     process.exit(1);
   }
 }
