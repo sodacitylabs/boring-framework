@@ -2,6 +2,7 @@
 
 const InterpreterContext = require("./Interpreter/InterpreterContext");
 const NewExpression = require("./Interpreter/Expressions/New");
+const ServerExpression = require("./Interpreter/Expressions/Server");
 
 (async () => {
   try {
@@ -9,6 +10,7 @@ const NewExpression = require("./Interpreter/Expressions/New");
 
     const tree = [];
     tree.push(new NewExpression());
+    tree.push(new ServerExpression());
     tree.forEach(expression => expression.interpret(context));
 
     const command = context.getOutput();
@@ -18,7 +20,7 @@ const NewExpression = require("./Interpreter/Expressions/New");
   }
 })();
 
-const { spawn, spawnSync } = require("child_process");
+const { spawnSync } = require("child_process");
 
 const [, , ...args] = process.argv;
 const dir = process.cwd();
@@ -37,7 +39,6 @@ switch (cmd) {
     showRoutes();
     break;
   case "server":
-    startServer();
     break;
   case "test":
     runTests();
@@ -168,44 +169,6 @@ function showRoutes() {
     require("./routes")();
   } catch (ex) {
     console.error(`Error building routes: ${ex.message}`);
-    process.exit(1);
-  }
-}
-
-function startServer() {
-  try {
-    const projectConfig = require(`${dir}/config`);
-    const reload = args[1] && args[1] === "--reload";
-
-    if (projectConfig.mailer.default) {
-      spawn(`./node_modules/.bin/maildev`, {
-        stdio: `inherit`,
-        shell: true,
-        cwd: dir
-      });
-    }
-
-    if (reload) {
-      const nodemon = require(`${dir}/node_modules/nodemon`);
-
-      nodemon({});
-
-      nodemon
-        .on("start", function() {
-          console.log("Server has started");
-        })
-        .on("quit", function() {
-          console.log("Server has quit");
-          process.exit();
-        })
-        .on("restart", function(files) {
-          console.log("Server restarted due to: ", files);
-        });
-    } else {
-      require("./server/start")(null, reload);
-    }
-  } catch (ex) {
-    console.error(`Error running server: ${ex.message}`);
     process.exit(1);
   }
 }
