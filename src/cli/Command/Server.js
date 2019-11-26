@@ -1,18 +1,19 @@
-const { spawn, spawnSync } = require("child_process");
 const Command = require("./Command");
 const path = require("path");
 const Router = require("../../core/RouterV2");
 const Fastify = require("fastify");
+const ProcessHelper = require("../../core/helpers/ProcessHelper");
+const _ = require("lodash");
 
 module.exports = class ServerCommand extends Command {
   execute(context) {
-    const dir = process.cwd();
-    const projectConfig = require(`${dir}/config`);
+    const dir = ProcessHelper.cwd();
+    const projectConfig = ProcessHelper.require(`${dir}/config`);
     const inputs = context.getInput();
     const reload = inputs[1] && inputs[1] === "--reload";
 
     if (reload) {
-      const nodemon = require(`${dir}/node_modules/nodemon`);
+      const nodemon = ProcessHelper.require(`${dir}/node_modules/nodemon`);
 
       nodemon({});
 
@@ -34,8 +35,8 @@ module.exports = class ServerCommand extends Command {
       const router = new Router(projectConfig, dir);
       const routes = router.load();
 
-      if (projectConfig.mailer.default) {
-        spawn(`./node_modules/.bin/maildev`, {
+      if (_.get(projectConfig, "mailer.default")) {
+        ProcessHelper.spawn(`./node_modules/.bin/maildev`, {
           stdio: `inherit`,
           shell: true,
           cwd: dir
@@ -50,19 +51,22 @@ module.exports = class ServerCommand extends Command {
         root: path.join(dir, "public")
       });
 
-      spawnSync(`cp -R app/assets/images/. public/assets/images`, {
+      ProcessHelper.spawnSync(
+        `cp -R app/assets/images/. public/assets/images`,
+        {
+          stdio: `inherit`,
+          shell: true,
+          cwd: dir
+        }
+      );
+
+      ProcessHelper.spawnSync("kill -9 $(lsof -i tcp:1025) 2> /dev/null", {
         stdio: `inherit`,
         shell: true,
         cwd: dir
       });
 
-      spawnSync("kill -9 $(lsof -i tcp:1025) 2> /dev/null", {
-        stdio: `inherit`,
-        shell: true,
-        cwd: dir
-      });
-
-      spawnSync("kill -9 $(lsof -i tcp:1080) 2> /dev/null", {
+      ProcessHelper.spawnSync("kill -9 $(lsof -i tcp:1080) 2> /dev/null", {
         stdio: `inherit`,
         shell: true,
         cwd: dir
@@ -72,7 +76,7 @@ module.exports = class ServerCommand extends Command {
         if (err) {
           fastify.log.error(`server failed to start from ${err.message}`);
 
-          return process.exit(1);
+          return ProcessHelper.exit(1);
         }
 
         fastify.log.info(
