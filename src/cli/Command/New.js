@@ -319,27 +319,6 @@ function createPackageFile(projectName, projectDirectory) {
 }
 
 /**
- * @function createReadMe
- * @private
- *
- * @param {string} projectName - name of the project
- * @param {string} projectDirectory - full path of project directory to create
- *
- * @throws {Error}
- * @returns {null}
- */
-function createReadMe(projectName, projectDirectory) {
-  console.log(`${creatingPrefix} README.md`);
-
-  fs.writeFileSync(
-    `${projectDirectory}/README.md`,
-    `#${projectName}\nDocument whatever steps are necessary to get the
-    run, build, test and deploy your app.`,
-    "utf8"
-  );
-}
-
-/**
  * @function createProjectConfigs
  * @private
  *
@@ -468,6 +447,27 @@ function createProjectFolders(projectDirectory) {
 }
 
 /**
+ * @function createReadMe
+ * @private
+ *
+ * @param {string} projectName - name of the project
+ * @param {string} projectDirectory - full path of project directory to create
+ *
+ * @throws {Error}
+ * @returns {null}
+ */
+function createReadMe(projectName, projectDirectory) {
+  console.log(`${creatingPrefix} README.md`);
+
+  fs.writeFileSync(
+    `${projectDirectory}/README.md`,
+    `#${projectName}
+    Document whatever steps are necessary to get the run, build, test and deploy your app.`,
+    "utf8"
+  );
+}
+
+/**
  * @function createRobots
  * @private
  *
@@ -481,7 +481,10 @@ function createRobots(projectDirectory) {
 
   fs.writeFileSync(
     `${projectDirectory}/public/robots.txt`,
-    "User-agent: *\nAllow: /\n",
+    `
+    User-agent: *
+    Allow: /
+    `,
     "utf8"
   );
 }
