@@ -98,5 +98,5 @@ test("creates new project", () => {
   expect(fs.existsSync).toHaveBeenCalledTimes(1);
   expect(fs.mkdirSync).toHaveBeenCalledTimes(22);
   expect(fs.writeFileSync).toHaveBeenCalledTimes(23);
-  expect(child_process.spawnSync).toHaveBeenCalledTimes(12);
+  expect(child_process.spawnSync).toHaveBeenCalledTimes(8);
 });
