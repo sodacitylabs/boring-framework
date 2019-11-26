@@ -1,5 +1,5 @@
 /**
- * @description Abstracts away the child_process module as well as other functions called throughout the codebase that are runtime-centric
+ * @description Abstracts away globals for require-ing modules and dealing with global process
  */
 module.exports = class ProcessHelper {
   static cwd() {

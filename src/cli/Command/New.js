@@ -62,7 +62,6 @@ function createBashFiles(projectDirectory) {
 /**
  * @function createDotFiles
  * @private
- * @description creates all the .* files for project meta stuff
  *
  * @param {string} projectDirectory - full path of project directory to create
  *
@@ -102,7 +101,6 @@ function createDotFiles(projectDirectory) {
 /**
  * @function createJestFiles
  * @private
- * @description creates files needed to run jest testing
  *
  * @param {string} projectDirectory - full path of project directory to create
  *
@@ -149,7 +147,6 @@ function createJestFiles(projectDirectory) {
 /**
  * @function createLinterFiles
  * @private
- * @description creates files for ESLint and Prettier
  *
  * @param {string} projectDirectory - full path of project directory to create
  *
@@ -237,9 +234,8 @@ function createLinterFiles(projectDirectory) {
 }
 
 /**
- * @function createProjectDirectory
+ * @function createPackageFile
  * @private
- * @description creates the package.json
  *
  * @param {string} projectName - name of the project
  * @param {string} projectDirectory - full path of project directory to create
@@ -346,7 +342,6 @@ function createReadMe(projectName, projectDirectory) {
 /**
  * @function createProjectConfigs
  * @private
- * @description creates the project config files
  *
  * @param {string} projectDirectory - full path of project directory to create
  *
@@ -443,7 +438,6 @@ function createProjectConfigs(projectDirectory) {
 /**
  * @function createProjectDirectory
  * @private
- * @description creates the root project folder for a new application
  *
  * @param {string} projectDirectory - full path of project directory to create
  *
@@ -459,7 +453,6 @@ function createProjectDirectory(projectDirectory) {
 /**
  * @function createProjectFolders
  * @private
- * @description creates the root project folder for a new application
  *
  * @param {string} projectDirectory - full path of project directory to create
  *
@@ -477,7 +470,6 @@ function createProjectFolders(projectDirectory) {
 /**
  * @function createRobots
  * @private
- * @description creates robots.txt file for web crawlers
  *
  * @param {string} projectDirectory - full path of project directory to create
  *
@@ -510,7 +502,7 @@ function createSqliteDB(projectDirectory) {
 }
 
 /**
- * @function installNode
+ * @function formatFiles
  * @private
  *
  * @param {string} projectDirectory - full path of project directory to create
