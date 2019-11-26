@@ -81,6 +81,8 @@
     "collectCoverage": true,
     "coverageDirectory": "<rootDir>/coverage",
     "collectCoverageFrom": [
+      "src/cli/Command/**/*.js*",
+      "src/cli/Interpreter/**/*.js*",
       "src/core/**/*.js*",
       "!src/core/index.js",
       "!src/core/Database.js",

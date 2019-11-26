@@ -1,5 +1,15 @@
 #!/usr/bin/env node
 
+const InterpreterContext = require("./Interpreter/InterpreterContext");
+
+(async () => {
+  try {
+    const context = new InterpreterContext(process.argv); // eslint-disable-line
+  } catch (ex) {
+    console.error(ex);
+  }
+})();
+
 const { spawn, spawnSync } = require("child_process");
 
 const [, , ...args] = process.argv;
