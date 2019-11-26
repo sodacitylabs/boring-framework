@@ -87,6 +87,16 @@ module.exports = {
       </html>
       `
     },
+    gitignore: `
+    node_modules
+    public
+    !public/robots.txt
+    log
+    tmp/*
+    db/sqlite.db
+    coverage
+    `,
+    npmrc: `save_exact=true\n`,
     welcome: () => `
     <!doctype html>
     <html>

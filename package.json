@@ -91,6 +91,7 @@
       "!src/core/RouterV2.js",
       "!src/core/RequestController.js",
       "!src/core/decorators/render.js",
+      "!src/core/helpers/ProcessHelper.js",
       "src/test/**/*.js*"
     ],
     "coverageReporters": [
