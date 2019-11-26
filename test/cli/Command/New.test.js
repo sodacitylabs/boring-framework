@@ -28,6 +28,7 @@ const ProcessHelper = require("../../../src/core/helpers/ProcessHelper");
 const InterpreterContext = require("../../../src/cli/Interpreter/InterpreterContext");
 const NewExpression = require("../../../src/cli/Interpreter/Expressions/New");
 const fs = require("fs");
+const child_process = require("child_process");
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -97,4 +98,5 @@ test("creates new project", () => {
   expect(fs.existsSync).toHaveBeenCalledTimes(1);
   expect(fs.mkdirSync).toHaveBeenCalledTimes(22);
   expect(fs.writeFileSync).toHaveBeenCalledTimes(23);
+  expect(child_process.spawnSync).toHaveBeenCalledTimes(12);
 });

@@ -18,20 +18,20 @@ module.exports = class NewCommand extends Command {
     // TODO: introduce artificial delays between steps with better messaging / colors
     //       to describe whats happening and why
 
-    validateArguments(projectName, projectDirectory);
-    createProjectDirectory(projectDirectory);
-    createReadMe(projectName, projectDirectory);
-    createPackageFile(projectName, projectDirectory);
-    createDotFiles(projectDirectory);
-    createProjectFolders(projectDirectory);
-    createRobots(projectDirectory);
-    createProjectConfigs(projectDirectory);
-    createLinterFiles(projectDirectory);
-    createJestFiles(projectDirectory);
-    createSqliteDB(projectDirectory);
-    createBashFiles(projectDirectory);
-    installNode(projectDirectory);
-    formatFiles(rootDirectory, projectDirectory);
+    validateArguments(rootDirectory, projectName, projectDirectory);
+    createProjectDirectory(rootDirectory, projectName, projectDirectory);
+    createReadMe(rootDirectory, projectName, projectDirectory);
+    createPackageFile(rootDirectory, projectName, projectDirectory);
+    createDotFiles(rootDirectory, projectName, projectDirectory);
+    createProjectFolders(rootDirectory, projectName, projectDirectory);
+    createRobots(rootDirectory, projectName, projectDirectory);
+    createProjectConfigs(rootDirectory, projectName, projectDirectory);
+    createLinterFiles(rootDirectory, projectName, projectDirectory);
+    createJestFiles(rootDirectory, projectName, projectDirectory);
+    createSqliteDB(rootDirectory, projectName, projectDirectory);
+    createBashFiles(rootDirectory, projectName, projectDirectory);
+    installNode(rootDirectory, projectName, projectDirectory);
+    formatFiles(rootDirectory, projectName, projectDirectory);
   }
 };
 
@@ -39,12 +39,14 @@ module.exports = class NewCommand extends Command {
  * @function createBashFiles
  * @private
  *
+ * @param {string} rootDirectory - directory the new command was run from
+ * @param {string} projectName - name of the project
  * @param {string} projectDirectory - full path of project directory to create
  *
  * @throws {Error}
  * @returns {null}
  */
-function createBashFiles(projectDirectory) {
+function createBashFiles(rootDirectory, projectName, projectDirectory) {
   // todo: set executable permissons on boring.sh
   console.log(`${creatingPrefix} bin folder`);
 
@@ -63,12 +65,14 @@ function createBashFiles(projectDirectory) {
  * @function createDotFiles
  * @private
  *
+ * @param {string} rootDirectory - directory the new command was run from
+ * @param {string} projectName - name of the project
  * @param {string} projectDirectory - full path of project directory to create
  *
  * @throws {Error}
  * @returns {null}
  */
-function createDotFiles(projectDirectory) {
+function createDotFiles(rootDirectory, projectName, projectDirectory) {
   const nodeVersion = fs
     .readFileSync(path.resolve(__dirname, "../../../.nvmrc"))
     .toString();
@@ -102,12 +106,14 @@ function createDotFiles(projectDirectory) {
  * @function createJestFiles
  * @private
  *
+ * @param {string} rootDirectory - directory the new command was run from
+ * @param {string} projectName - name of the project
  * @param {string} projectDirectory - full path of project directory to create
  *
  * @throws {Error}
  * @returns {null}
  */
-function createJestFiles(projectDirectory) {
+function createJestFiles(rootDirectory, projectName, projectDirectory) {
   console.log(`${creatingPrefix} jest test setups`);
 
   fs.mkdirSync(`${projectDirectory}/test/setup`);
@@ -148,12 +154,14 @@ function createJestFiles(projectDirectory) {
  * @function createLinterFiles
  * @private
  *
+ * @param {string} rootDirectory - directory the new command was run from
+ * @param {string} projectName - name of the project
  * @param {string} projectDirectory - full path of project directory to create
  *
  * @throws {Error}
  * @returns {null}
  */
-function createLinterFiles(projectDirectory) {
+function createLinterFiles(rootDirectory, projectName, projectDirectory) {
   console.log(`${creatingPrefix} .eslintrc.json`);
 
   fs.writeFileSync(
@@ -187,14 +195,30 @@ function createLinterFiles(projectDirectory) {
   console.log(`${creatingPrefix} .eslintignore`);
   fs.writeFileSync(
     `${projectDirectory}/.eslintignore`,
-    `node_modules\npackage.json\napp/assets\ntmp\npublic\nlogs\nsqlite.db`,
+    `
+    node_modules
+    package.json
+    app/assets
+    tmp
+    public
+    logs
+    sqlite.db
+    `,
     "utf8"
   );
 
   console.log(`${creatingPrefix} .prettierignore`);
   fs.writeFileSync(
     `${projectDirectory}/.prettierignore`,
-    `node_modules\npackage.json\napp/assets\ntmp\npublic\nlogs\nsqlite.db`,
+    `
+    node_modules
+    package.json
+    app/assets
+    tmp
+    public
+    logs
+    sqlite.db
+    `,
     "utf8"
   );
 
@@ -237,13 +261,14 @@ function createLinterFiles(projectDirectory) {
  * @function createPackageFile
  * @private
  *
+ * @param {string} rootDirectory - directory the new command was run from
  * @param {string} projectName - name of the project
  * @param {string} projectDirectory - full path of project directory to create
  *
  * @throws {Error}
  * @returns {null}
  */
-function createPackageFile(projectName, projectDirectory) {
+function createPackageFile(rootDirectory, projectName, projectDirectory) {
   console.log(`${creatingPrefix} package.json`);
 
   const boringPkg = require("../../../package.json");
@@ -322,12 +347,14 @@ function createPackageFile(projectName, projectDirectory) {
  * @function createProjectConfigs
  * @private
  *
+ * @param {string} rootDirectory - directory the new command was run from
+ * @param {string} projectName - name of the project
  * @param {string} projectDirectory - full path of project directory to create
  *
  * @throws {Error}
  * @returns {null}
  */
-function createProjectConfigs(projectDirectory) {
+function createProjectConfigs(rootDirectory, projectName, projectDirectory) {
   console.log(`${creatingPrefix} base config for project`);
 
   const projectConfig = JSON.stringify(
@@ -418,12 +445,14 @@ function createProjectConfigs(projectDirectory) {
  * @function createProjectDirectory
  * @private
  *
+ * @param {string} rootDirectory - directory the new command was run from
+ * @param {string} projectName - name of the project
  * @param {string} projectDirectory - full path of project directory to create
  *
  * @throws {Error}
  * @returns {null}
  */
-function createProjectDirectory(projectDirectory) {
+function createProjectDirectory(rootDirectory, projectName, projectDirectory) {
   console.log(`${creatingPrefix} project root at ${projectDirectory}`);
 
   fs.mkdirSync(projectDirectory);
@@ -433,12 +462,14 @@ function createProjectDirectory(projectDirectory) {
  * @function createProjectFolders
  * @private
  *
+ * @param {string} rootDirectory - directory the new command was run from
+ * @param {string} projectName - name of the project
  * @param {string} projectDirectory - full path of project directory to create
  *
  * @throws {Error}
  * @returns {null}
  */
-function createProjectFolders(projectDirectory) {
+function createProjectFolders(rootDirectory, projectName, projectDirectory) {
   console.log(`${seedingPrefix} project directories`);
 
   for (let i = 0; i < CoreConfig.seedDirectories.length; i++) {
@@ -450,13 +481,14 @@ function createProjectFolders(projectDirectory) {
  * @function createReadMe
  * @private
  *
+ * @param {string} rootDirectory - directory the new command was run from
  * @param {string} projectName - name of the project
  * @param {string} projectDirectory - full path of project directory to create
  *
  * @throws {Error}
  * @returns {null}
  */
-function createReadMe(projectName, projectDirectory) {
+function createReadMe(rootDirectory, projectName, projectDirectory) {
   console.log(`${creatingPrefix} README.md`);
 
   fs.writeFileSync(
@@ -471,12 +503,14 @@ function createReadMe(projectName, projectDirectory) {
  * @function createRobots
  * @private
  *
+ * @param {string} rootDirectory - directory the new command was run from
+ * @param {string} projectName - name of the project
  * @param {string} projectDirectory - full path of project directory to create
  *
  * @throws {Error}
  * @returns {null}
  */
-function createRobots(projectDirectory) {
+function createRobots(rootDirectory, projectName, projectDirectory) {
   console.log(`${creatingPrefix} robots.txt`);
 
   fs.writeFileSync(
@@ -493,12 +527,14 @@ function createRobots(projectDirectory) {
  * @function createSqliteDB
  * @private
  *
+ * @param {string} rootDirectory - directory the new command was run from
+ * @param {string} projectName - name of the project
  * @param {string} projectDirectory - full path of project directory to create
  *
  * @throws {Error}
  * @returns {null}
  */
-function createSqliteDB(projectDirectory) {
+function createSqliteDB(rootDirectory, projectName, projectDirectory) {
   console.log(`${creatingPrefix} sqlite development database`);
 
   fs.writeFileSync(`${projectDirectory}/db/sqlite.db`, ``, "utf8");
@@ -508,14 +544,52 @@ function createSqliteDB(projectDirectory) {
  * @function formatFiles
  * @private
  *
+ * @param {string} rootDirectory - directory the new command was run from
+ * @param {string} projectName - name of the project
  * @param {string} projectDirectory - full path of project directory to create
  *
  * @throws {Error}
  * @returns {null}
  */
-function formatFiles(rootDirectory, projectDirectory) {
+function formatFiles(rootDirectory, projectName, projectDirectory) {
   spawnSync(
     `${projectDirectory}/node_modules/.bin/prettier "${projectDirectory}/config/**/*.js" --write`,
+    {
+      stdio: `inherit`,
+      shell: true,
+      cwd: rootDirectory
+    }
+  );
+
+  spawnSync(
+    `${projectDirectory}/node_modules/.bin/prettier "${projectDirectory}/package.json" --write`,
+    {
+      stdio: `inherit`,
+      shell: true,
+      cwd: rootDirectory
+    }
+  );
+
+  spawnSync(
+    `${projectDirectory}/node_modules/.bin/prettier "${projectDirectory}/.eslintrc.json" --write`,
+    {
+      stdio: `inherit`,
+      shell: true,
+      cwd: rootDirectory
+    }
+  );
+
+  spawnSync(
+    `${projectDirectory}/node_modules/.bin/prettier "${projectDirectory}/test/.eslintrc.json" --write`,
+    {
+      stdio: `inherit`,
+      shell: true,
+      cwd: rootDirectory
+    }
+  );
+
+  spawnSync(
+    `${projectDirectory}/node_modules/.bin/prettier "${projectDirectory}/test/**/*.js" --write`,
     {
       stdio: `inherit`,
       shell: true,
@@ -528,12 +602,14 @@ function formatFiles(rootDirectory, projectDirectory) {
  * @function installNode
  * @private
  *
+ * @param {string} rootDirectory - directory the new command was run from
+ * @param {string} projectName - name of the project
  * @param {string} projectDirectory - full path of project directory to create
  *
  * @throws {Error}
  * @returns {null}
  */
-function installNode(projectDirectory) {
+function installNode(rootDirectory, projectName, projectDirectory) {
   const nodeVersion = fs
     .readFileSync(path.resolve(__dirname, "../../../.nvmrc"))
     .toString();
@@ -586,13 +662,14 @@ function requireArguments(context) {
  * @private
  * @description check if all values are semantically valid
  *
- * @param {string} projectDirectory - directory to create
- * @param {string} projectName - project name
+ * @param {string} rootDirectory - directory the new command was run from
+ * @param {string} projectName - name of the project
+ * @param {string} projectDirectory - full path of project directory to create
  *
  * @throws {Error}
  * @returns {null}
  */
-function validateArguments(projectName, projectDirectory) {
+function validateArguments(rootDirectory, projectName, projectDirectory) {
   if (!projectName) {
     throw new Error(`Running the new command requires a project name`);
   } else if (fs.existsSync(projectDirectory)) {
