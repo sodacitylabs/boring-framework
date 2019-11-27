@@ -24,7 +24,7 @@ jest.mock("../../../src/core/helpers/ProcessHelper", () => {
 
 const ProcessHelper = require("../../../src/core/helpers/ProcessHelper");
 const InterpreterContext = require("../../../src/cli/Interpreter/InterpreterContext");
-const NewExpression = require("../../../src/cli/Interpreter/Expressions/New");
+const GenerateControllerExpression = require("../../../src/cli/Interpreter/Expressions/GenerateController");
 const fs = require("fs");
 const child_process = require("child_process");
 
@@ -34,67 +34,55 @@ afterEach(() => {
 });
 
 test("throws if no name provided", () => {
-  const context = new InterpreterContext(["$", "Boring", "new"]);
-  const expression = new NewExpression();
-
-  expression.interpret(context);
-
-  const command = context.getOutput();
-
   try {
-    command.execute(context);
+    interpretAndExecuteCommand(["$", "Boring", "generate", "controller"]);
 
     throw new Error("should throw");
   } catch (ignore) {}
 });
 
-test("throws if directory already exists", () => {
+test("throws if file already exists", () => {
   const fakeTestWorkingDirectory = "/fake/directory/that/doesnt/exist";
 
   ProcessHelper.cwd.mockImplementation(() => fakeTestWorkingDirectory);
   fs.existsSync.mockImplementation(() => true);
 
-  const context = new InterpreterContext(["$", "Boring", "new", "fake"]);
-  const expression = new NewExpression();
-
-  expression.interpret(context);
-
-  const command = context.getOutput();
-
   try {
-    command.execute(context);
+    interpretAndExecuteCommand([
+      "$",
+      "Boring",
+      "generate",
+      "controller",
+      "Fake"
+    ]);
 
     throw new Error("should throw");
   } catch (ignore) {}
 });
 
-test("creates new project", () => {
+test("creates new controller file", () => {
   const fakeTestWorkingDirectory = "/fake/directory/that/doesnt/exist";
 
   ProcessHelper.cwd.mockImplementation(() => fakeTestWorkingDirectory);
-  fs.existsSync.mockImplementation(path => {
-    if (path === `${fakeTestWorkingDirectory}/fake`) {
-      return false;
-    }
-  });
-  fs.readFileSync.mockImplementation(path => {
-    if (path.indexOf(".nvmrc") !== -1) {
-      return `v12.7.0`;
-    }
+  fs.existsSync.mockImplementation(() => {
+    return false;
   });
   console.log = jest.fn(); // eslint-disable-line
 
-  const context = new InterpreterContext(["$", "Boring", "new", "fake"]);
-  const expression = new NewExpression();
+  interpretAndExecuteCommand(["$", "Boring", "generate", "controller", "fake"]);
+
+  expect(fs.existsSync).toHaveBeenCalledTimes(1);
+  expect(fs.writeFileSync).toHaveBeenCalledTimes(2);
+  expect(child_process.spawnSync).toHaveBeenCalledTimes(2);
+});
+
+function interpretAndExecuteCommand(args) {
+  const context = new InterpreterContext(args);
+  const expression = new GenerateControllerExpression();
 
   expression.interpret(context);
 
   const command = context.getOutput();
 
   command.execute(context);
-
-  expect(fs.existsSync).toHaveBeenCalledTimes(1);
-  expect(fs.mkdirSync).toHaveBeenCalledTimes(22);
-  expect(fs.writeFileSync).toHaveBeenCalledTimes(23);
-  expect(child_process.spawnSync).toHaveBeenCalledTimes(8);
-});
+}
