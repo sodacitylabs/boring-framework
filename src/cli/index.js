@@ -6,6 +6,7 @@ const ServerExpression = require("./Interpreter/Expressions/Server");
 const GenerateControllerExpression = require("./Interpreter/Expressions/GenerateController");
 const GenerateActionExpression = require("./Interpreter/Expressions/GenerateAction");
 const TestExpression = require("./Interpreter/Expressions/Test");
+const MigrateExpression = require("./Interpreter/Expressions/Migrate");
 
 (async () => {
   try {
@@ -17,6 +18,7 @@ const TestExpression = require("./Interpreter/Expressions/Test");
     tree.push(new GenerateControllerExpression());
     tree.push(new GenerateActionExpression());
     tree.push(new TestExpression());
+    tree.push(new MigrateExpression());
     tree.forEach(expression => expression.interpret(context));
 
     const command = context.getOutput();
@@ -35,7 +37,6 @@ switch (cmd) {
     generate();
     break;
   case "migrate":
-    migrateDatabase();
     break;
   case "new":
     break;
@@ -103,38 +104,6 @@ function generateModel() {
     require("./generate/model")(dir, model, attrs);
   } catch (ex) {
     console.error(`Error creating a model: ${ex.message}`);
-    process.exit(1);
-  }
-}
-
-function migrateDatabase() {
-  try {
-    const direction = args[1];
-    const db = require(`${dir}/db`);
-
-    if (direction === "up") {
-      db.migrate
-        .latest({
-          directory: `${dir}/db/migrations`
-        })
-        .then(function() {
-          console.log(`Done migrating db`);
-          process.exit(0);
-        });
-    } else if (direction === "down") {
-      db.migrate
-        .rollback({
-          directory: `${dir}/db/migrations`
-        })
-        .then(function() {
-          console.log(`Done rolling back db`);
-          process.exit(0);
-        });
-    } else {
-      throw new Error(`migration direction of ${direction} is not supported.`);
-    }
-  } catch (ex) {
-    console.error(`Error migrating db: ${ex.message}`);
     process.exit(1);
   }
 }
