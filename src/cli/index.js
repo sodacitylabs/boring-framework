@@ -5,6 +5,7 @@ const NewExpression = require("./Interpreter/Expressions/New");
 const ServerExpression = require("./Interpreter/Expressions/Server");
 const GenerateControllerExpression = require("./Interpreter/Expressions/GenerateController");
 const GenerateActionExpression = require("./Interpreter/Expressions/GenerateAction");
+const TestExpression = require("./Interpreter/Expressions/Test");
 
 (async () => {
   try {
@@ -15,6 +16,7 @@ const GenerateActionExpression = require("./Interpreter/Expressions/GenerateActi
     tree.push(new ServerExpression());
     tree.push(new GenerateControllerExpression());
     tree.push(new GenerateActionExpression());
+    tree.push(new TestExpression());
     tree.forEach(expression => expression.interpret(context));
 
     const command = context.getOutput();
@@ -23,8 +25,6 @@ const GenerateActionExpression = require("./Interpreter/Expressions/GenerateActi
     console.error(ex);
   }
 })();
-
-const { spawnSync } = require("child_process");
 
 const [, , ...args] = process.argv;
 const dir = process.cwd();
@@ -45,7 +45,6 @@ switch (cmd) {
   case "server":
     break;
   case "test":
-    runTests();
     break;
   default:
     console.error(`Unknown command ${cmd} and args phrase`);
@@ -145,22 +144,6 @@ function showRoutes() {
     require("./routes")();
   } catch (ex) {
     console.error(`Error building routes: ${ex.message}`);
-    process.exit(1);
-  }
-}
-
-function runTests() {
-  try {
-    spawnSync(
-      `./node_modules/.bin/jest --forceExit --coverage --runInBand test`,
-      {
-        stdio: `inherit`,
-        shell: true,
-        cwd: dir
-      }
-    );
-  } catch (ex) {
-    console.error(`Error running tests: ${ex.message}`);
     process.exit(1);
   }
 }
