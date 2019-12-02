@@ -4,6 +4,7 @@ const InterpreterContext = require("./Interpreter/InterpreterContext");
 const NewExpression = require("./Interpreter/Expressions/New");
 const ServerExpression = require("./Interpreter/Expressions/Server");
 const GenerateControllerExpression = require("./Interpreter/Expressions/GenerateController");
+const GenerateActionExpression = require("./Interpreter/Expressions/GenerateAction");
 
 (async () => {
   try {
@@ -13,6 +14,7 @@ const GenerateControllerExpression = require("./Interpreter/Expressions/Generate
     tree.push(new NewExpression());
     tree.push(new ServerExpression());
     tree.push(new GenerateControllerExpression());
+    tree.push(new GenerateActionExpression());
     tree.forEach(expression => expression.interpret(context));
 
     const command = context.getOutput();
@@ -58,7 +60,6 @@ function generate() {
 
     switch (args[1]) {
       case "action":
-        generateAction();
         break;
       case "controller":
         break;
@@ -74,18 +75,6 @@ function generate() {
     }
   } catch (ex) {
     console.error(`Error generating: ${ex.message}`);
-    process.exit(1);
-  }
-}
-
-function generateAction() {
-  try {
-    const action = args[2];
-    const controller = args[3];
-
-    require("./generate/action")(dir, controller, action);
-  } catch (ex) {
-    console.error(`Error creating an action: ${ex.message}`);
     process.exit(1);
   }
 }

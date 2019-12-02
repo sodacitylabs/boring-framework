@@ -1,40 +1,34 @@
-"use strict";
-
-const CoreConfig = require("../../core/Config");
-const fs = require("fs");
 const { spawnSync } = require("child_process");
-
+const Command = require("./Command");
+const fs = require("fs");
 const CREATING_PREFIX = `Creating  `;
+const CoreConfig = require("../../core/Config");
+const ProcessHelper = require("../../core/helpers/ProcessHelper");
 
-/**
- * @function
- * @description adds additional action to existing controller file
- *
- * @param {string} root - root directory to start looking for files
- * @param {string} controller - controller name
- * @param {string} action - action name to create
- *
- * @returns {null}
- */
-module.exports = function(root, controller, action) {
-  requireArguments(root, controller, action);
-  validateArguments(root, controller, action);
+module.exports = class GenerateActionCommand extends Command {
+  execute(context) {
+    const { rootDirectory, actionName, controllerName } = requireArguments(
+      context
+    );
 
-  const controllers = `${root}/app/controllers`;
-  const Controller = require(`${root}/app/controllers/${controller}.js`);
+    const controllersFolder = `${rootDirectory}/app/controllers`;
+    const Controller = ProcessHelper.require(
+      `${rootDirectory}/app/controllers/${controllerName}.js`
+    );
 
-  preventDuplicateAction(Controller, action);
-  makeViewsDirectory(root, controller, action);
-  writeViewTemplate(root, controller, action);
+    preventDuplicateAction(Controller, actionName);
 
-  const fileContents = buildClassContents(Controller, action);
+    const fileContents = buildClassContents(Controller, actionName);
 
-  overwriteControllerFile(
-    root,
-    `${controllers}/${controller}.js`,
-    Controller,
-    fileContents
-  );
+    makeViewsDirectory(rootDirectory, controllerName, actionName);
+    writeViewTemplate(rootDirectory, controllerName, actionName);
+    overwriteControllerFile(
+      rootDirectory,
+      `${controllersFolder}/${controllerName}.js`,
+      Controller,
+      fileContents
+    );
+  }
 };
 
 /**
@@ -49,25 +43,29 @@ module.exports = function(root, controller, action) {
  * @returns {null}
  */
 function buildClassContents(controller, action) {
-  let match = controller
-    .toString()
-    .match(
-      /(class (\w*)Controller)([\s\w]*)({(\s*))([\w\n\s\t();,{}!#./*@$:=`[\]"|'&_?-]*)(};?)/g
-    )[0];
+  try {
+    let match = controller
+      .toString()
+      .match(
+        /(class (\w*)Controller)([\s\w]*)({(\s*))([\w\n\s\t();,{}!#./*@$:=`[\]"|'&_?-]*)(};?)/g
+      )[0];
 
-  if (CoreConfig.viewActionNames.indexOf(action) === -1) {
-    return `${match.substring(
-      0,
-      match.length - 1
-    )} static async ${action}(req, res) { try { res.code(204).send(); } catch(ex) { res.code(500).send(); } }\n };`;
-  } else if (CoreConfig.viewActionNames.indexOf(action) !== -1) {
-    return `${match.substring(
-      0,
-      match.length - 1
-    )} static async ${action}(req, res) { try { res.render(); } catch(ex) { res.code(500).send(); } }\n };`;
+    if (CoreConfig.viewActionNames.indexOf(action) === -1) {
+      return `${match.substring(
+        0,
+        match.length - 1
+      )} static async ${action}(req, res) { try { res.code(204).send(); } catch(ex) { res.code(500).send(); } }\n };`;
+    } else if (CoreConfig.viewActionNames.indexOf(action) !== -1) {
+      return `${match.substring(
+        0,
+        match.length - 1
+      )} static async ${action}(req, res) { try { res.render(); } catch(ex) { res.code(500).send(); } }\n };`;
+    }
+  } catch (ex) {
+    throw new Error(
+      `Unable to pattern match against existing controller file: ${ex.message}`
+    );
   }
-
-  return match;
 }
 
 /**
@@ -152,47 +150,42 @@ function overwriteControllerFile(root, filePath, controller, contents) {
  * @private
  * @description check if all values provided and are valid values
  *
- * @param {string} root - root directory to start looking for files
- * @param {string} controller - controller name
- * @param {string} action - action name to create
+ * @param {Context} context - the context object given
  *
  * @throws {Error}
  * @returns {null}
  */
-function requireArguments(root, controller, action) {
-  if (!controller) {
+function requireArguments(context) {
+  const rootDirectory = ProcessHelper.cwd();
+  const inputs = context.getInput();
+  const actionName = inputs[2];
+  const controllerName = inputs[3];
+
+  if (!actionName) {
+    throw new Error(
+      `Generating an action for a controller requires an action name`
+    );
+  }
+
+  if (CoreConfig.actionNames.indexOf(actionName) === -1) {
+    throw new Error(`Action ${actionName} is not a valid action name.`);
+  }
+
+  if (!controllerName) {
     throw new Error(
       `Generating an action for a controller requires a controller name`
     );
   }
 
-  if (!action) {
-    throw new Error(
-      `Generating an action for a controller requires an action name`
-    );
-  }
-}
-
-/**
- * @function validateArguments
- * @private
- * @description check if all values are semantically valid
- *
- * @param {string} root - root directory to start looking for files
- * @param {string} controller - controller name
- * @param {string} action - action name to create
- *
- * @throws {Error}
- * @returns {null}
- */
-function validateArguments(root, controller, action) {
-  if (CoreConfig.actionNames.indexOf(action) === -1) {
-    throw new Error(`Action ${action} is not a valid action name.`);
+  if (!fs.existsSync(`${rootDirectory}/app/controllers/${controllerName}.js`)) {
+    throw new Error(`Controller ${controllerName} does not exist.`);
   }
 
-  if (!fs.existsSync(`${root}/app/controllers/${controller}.js`)) {
-    throw new Error(`Controller ${controller} does not exist.`);
-  }
+  return {
+    rootDirectory,
+    actionName,
+    controllerName
+  };
 }
 
 /**

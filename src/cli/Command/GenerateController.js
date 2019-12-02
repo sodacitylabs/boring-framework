@@ -2,36 +2,51 @@ const { spawnSync } = require("child_process");
 const Command = require("./Command");
 const fs = require("fs");
 const ProcessHelper = require("../../core/helpers/ProcessHelper");
-// const InterpreterContext = require("../Interpreter/InterpreterContext");
-// const GenerateActionExpression = require("../Interpreter/Expressions/GenerateAction");
+const InterpreterContext = require("../Interpreter/InterpreterContext");
+const GenerateActionExpression = require("../Interpreter/Expressions/GenerateAction");
 
 const creatingPrefix = `Creating  `;
 
 module.exports = class GenerateControllerCommand extends Command {
   execute(context) {
-    const { rootDirectory, controllerName } = validateArguments(context);
+    const { rootDirectory, controllerName, actionNames } = validateArguments(
+      context
+    );
 
     createControllerFile(rootDirectory, controllerName);
     createTestControllerFile(rootDirectory, controllerName);
-
-    // actionNames.slice(3).forEach(action => {
-    //   const actionContext = new InterpreterContext([
-    //     "$",
-    //     "boring",
-    //     "generate",
-    //     "action",
-    //     action,
-    //     name
-    //   ]);
-    //   const actionExpression = new GenerateActionExpression();
-    //   actionExpression.interpret(actionContext);
-
-    //   const actionCommand = actionContext.getOutput();
-
-    //   actionCommand.execute(actionContext);
-    // });
+    createActions(controllerName, actionNames);
   }
 };
+
+/**
+ * @function createActions
+ * @private
+ *
+ * @param {string} controllerName - controller to create the actions on
+ * @param {Array} actionNames - list of actions to create
+ *
+ * @throws {Error}
+ * @returns {null}
+ */
+function createActions(controllerName, actionNames) {
+  actionNames.forEach(action => {
+    const actionContext = new InterpreterContext([
+      "$",
+      "boring",
+      "generate",
+      "action",
+      action,
+      controllerName
+    ]);
+    const actionExpression = new GenerateActionExpression();
+    actionExpression.interpret(actionContext);
+
+    const actionCommand = actionContext.getOutput();
+
+    actionCommand.execute(actionContext);
+  });
+}
 
 /**
  * @function createControllerFile
