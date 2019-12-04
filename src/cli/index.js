@@ -8,6 +8,7 @@ const GenerateActionExpression = require("./Interpreter/Expressions/GenerateActi
 const TestExpression = require("./Interpreter/Expressions/Test");
 const MigrateExpression = require("./Interpreter/Expressions/Migrate");
 const GenerateMigrationExpression = require("./Interpreter/Expressions/GenerateMigration");
+const RoutesExpression = require("./Interpreter/Expressions/Routes");
 
 (async () => {
   try {
@@ -21,6 +22,7 @@ const GenerateMigrationExpression = require("./Interpreter/Expressions/GenerateM
     tree.push(new TestExpression());
     tree.push(new MigrateExpression());
     tree.push(new GenerateMigrationExpression());
+    tree.push(new RoutesExpression());
     tree.forEach(expression => expression.interpret(context));
 
     const command = context.getOutput();
@@ -43,7 +45,6 @@ switch (cmd) {
   case "new":
     break;
   case "routes":
-    showRoutes();
     break;
   case "server":
     break;
@@ -94,15 +95,6 @@ function generateModel() {
     require("./generate/model")(dir, model, attrs);
   } catch (ex) {
     console.error(`Error creating a model: ${ex.message}`);
-    process.exit(1);
-  }
-}
-
-function showRoutes() {
-  try {
-    require("./routes")();
-  } catch (ex) {
-    console.error(`Error building routes: ${ex.message}`);
     process.exit(1);
   }
 }
