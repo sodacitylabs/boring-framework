@@ -35,7 +35,7 @@ function requireArguments(context) {
   }
 
   if (!fs.existsSync(`${rootDirectory}/db/migrations`)) {
-    fs.mkdirSync(`${rootDirectory}/db/migrations`);
+    throw new Error(`Cannot create migrations without a migrations folder.`);
   }
 
   return {
