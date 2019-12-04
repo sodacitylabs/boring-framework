@@ -7,6 +7,7 @@ const GenerateControllerExpression = require("./Interpreter/Expressions/Generate
 const GenerateActionExpression = require("./Interpreter/Expressions/GenerateAction");
 const TestExpression = require("./Interpreter/Expressions/Test");
 const MigrateExpression = require("./Interpreter/Expressions/Migrate");
+const GenerateMigrationExpression = require("./Interpreter/Expressions/GenerateMigration");
 
 (async () => {
   try {
@@ -19,6 +20,7 @@ const MigrateExpression = require("./Interpreter/Expressions/Migrate");
     tree.push(new GenerateActionExpression());
     tree.push(new TestExpression());
     tree.push(new MigrateExpression());
+    tree.push(new GenerateMigrationExpression());
     tree.forEach(expression => expression.interpret(context));
 
     const command = context.getOutput();
@@ -64,7 +66,6 @@ function generate() {
       case "controller":
         break;
       case "migration":
-        generateMigration();
         break;
       case "model":
         generateModel();
@@ -75,17 +76,6 @@ function generate() {
     }
   } catch (ex) {
     console.error(`Error generating: ${ex.message}`);
-    process.exit(1);
-  }
-}
-
-function generateMigration() {
-  try {
-    const fileName = args[2];
-
-    require("./generate/migration")(dir, fileName);
-  } catch (ex) {
-    console.error(`Error creating a migration: ${ex.message}`);
     process.exit(1);
   }
 }
