@@ -2,7 +2,8 @@ jest.mock("../../../src/core/helpers/ProcessHelper", () => {
   return {
     cwd: jest.fn().mockImplementation(() => {}),
     exit: jest.fn().mockImplementation(() => {}),
-    require: jest.fn().mockImplementation(() => {})
+    require: jest.fn().mockImplementation(() => {}),
+    kill: jest.fn().mockImplementation(() => {})
   };
 });
 
@@ -75,7 +76,8 @@ test("executes server command in a separate process w/o reload option", () => {
   expect(ProcessHelper.require).toHaveBeenCalledWith(
     `${fakeTestWorkingDirectory}/config`
   );
-  expect(child_process.spawnSync).toHaveBeenCalledTimes(3);
+  expect(child_process.spawnSync).toHaveBeenCalledTimes(1);
+  expect(ProcessHelper.kill).toHaveBeenCalledTimes(2);
 });
 
 test("uses nodemon to reload if --reload arg given", () => {
