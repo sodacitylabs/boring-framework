@@ -80,37 +80,6 @@ test("executes server command in a separate process w/o reload option", () => {
   expect(ProcessHelper.kill).toHaveBeenCalledTimes(2);
 });
 
-test("uses nodemon to reload if --reload arg given", () => {
-  /* eslint-disable-next-line no-inner-declarations */
-  function MockNodemon() {
-    return MockNodemon;
-  }
-  MockNodemon.on = jest.fn().mockImplementation(function() {
-    return MockNodemon;
-  });
-
-  const fakeTestWorkingDirectory = "/fake/directory/that/doesnt/exist";
-
-  ProcessHelper.cwd.mockImplementation(() => fakeTestWorkingDirectory);
-  ProcessHelper.require.mockImplementation(path => {
-    if (path === `${fakeTestWorkingDirectory}/config`) {
-      return {
-        server: {
-          port: 1776
-        }
-      };
-    } else if (path === `${fakeTestWorkingDirectory}/node_modules/nodemon`) {
-      return MockNodemon;
-    }
-
-    throw new Error(`Unforeseen require call for ${path}`);
-  });
-
-  interpretAndExecuteCommand(["$", "Boring", "server", "--reload"]);
-
-  expect(MockNodemon.on).toHaveBeenCalledTimes(3);
-});
-
 test("tries to start maildev if default config", () => {
   const fakeTestWorkingDirectory = "/fake/directory/that/doesnt/exist";
 
