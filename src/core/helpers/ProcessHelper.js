@@ -14,6 +14,6 @@ module.exports = class ProcessHelper {
     return require(path);
   }
   static async kill(args) {
-    await fkill(args);
+    await fkill(args).catch(() => {});
   }
 };
