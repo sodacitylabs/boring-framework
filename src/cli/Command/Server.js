@@ -58,17 +58,8 @@ module.exports = class ServerCommand extends Command {
         cwd: dir
       });
 
-      spawnSync("kill -9 $(lsof -i tcp:1025) 2> /dev/null", {
-        stdio: `inherit`,
-        shell: true,
-        cwd: dir
-      });
-
-      spawnSync("kill -9 $(lsof -i tcp:1080) 2> /dev/null", {
-        stdio: `inherit`,
-        shell: true,
-        cwd: dir
-      });
+      ProcessHelper.kill(1025);
+      ProcessHelper.kill(1080);
 
       fastify.listen({ port }, err => {
         if (err) {
