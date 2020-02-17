@@ -205,7 +205,7 @@ async function _invokeAction(req, res, controller, action) {
       action
     });
 
-    await RequestHelper.parseBody(req);
+    await RequestHelper.decorate(req);
 
     await actionFunction(req, res);
   } catch (ex) {
