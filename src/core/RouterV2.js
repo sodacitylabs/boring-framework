@@ -207,7 +207,7 @@ async function _invokeAction(req, res, controller, action) {
 
     await RequestHelper.parseBody(req);
 
-    actionFunction(req, res);
+    await actionFunction(req, res);
   } catch (ex) {
     console.error(`Error Invoking Action :: ${ex.message}`);
     _routingError(req, res, 404);
