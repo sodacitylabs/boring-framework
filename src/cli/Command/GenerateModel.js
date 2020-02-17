@@ -169,22 +169,25 @@ function createModel(rootDirectory, modelName, modelAttributes) {
     }
   });
 
-  const belongsToRelations =
-    belongsTo.length && buildBelongsToRelation(modelName, belongsTo);
+  const belongsToImports = belongsTo.length
+    ? belongsTo.reduce(
+        (acc, curr) => (acc += `const ${curr} = require('./${curr}')\n`),
+        ""
+      )
+    : "";
+  const belongsToRelations = belongsTo.length
+    ? buildBelongsToRelation(modelName, belongsTo)
+    : "";
 
   fs.writeFileSync(
     modelFile,
     `
     const Boring = require('@sodacitylabs/boring-framework');
     const ActiveRecord = Boring.Model.ActiveRecord;
-    ${(belongsTo.length &&
-      belongsTo.reduce(
-        (acc, curr) => (acc += `const ${curr} = require('./${curr}')\n`)
-      ),
-    "")}
+    ${belongsToImports}
 
     module.exports = class ${modelName} extends ActiveRecord {
-      ${belongsTo.length && belongsToRelations}
+      ${belongsToRelations}
     };
     `,
     "utf8"
