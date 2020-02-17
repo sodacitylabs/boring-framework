@@ -95,6 +95,7 @@ module.exports = {
     tmp/*
     db/sqlite.db
     coverage
+    *.secrets.*
     `,
     npmrc: `save_exact=true\n`,
     welcome: () => `
