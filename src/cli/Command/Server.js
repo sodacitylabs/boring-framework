@@ -4,18 +4,17 @@ const path = require("path");
 const Router = require("../../core/RouterV2");
 const Fastify = require("fastify");
 const ProcessHelper = require("../../core/helpers/ProcessHelper");
-const _ = require("lodash");
 
 module.exports = class ServerCommand extends Command {
   execute(context /* eslint-disable-line no-unused-vars */) {
     const { rootDirectory, projectConfig } = requireArguments(context);
     const fastify = new Fastify({ logger: true });
-    const port = projectConfig.server.port || 3000;
+    const port = projectConfig.get("server.port") || 3000;
     const start = Date.now();
     const router = new Router(projectConfig, rootDirectory);
     const routes = router.load();
 
-    if (_.get(projectConfig, "mailer.default")) {
+    if (projectConfig.get("mailer.default")) {
       spawn(`./node_modules/.bin/maildev`, {
         stdio: `inherit`,
         shell: true,
