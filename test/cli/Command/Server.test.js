@@ -58,11 +58,21 @@ test("executes server command in a separate process w/o reload option", () => {
   ProcessHelper.cwd.mockImplementation(() => fakeTestWorkingDirectory);
   ProcessHelper.require.mockImplementation(path => {
     if (path === `${fakeTestWorkingDirectory}/config`) {
-      return {
-        server: {
-          port: 1776
+      class FakeConfig {
+        constructor() {
+          this.config = {
+            server: {
+              port: 1776
+            }
+          };
         }
-      };
+
+        get(key) {
+          return require("lodash").get(this.config, key);
+        }
+      }
+
+      return new FakeConfig();
     }
 
     throw new Error(`Unforeseen require call for ${path}`);
@@ -86,14 +96,24 @@ test("tries to start maildev if default config", () => {
   ProcessHelper.cwd.mockImplementation(() => fakeTestWorkingDirectory);
   ProcessHelper.require.mockImplementation(path => {
     if (path === `${fakeTestWorkingDirectory}/config`) {
-      return {
-        mailer: {
-          default: {}
-        },
-        server: {
-          port: 1776
+      class FakeConfig {
+        constructor() {
+          this.config = {
+            mailer: {
+              default: {}
+            },
+            server: {
+              port: 1776
+            }
+          };
         }
-      };
+
+        get(key) {
+          return require("lodash").get(this.config, key);
+        }
+      }
+
+      return new FakeConfig();
     }
 
     throw new Error(`Unforeseen require call for ${path}`);
@@ -123,11 +143,21 @@ test("tries to mount any routes returned", () => {
   ProcessHelper.cwd.mockImplementation(() => fakeTestWorkingDirectory);
   ProcessHelper.require.mockImplementation(path => {
     if (path === `${fakeTestWorkingDirectory}/config`) {
-      return {
-        server: {
-          port: 1776
+      class FakeConfig {
+        constructor() {
+          this.config = {
+            server: {
+              port: 1776
+            }
+          };
         }
-      };
+
+        get(key) {
+          return require("lodash").get(this.config, key);
+        }
+      }
+
+      return new FakeConfig();
     }
 
     throw new Error(`Unforeseen require call for ${path}`);
@@ -147,11 +177,21 @@ test("tries to listen on the configured port", () => {
   ProcessHelper.cwd.mockImplementation(() => fakeTestWorkingDirectory);
   ProcessHelper.require.mockImplementation(path => {
     if (path === `${fakeTestWorkingDirectory}/config`) {
-      return {
-        server: {
-          port: 1776
+      class FakeConfig {
+        constructor() {
+          this.config = {
+            server: {
+              port: 1776
+            }
+          };
         }
-      };
+
+        get(key) {
+          return require("lodash").get(this.config, key);
+        }
+      }
+
+      return new FakeConfig();
     }
 
     throw new Error(`Unforeseen require call for ${path}`);
@@ -176,11 +216,21 @@ test("exits if fastify is unable to listen", () => {
   ProcessHelper.cwd.mockImplementation(() => fakeTestWorkingDirectory);
   ProcessHelper.require.mockImplementation(path => {
     if (path === `${fakeTestWorkingDirectory}/config`) {
-      return {
-        server: {
-          port: 1776
+      class FakeConfig {
+        constructor() {
+          this.config = {
+            server: {
+              port: 1776
+            }
+          };
         }
-      };
+
+        get(key) {
+          return require("lodash").get(this.config, key);
+        }
+      }
+
+      return new FakeConfig();
     }
 
     throw new Error(`Unforeseen require call for ${path}`);

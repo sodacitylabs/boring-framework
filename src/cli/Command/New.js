@@ -387,16 +387,33 @@ function createProjectConfigs(rootDirectory, projectName, projectDirectory) {
     `${projectDirectory}/config/index.js`,
     `
       "use strict";
-      const merge = require("lodash/merge");
-      const all = require("./environments/all");
-      const environment = process.env.NODE_ENV;
-      let secretsConfig = {};
-      let envConfig = {};
-      try {
-        envConfig = require(\`./environments/\${environment}\`);
-        secretsConfig = require(\`./environments/\${environment}.secrets\`);
-      } catch (e) {}
-      module.exports = merge({}, all, envConfig, secretsConfig);
+
+      const _ = require("lodash");
+
+      let config = {};
+
+      class Config {
+        constructor() {
+          const all = require("./environments/all");
+          const environment = process.env.NODE_ENV;
+
+          let secretsConfig = {};
+          let envConfig = {};
+
+          try {
+            envConfig = require(\`./environments/\${environment}\`);
+            secretsConfig = require(\`./environments/\${environment}.secrets\`);
+          } catch (e) {}
+
+          config = _.merge({}, all, envConfig, secretsConfig)
+        }
+
+        get(key) {
+          return _.get(config, key)
+        }
+      }
+
+      module.exports = new Config();
       `,
     "utf8"
   );

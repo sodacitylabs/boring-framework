@@ -1,7 +1,7 @@
 const NounHelper = require("./helpers/NounHelper");
 const { Model, knexSnakeCaseMappers } = require("objection");
 const Knex = require("knex");
-const dbInfo = require(`${process.cwd()}/config`).db;
+const dbInfo = require(`${process.cwd()}/config`).get("db");
 
 Model.knex(Knex(Object.assign(dbInfo, knexSnakeCaseMappers(), {})));
 

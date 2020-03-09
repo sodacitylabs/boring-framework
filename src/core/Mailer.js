@@ -11,22 +11,28 @@ module.exports = class Mailer {
     if (!_transport) {
       const projectConfig = require(`${dir}/config`);
 
-      switch (projectConfig.mailer.plugin) {
+      switch (projectConfig.get("mailer.plugin")) {
         case "smtp":
           _transport = nodemailer.createTransport(
-            require("nodemailer-smtp-transport")(projectConfig.mailer.transport)
+            require("nodemailer-smtp-transport")(
+              projectConfig.get("mailer.transport")
+            )
           );
           _transport.use("compile", htmlToText());
           break;
         case "ses":
           _transport = nodemailer.createTransport(
-            require("nodemailer-ses-transport")(projectConfig.mailer.transport)
+            require("nodemailer-ses-transport")(
+              projectConfig.get("mailer.transport")
+            )
           );
           _transport.use("compile", htmlToText());
           break;
         default:
           throw new Error(
-            `Mailer plugin type of ${projectConfig.mailer.plugin} is currently not supported`
+            `Mailer plugin type of ${projectConfig.get(
+              "mailer.plugin"
+            )} is currently not supported`
           );
       }
     }
