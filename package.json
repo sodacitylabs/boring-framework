@@ -44,7 +44,7 @@
     "ejs": "2.6.1",
     "eslint-plugin-jest": "22.3.0",
     "fastify": "2.10.0",
-    "fastify-static": "2.5.0",
+    "fastify-static": "4.2.4",
     "fkill": "6.2.0",
     "jest": "24.9.0",
     "knex": "0.19.1",
